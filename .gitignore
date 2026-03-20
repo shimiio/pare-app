@@ -1,0 +1,9 @@
+# backend
+bin/
+obj/
+
+# frontend
+node_modules/
+
+# env
+.env
