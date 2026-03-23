@@ -1,6 +1,9 @@
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Pare.Infrastructure.Data;
+using Pare.Application.Interfaces;
+using Pare.Infrastructure.Repositories;
+using Pare.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,11 @@ var connectionString = $"Host=localhost;Port=5432;Database={dbName};Username={db
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+// Services
+builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+
 // Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -31,4 +39,5 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapControllers();
 app.Run();
