@@ -1,4 +1,4 @@
-namespace Pare.Domain.Models;
+namespace Pare.Domain.Entities;
 
 public class Subscription
 {

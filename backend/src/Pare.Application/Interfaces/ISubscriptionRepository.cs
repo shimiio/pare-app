@@ -1,4 +1,4 @@
-using Pare.Domain.Models;
+using Pare.Domain.Entities;
 
 namespace Pare.Application.Interfaces;
 

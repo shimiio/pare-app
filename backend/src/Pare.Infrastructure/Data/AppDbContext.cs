@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Pare.Domain.Models;
+using Pare.Domain.Entities;
 
 namespace Pare.Infrastructure.Data;
 

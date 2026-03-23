@@ -1,5 +1,5 @@
 using Pare.Application.Interfaces;
-using Pare.Domain.Models;
+using Pare.Domain.Entities;
 
 namespace Pare.Application.Services;
 

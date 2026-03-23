@@ -25,7 +25,7 @@ namespace Pare.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Pare.Domain.Models.Subscription", b =>
+            modelBuilder.Entity("Pare.Domain.Entities.Subscription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

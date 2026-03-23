@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Pare.Application.Interfaces;
-using Pare.Domain.Models;
+using Pare.Domain.Entities;
 
 namespace Pare.API.Controllers;
 
