@@ -12,4 +12,7 @@ public class Subscription
     public Status Status { get; set; }
     public DateOnly NextBillingDate { get; set; }
     public DateOnly StartDate { get; set; }
+
+    public int UserId { get; set; }
+    public User User { get; set; } = null!;
 }
