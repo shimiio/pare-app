@@ -7,13 +7,13 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public DbSet<Subscription> Subscriptions => Set<Subscription>();
-    public DbSet<User> Users => Set<User>();
+    public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Subscription>().ToTable("subscriptions");
-        modelBuilder.Entity<User>().ToTable("user");
+        modelBuilder.Entity<User>().ToTable("users");
 
         modelBuilder.Entity<Subscription>()
             .HasOne(s => s.User)

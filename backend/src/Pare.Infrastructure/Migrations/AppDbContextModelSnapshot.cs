@@ -63,7 +63,7 @@ namespace Pare.Infrastructure.Migrations
                     b.ToTable("subscriptions", (string)null);
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("Pare.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -85,12 +85,12 @@ namespace Pare.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("user", (string)null);
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Pare.Domain.Entities.Subscription", b =>
                 {
-                    b.HasOne("User", "User")
+                    b.HasOne("Pare.Domain.Entities.User", "User")
                         .WithMany("Subscriptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -99,7 +99,7 @@ namespace Pare.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("Pare.Domain.Entities.User", b =>
                 {
                     b.Navigation("Subscriptions");
                 });

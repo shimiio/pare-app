@@ -12,8 +12,8 @@ using Pare.Infrastructure.Data;
 namespace Pare.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260324121921_AddUserEntityAndEnums")]
-    partial class AddUserEntityAndEnums
+    [Migration("20260326230901_RenameUserToUsers")]
+    partial class RenameUserToUsers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,7 +66,7 @@ namespace Pare.Infrastructure.Migrations
                     b.ToTable("subscriptions", (string)null);
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("Pare.Domain.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,12 +88,12 @@ namespace Pare.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("user", (string)null);
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("Pare.Domain.Entities.Subscription", b =>
                 {
-                    b.HasOne("User", "User")
+                    b.HasOne("Pare.Domain.Entities.User", "User")
                         .WithMany("Subscriptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -102,7 +102,7 @@ namespace Pare.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("Pare.Domain.Entities.User", b =>
                 {
                     b.Navigation("Subscriptions");
                 });

@@ -7,13 +7,13 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Pare.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserEntityAndEnums : Migration
+    public partial class RenameUserToUsers : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "user",
+                name: "users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -24,7 +24,7 @@ namespace Pare.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_user", x => x.Id);
+                    table.PrimaryKey("PK_users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -46,9 +46,9 @@ namespace Pare.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_subscriptions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_subscriptions_user_UserId",
+                        name: "FK_subscriptions_users_UserId",
                         column: x => x.UserId,
-                        principalTable: "user",
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -66,7 +66,7 @@ namespace Pare.Infrastructure.Migrations
                 name: "subscriptions");
 
             migrationBuilder.DropTable(
-                name: "user");
+                name: "users");
         }
     }
 }
