@@ -20,16 +20,23 @@ var connectionString = $"Host=localhost;Port=5432;Database={dbName};Username={db
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Services
+// Routing
 builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
+
+// Subscriptions
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+
+// Users
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// App
 var app = builder.Build();
 
 // Swagger

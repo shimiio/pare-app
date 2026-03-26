@@ -1,4 +1,4 @@
-using Pare.Domain.Entities;
+namespace Pare.Domain.Entities;
 
 public class User
 {
