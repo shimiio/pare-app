@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Pare.Infrastructure.Data;
 using Pare.Application.Interfaces;
 using Pare.Infrastructure.Repositories;
+using Pare.Infrastructure.Auth;
 using Pare.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,9 @@ builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 // Users
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+// Hash
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
 // Swagger
 builder.Services.AddControllers();

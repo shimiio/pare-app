@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Pare.Application.Interfaces;
 using Pare.Application.DTOs;
-using Pare.Domain.Entities;
 
 namespace Pare.API.Controllers;
 
@@ -20,14 +19,7 @@ public class UsersController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateUserRequest request)
     {
-        var user = new User
-        {
-            Name = request.Name,
-            Email = request.Email,
-            PasswordHash = request.Password
-        };
-
-        var created = await _service.CreateAsync(user);
-        return Created($"/api/user/{created.Id}", created);
+        var created = await _service.CreateAsync(request);
+        return Created($"/api/users/{created.Id}", created);
     }
 }
