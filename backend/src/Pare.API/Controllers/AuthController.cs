@@ -22,4 +22,12 @@ public class AuthController : ControllerBase
         var jwtToken = await _service.RegisterAsync(request);
         return jwtToken is null ? Conflict() : Created("", jwtToken);
     }
+
+    // POST login
+    [HttpPost("login")]
+    public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
+    {
+        var jwtToken = await _service.LoginAsync(request);
+        return jwtToken is null ? Unauthorized() : Ok(jwtToken);
+    }
 }
