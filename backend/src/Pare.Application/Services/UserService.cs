@@ -8,15 +8,17 @@ public class UserService : IUserService
 {
     private readonly IUserRepository _repo;
     private readonly IPasswordHasher _hasher;
+    private readonly IJwtTokenService _jwtService;
 
-    public UserService(IUserRepository repo, IPasswordHasher hasher)
+    public UserService(IUserRepository repo, IPasswordHasher hasher, IJwtTokenService jwtService)
     {
         _repo = repo;
         _hasher = hasher;
+        _jwtService = jwtService;
     }
 
     // POST register
-    public async Task<User?> RegisterAsync(RegisterRequest request)
+    public async Task<AuthResponseDto?> RegisterAsync(RegisterRequest request)
     {
         // Check if email already exists
         var existing = await _repo.GetByEmailAsync(request.Email);
@@ -35,6 +37,13 @@ public class UserService : IUserService
 
         var created = await _repo.CreateAsync(user);
 
-        return created;
+        // Generate JWT token
+        var token = _jwtService.GenerateToken(user.Id, user.Email);
+        var jwtToken = new AuthResponseDto
+        {
+            JwtToken = token
+        };
+
+        return jwtToken;
     }
 }

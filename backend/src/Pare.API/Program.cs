@@ -52,7 +52,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<JwtTokenService>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // Users & Auth
 builder.Services.AddScoped<IUserRepository, UserRepository>();

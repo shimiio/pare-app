@@ -20,8 +20,8 @@ public class JwtTokenService : IJwtTokenService
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-            new Claim(ClaimTypes.Email, email)
+            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, email)
         };
 
         var secretKey = _config["Jwt:SecretKey"] ?? throw new InvalidOperationException("Jwt:SecretKey is not configured");
@@ -30,7 +30,7 @@ public class JwtTokenService : IJwtTokenService
 
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.Now.AddHours(Convert.ToDouble(_config["Jwt:ExpiresInHours"])),
+            expires: DateTime.UtcNow.AddHours(Convert.ToDouble(_config["Jwt:ExpiresInHours"])),
             signingCredentials: creds
         );
 

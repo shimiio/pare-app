@@ -9,19 +9,17 @@ namespace Pare.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IUserService _service;
-    private readonly IJwtTokenService _jwtService;
 
-    public AuthController(IUserService service, IJwtTokenService jwtService)
+    public AuthController(IUserService service)
     {
         _service = service;
-        _jwtService = jwtService;
     }
 
     // POST register
-    [HttpPost]
+    [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
     {
-        var created = await _service.RegisterAsync(request);
-        return created is null ? Conflict() : Created($"/api/users/{created.Id}", created);
+        var jwtToken = await _service.RegisterAsync(request);
+        return jwtToken is null ? Conflict() : Created("", jwtToken);
     }
 }
