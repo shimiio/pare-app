@@ -15,11 +15,17 @@ public class UserService : IUserService
         _hasher = hasher;
     }
 
-    // POST
-    public async Task<User> CreateAsync(CreateUserRequest request)
+    // POST register
+    public async Task<User?> RegisterAsync(RegisterRequest request)
     {
+        // Check if email already exists
+        var existing = await _repo.GetByEmailAsync(request.Email);
+        if (existing != null) return null;
+
+        // Hash the password
         string hash = _hasher.Hash(request.Password);
 
+        // Create the user
         var user = new User
         {
             Name = request.Name,
@@ -27,6 +33,8 @@ public class UserService : IUserService
             PasswordHash = hash
         };
 
-        return await _repo.CreateAsync(user);
+        var created = await _repo.CreateAsync(user);
+
+        return created;
     }
 }

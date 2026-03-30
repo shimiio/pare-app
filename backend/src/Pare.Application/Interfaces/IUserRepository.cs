@@ -4,6 +4,6 @@ namespace Pare.Application.Interfaces;
 
 public interface IUserRepository
 {
-    // POST
+    Task<User?> GetByEmailAsync(string email);
     Task<User> CreateAsync(User user);
 }

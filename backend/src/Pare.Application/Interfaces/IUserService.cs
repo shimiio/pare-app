@@ -6,5 +6,5 @@ namespace Pare.Application.Interfaces;
 public interface IUserService
 {
     // POST
-    Task<User> CreateAsync(CreateUserRequest request);
+    Task<User?> RegisterAsync(RegisterRequest request);
 }

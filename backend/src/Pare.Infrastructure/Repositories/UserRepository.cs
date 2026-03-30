@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Pare.Domain.Entities;
 using Pare.Application.Interfaces;
 using Pare.Infrastructure.Data;
@@ -11,6 +12,11 @@ public class UserRepository : IUserRepository
     public UserRepository(AppDbContext db)
     {
         _db = db;
+    }
+
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        return await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
 
     // POST
