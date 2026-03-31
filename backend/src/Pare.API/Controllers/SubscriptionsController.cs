@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Pare.Application.Interfaces;
-using Pare.Domain.Entities;
+using Pare.Application.DTOs;
 
 namespace Pare.API.Controllers;
 
@@ -33,17 +33,17 @@ public class SubscriptionsController : ControllerBase
 
     // POST /api/subscriptions
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Subscription subscription)
+    public async Task<IActionResult> Create([FromBody] SubscriptionWriteDto createDto)
     {
-        var created = await _service.CreateAsync(subscription);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        var created = await _service.CreateAsync(createDto);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, createDto);
     }
 
     // PUT /api/subscriptions/id
     [HttpPut]
-    public async Task<IActionResult> Update(int id, [FromBody] Subscription subscription)
+    public async Task<IActionResult> Update(int id, [FromBody] SubscriptionWriteDto updateDto)
     {
-        var updated = await _service.UpdateAsync(id, subscription);
+        var updated = await _service.UpdateAsync(id, updateDto);
         return updated is null ? NotFound() : Ok(updated);
     }
 

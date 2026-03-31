@@ -1,3 +1,4 @@
+using Pare.Application.DTOs;
 using Pare.Application.Interfaces;
 using Pare.Domain.Entities;
 
@@ -13,31 +14,53 @@ public class SubscriptionService : ISubscriptionService
     }
 
     // GET all
-    public async Task<IEnumerable<Subscription>> GetAllAsync()
+    public async Task<IEnumerable<SubscriptionDto>> GetAllAsync()
     {
         var subscriptions = await _repo.GetAllAsync();
-        return subscriptions.Select(ToSubscription);
+        return subscriptions.Select(ToSubscriptionDto);
     }
 
     // GET by id
-    public async Task<Subscription?> GetByIdAsync(int id)
+    public async Task<SubscriptionDto?> GetByIdAsync(int id)
     {
         var subscription = await _repo.GetByIdAsync(id);
-        return subscription is null ? null : ToSubscription(subscription);
+        return subscription is null ? null : ToSubscriptionDto(subscription);
     }
 
     // POST
-    public async Task<Subscription> CreateAsync(Subscription subscription)
+    public async Task<SubscriptionDto> CreateAsync(SubscriptionWriteDto createDto)
     {
+        var subscription = new Subscription
+        {
+            Name = createDto.Name,
+            Price = createDto.Price,
+            Currency = createDto.Currency,
+            BillingCycle = createDto.BillingCycle,
+            Status = createDto.Status,
+            NextBillingDate = createDto.NextBillingDate,
+            StartDate = createDto.StartDate,
+        };
+
         var created = await _repo.CreateAsync(subscription);
-        return ToSubscription(created);
+        return ToSubscriptionDto(created);
     }
 
     // PUT
-    public async Task<Subscription?> UpdateAsync(int id, Subscription subscription)
+    public async Task<SubscriptionDto?> UpdateAsync(int id, SubscriptionWriteDto updateDto)
     {
+        var subscription = new Subscription
+        {
+            Name = updateDto.Name,
+            Price = updateDto.Price,
+            Currency = updateDto.Currency,
+            BillingCycle = updateDto.BillingCycle,
+            Status = updateDto.Status,
+            NextBillingDate = updateDto.NextBillingDate,
+            StartDate = updateDto.StartDate
+        };
+
         var updated = await _repo.UpdateAsync(id, subscription);
-        return updated is null ? null : ToSubscription(updated);
+        return updated is null ? null : ToSubscriptionDto(updated);
     }
 
     // DELETE
@@ -46,12 +69,14 @@ public class SubscriptionService : ISubscriptionService
         return await _repo.DeleteByIdAsync(id);
     }
 
-    private static Subscription ToSubscription(Subscription subscription) => new Subscription
+    private static SubscriptionDto ToSubscriptionDto(Subscription subscription) => new SubscriptionDto
     {
         Id = subscription.Id,
         Name = subscription.Name,
         Price = subscription.Price,
         Currency = subscription.Currency,
+        BillingCycle = subscription.BillingCycle,
+        Status = subscription.Status,
         NextBillingDate = subscription.NextBillingDate,
         StartDate = subscription.StartDate
     };
