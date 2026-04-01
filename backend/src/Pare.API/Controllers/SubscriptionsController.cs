@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Pare.Application.Interfaces;
 using Pare.Application.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Pare.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class SubscriptionsController : ControllerBase
@@ -15,11 +18,14 @@ public class SubscriptionsController : ControllerBase
         _service = service;
     }
 
+    private int GetUserId() => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
     // GET /api/subscriptions
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var subscriptions = await _service.GetAllAsync();
+        int userId = GetUserId();
+        var subscriptions = await _service.GetAllAsync(userId);
         return Ok(subscriptions);
     }
 
@@ -27,7 +33,8 @@ public class SubscriptionsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var subscription = await _service.GetByIdAsync(id);
+        int userId = GetUserId();
+        var subscription = await _service.GetByIdAsync(id, userId);
         return subscription is null ? NotFound() : Ok(subscription);
     }
 
@@ -35,23 +42,26 @@ public class SubscriptionsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] SubscriptionWriteDto createDto)
     {
-        var created = await _service.CreateAsync(createDto);
+        int userId = GetUserId();
+        var created = await _service.CreateAsync(userId, createDto);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, createDto);
     }
 
     // PUT /api/subscriptions/id
-    [HttpPut]
+    [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, [FromBody] SubscriptionWriteDto updateDto)
     {
-        var updated = await _service.UpdateAsync(id, updateDto);
+        int userId = GetUserId();
+        var updated = await _service.UpdateAsync(id, userId, updateDto);
         return updated is null ? NotFound() : Ok(updated);
     }
 
     // DELETE /api/subscriptions/id
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var deleted = await _service.DeleteByIdAsync(id);
+        int userId = GetUserId();
+        var deleted = await _service.DeleteByIdAsync(id, userId);
         return deleted ? NoContent() : NotFound();
     }
 }

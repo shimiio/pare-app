@@ -14,21 +14,21 @@ public class SubscriptionService : ISubscriptionService
     }
 
     // GET all
-    public async Task<IEnumerable<SubscriptionDto>> GetAllAsync()
+    public async Task<IEnumerable<SubscriptionDto>> GetAllAsync(int userId)
     {
-        var subscriptions = await _repo.GetAllAsync();
+        var subscriptions = await _repo.GetAllAsync(userId);
         return subscriptions.Select(ToSubscriptionDto);
     }
 
     // GET by id
-    public async Task<SubscriptionDto?> GetByIdAsync(int id)
+    public async Task<SubscriptionDto?> GetByIdAsync(int id, int userId)
     {
-        var subscription = await _repo.GetByIdAsync(id);
+        var subscription = await _repo.GetByIdAsync(id, userId);
         return subscription is null ? null : ToSubscriptionDto(subscription);
     }
 
     // POST
-    public async Task<SubscriptionDto> CreateAsync(SubscriptionWriteDto createDto)
+    public async Task<SubscriptionDto> CreateAsync(int userId, SubscriptionWriteDto createDto)
     {
         var subscription = new Subscription
         {
@@ -39,6 +39,7 @@ public class SubscriptionService : ISubscriptionService
             Status = createDto.Status,
             NextBillingDate = createDto.NextBillingDate,
             StartDate = createDto.StartDate,
+            UserId = userId
         };
 
         var created = await _repo.CreateAsync(subscription);
@@ -46,7 +47,7 @@ public class SubscriptionService : ISubscriptionService
     }
 
     // PUT
-    public async Task<SubscriptionDto?> UpdateAsync(int id, SubscriptionWriteDto updateDto)
+    public async Task<SubscriptionDto?> UpdateAsync(int id, int userId, SubscriptionWriteDto updateDto)
     {
         var subscription = new Subscription
         {
@@ -59,14 +60,14 @@ public class SubscriptionService : ISubscriptionService
             StartDate = updateDto.StartDate
         };
 
-        var updated = await _repo.UpdateAsync(id, subscription);
+        var updated = await _repo.UpdateAsync(id, userId, subscription);
         return updated is null ? null : ToSubscriptionDto(updated);
     }
 
     // DELETE
-    public async Task<bool> DeleteByIdAsync(int id)
+    public async Task<bool> DeleteByIdAsync(int id, int userId)
     {
-        return await _repo.DeleteByIdAsync(id);
+        return await _repo.DeleteByIdAsync(id, userId);
     }
 
     private static SubscriptionDto ToSubscriptionDto(Subscription subscription) => new SubscriptionDto
