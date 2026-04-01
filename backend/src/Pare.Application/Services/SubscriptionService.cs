@@ -1,6 +1,7 @@
 using Pare.Application.DTOs;
 using Pare.Application.Interfaces;
 using Pare.Domain.Entities;
+using Pare.Application.Exceptions;
 
 namespace Pare.Application.Services;
 
@@ -24,7 +25,8 @@ public class SubscriptionService : ISubscriptionService
     public async Task<SubscriptionDto?> GetByIdAsync(int id, int userId)
     {
         var subscription = await _repo.GetByIdAsync(id, userId);
-        return subscription is null ? null : ToSubscriptionDto(subscription);
+        if (subscription is null) throw new NotFoundException("Subscription not found");
+        return ToSubscriptionDto(subscription);
     }
 
     // POST
@@ -61,13 +63,16 @@ public class SubscriptionService : ISubscriptionService
         };
 
         var updated = await _repo.UpdateAsync(id, userId, subscription);
-        return updated is null ? null : ToSubscriptionDto(updated);
+        if (updated is null) throw new NotFoundException("Subscription not found");
+        return ToSubscriptionDto(updated);
     }
 
     // DELETE
     public async Task<bool> DeleteByIdAsync(int id, int userId)
     {
-        return await _repo.DeleteByIdAsync(id, userId);
+        bool deleted = await _repo.DeleteByIdAsync(id, userId);
+        if (deleted is false) throw new NotFoundException("Subscription not found");
+        return deleted;
     }
 
     private static SubscriptionDto ToSubscriptionDto(Subscription subscription) => new SubscriptionDto

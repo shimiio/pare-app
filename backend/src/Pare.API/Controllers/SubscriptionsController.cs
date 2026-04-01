@@ -1,8 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Pare.Application.Interfaces;
 using Pare.Application.DTOs;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+using Pare.Application.Exceptions;
 
 namespace Pare.API.Controllers;
 
@@ -34,8 +35,16 @@ public class SubscriptionsController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         int userId = GetUserId();
-        var subscription = await _service.GetByIdAsync(id, userId);
-        return subscription is null ? NotFound() : Ok(subscription);
+
+        try
+        {
+            var subscription = await _service.GetByIdAsync(id, userId);
+            return Ok(subscription);
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     // POST /api/subscriptions
@@ -52,8 +61,16 @@ public class SubscriptionsController : ControllerBase
     public async Task<IActionResult> Update(int id, [FromBody] SubscriptionWriteDto updateDto)
     {
         int userId = GetUserId();
-        var updated = await _service.UpdateAsync(id, userId, updateDto);
-        return updated is null ? NotFound() : Ok(updated);
+
+        try
+        {
+            var updated = await _service.UpdateAsync(id, userId, updateDto);
+            return Ok(updated);
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 
     // DELETE /api/subscriptions/id
@@ -61,7 +78,14 @@ public class SubscriptionsController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         int userId = GetUserId();
-        var deleted = await _service.DeleteByIdAsync(id, userId);
-        return deleted ? NoContent() : NotFound();
+        try
+        {
+            var deleted = await _service.DeleteByIdAsync(id, userId);
+            return NoContent();
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }
