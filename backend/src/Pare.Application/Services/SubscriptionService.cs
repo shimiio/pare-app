@@ -1,5 +1,7 @@
+using Pare.Application.DTOs;
 using Pare.Application.Interfaces;
-using Pare.Domain.Models;
+using Pare.Application.Exceptions;
+using Pare.Domain.Entities;
 
 namespace Pare.Application.Services;
 
@@ -13,45 +15,74 @@ public class SubscriptionService : ISubscriptionService
     }
 
     // GET all
-    public async Task<IEnumerable<Subscription>> GetAllAsync()
+    public async Task<IEnumerable<SubscriptionDto>> GetAllAsync(int userId)
     {
-        var subscriptions = await _repo.GetAllAsync();
-        return subscriptions.Select(ToSubscription);
+        var subscriptions = await _repo.GetAllAsync(userId);
+        return subscriptions.Select(ToSubscriptionDto);
     }
 
     // GET by id
-    public async Task<Subscription?> GetByIdAsync(int id)
+    public async Task<SubscriptionDto?> GetByIdAsync(int id, int userId)
     {
-        var subscription = await _repo.GetByIdAsync(id);
-        return subscription is null ? null : ToSubscription(subscription);
+        var subscription = await _repo.GetByIdAsync(id, userId);
+        if (subscription is null) throw new NotFoundException("Subscription not found");
+        return ToSubscriptionDto(subscription);
     }
 
     // POST
-    public async Task<Subscription> CreateAsync(Subscription subscription)
+    public async Task<SubscriptionDto> CreateAsync(int userId, SubscriptionWriteDto createDto)
     {
+        var subscription = new Subscription
+        {
+            Name = createDto.Name,
+            Price = createDto.Price,
+            Currency = createDto.Currency,
+            BillingCycle = createDto.BillingCycle,
+            Status = createDto.Status,
+            NextBillingDate = createDto.NextBillingDate,
+            StartDate = createDto.StartDate,
+            UserId = userId
+        };
+
         var created = await _repo.CreateAsync(subscription);
-        return ToSubscription(created);
+        return ToSubscriptionDto(created);
     }
 
     // PUT
-    public async Task<Subscription?> UpdateAsync(int id, Subscription subscription)
+    public async Task<SubscriptionDto?> UpdateAsync(int id, int userId, SubscriptionWriteDto updateDto)
     {
-        var updated = await _repo.UpdateAsync(id, subscription);
-        return updated is null ? null : ToSubscription(updated);
+        var subscription = new Subscription
+        {
+            Name = updateDto.Name,
+            Price = updateDto.Price,
+            Currency = updateDto.Currency,
+            BillingCycle = updateDto.BillingCycle,
+            Status = updateDto.Status,
+            NextBillingDate = updateDto.NextBillingDate,
+            StartDate = updateDto.StartDate
+        };
+
+        var updated = await _repo.UpdateAsync(id, userId, subscription);
+        if (updated is null) throw new NotFoundException("Subscription not found");
+        return ToSubscriptionDto(updated);
     }
 
     // DELETE
-    public async Task<bool> DeleteByIdAsync(int id)
+    public async Task<bool> DeleteByIdAsync(int id, int userId)
     {
-        return await _repo.DeleteByIdAsync(id);
+        bool deleted = await _repo.DeleteByIdAsync(id, userId);
+        if (deleted is false) throw new NotFoundException("Subscription not found");
+        return deleted;
     }
 
-    private static Subscription ToSubscription(Subscription subscription) => new Subscription
+    private static SubscriptionDto ToSubscriptionDto(Subscription subscription) => new SubscriptionDto
     {
         Id = subscription.Id,
         Name = subscription.Name,
         Price = subscription.Price,
         Currency = subscription.Currency,
+        BillingCycle = subscription.BillingCycle,
+        Status = subscription.Status,
         NextBillingDate = subscription.NextBillingDate,
         StartDate = subscription.StartDate
     };

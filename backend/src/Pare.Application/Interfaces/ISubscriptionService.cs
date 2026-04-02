@@ -1,17 +1,17 @@
-using Pare.Domain.Models;
+using Pare.Application.DTOs;
 
 namespace Pare.Application.Interfaces;
 
 public interface ISubscriptionService
 {
     // GET all
-    Task<IEnumerable<Subscription>> GetAllAsync();
+    Task<IEnumerable<SubscriptionDto>> GetAllAsync(int userId);
     // GET by id
-    Task<Subscription?> GetByIdAsync(int id);
+    Task<SubscriptionDto?> GetByIdAsync(int id, int userId);
     // POST
-    Task<Subscription> CreateAsync(Subscription subscription);
+    Task<SubscriptionDto> CreateAsync(int userId, SubscriptionWriteDto createDto);
     // PUT
-    Task<Subscription?> UpdateAsync(int id, Subscription subscription);
+    Task<SubscriptionDto?> UpdateAsync(int id, int userId, SubscriptionWriteDto updateDto);
     // DELETE
-    Task<bool> DeleteByIdAsync(int id);
+    Task<bool> DeleteByIdAsync(int id, int userId);
 }
