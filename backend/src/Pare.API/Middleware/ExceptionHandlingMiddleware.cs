@@ -1,5 +1,7 @@
 using Pare.Application.Exceptions;
 
+namespace Pare.API.Middleware;
+
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;

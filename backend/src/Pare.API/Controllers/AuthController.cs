@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Pare.Application.Interfaces;
 using Pare.Application.DTOs;
 
+namespace Pare.API.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase

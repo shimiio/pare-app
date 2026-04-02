@@ -1,5 +1,4 @@
 using Pare.Application.DTOs;
-using Pare.Domain.Entities;
 
 namespace Pare.Application.Interfaces;
 

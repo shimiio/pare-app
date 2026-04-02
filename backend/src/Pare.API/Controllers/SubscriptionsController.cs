@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Pare.Application.Interfaces;
 using Pare.Application.DTOs;
 
+namespace Pare.API.Controllers;
+
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]

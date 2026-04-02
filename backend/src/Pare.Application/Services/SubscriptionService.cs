@@ -1,7 +1,7 @@
 using Pare.Application.DTOs;
 using Pare.Application.Interfaces;
-using Pare.Domain.Entities;
 using Pare.Application.Exceptions;
+using Pare.Domain.Entities;
 
 namespace Pare.Application.Services;
 
