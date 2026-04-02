@@ -1,0 +1,35 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend.ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Clone the repo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Install .NET
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore backend/
+
+      # Build the project
+      - name: Build
+        run: dotnet build backend/ --no-restore --configuration Release
