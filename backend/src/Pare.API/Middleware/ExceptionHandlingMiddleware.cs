@@ -20,5 +20,15 @@ public class ExceptionHandlingMiddleware
             context.Response.StatusCode = 404;
             await context.Response.WriteAsJsonAsync(new { error = ex.Message });
         }
+        catch (ConflictException ex)
+        {
+            context.Response.StatusCode = 409;
+            await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+        }
+        catch (UnauthorizedException ex)
+        {
+            context.Response.StatusCode = 401;
+            await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+        }
     }
 }

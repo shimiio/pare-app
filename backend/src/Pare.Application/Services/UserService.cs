@@ -1,5 +1,6 @@
 using Pare.Application.DTOs;
 using Pare.Application.Interfaces;
+using Pare.Application.Exceptions;
 using Pare.Domain.Entities;
 
 namespace Pare.Application.Services;
@@ -22,7 +23,7 @@ public class UserService : IUserService
     {
         // Check if email already exists
         var existing = await _repo.GetByEmailAsync(request.Email);
-        if (existing != null) return null;
+        if (existing != null) throw new ConflictException("Email already exists");
 
         // Hash the password
         string hash = _hasher.Hash(request.Password);
@@ -53,11 +54,11 @@ public class UserService : IUserService
     {
         // Get user data
         var existing = await _repo.GetByEmailAsync(request.Email);
-        if (existing == null) return null;
+        if (existing is null) throw new UnauthorizedException("Invalid email or password");
 
         // Verify password
         bool verify = _hasher.Verify(request.Password, existing.PasswordHash);
-        if (!verify) return null;
+        if (!verify) throw new UnauthorizedException("Invalid email or password");
 
         // Generate JWT token
         var token = _jwtService.GenerateToken(existing.Id, existing.Email);
