@@ -3,13 +3,26 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Pare.Infrastructure.Data;
 using Pare.Application.Interfaces;
-using Pare.Infrastructure.Repositories;
-using Pare.Infrastructure.Auth;
 using Pare.Application.Services;
+using Pare.Infrastructure.Repositories;
+using Pare.Infrastructure.Data;
+using Pare.Infrastructure.Auth;
+using Pare.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedOrigins", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 // DefaultConnection String
 Env.TraversePath().Load();
@@ -77,6 +90,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseCors("AllowedOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
