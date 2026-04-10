@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AuthInput from "../../ui/AuthInput";
 
 type Props = {
   onClose: () => void;
@@ -38,32 +39,26 @@ export default function SignupModal({ onClose }: Props) {
         <h2 className="font-medium 2xl:text-3xl 2xl:mb-12">Sign Up</h2>
 
         <div className="flex flex-col 2xl:gap-5 2xl:mb-15">
-          <input
-            className="2xl:p-2 2xl:text-xl border border-white/50 rounded-lg"
+          <AuthInput
             name="name"
             value={name}
             placeholder="Name"
             onChange={(e) => setName(e.target.value)}
-            autoComplete="off"
           />
 
-          <input
-            className="2xl:p-2 2xl:text-xl border border-white/50 rounded-lg"
+          <AuthInput
             name="email"
             value={email}
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
-            autoComplete="off"
           />
 
-          <input
-            className="2xl:p-2 2xl:text-xl border border-white/50 rounded-lg"
+          <AuthInput
             name="password"
             type="password"
             value={password}
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
-            autoComplete="off"
           />
         </div>
 
