@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AuthInput from "../../ui/AuthInput";
+import { login } from "../../../api/auth";
 
 type Props = {
   onClose: () => void;
@@ -15,8 +16,9 @@ export default function LoginModal({ onClose }: Props) {
     setTimeout(() => onClose(), 200);
   };
 
-  const handleLogin = () => {
-    console.log(email, password);
+  const handleLogin = async () => {
+    const response = await login(email, password);
+    localStorage.setItem("jwtToken", response.data.jwtToken);
   };
 
   return (

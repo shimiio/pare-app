@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AuthInput from "../../ui/AuthInput";
+import { register } from "../../../api/auth";
 
 type Props = {
   onClose: () => void;
@@ -17,7 +18,7 @@ export default function SignupModal({ onClose }: Props) {
   };
 
   const handleSignup = () => {
-    console.log(name, email, password);
+    register(name, email, password);
   };
 
   return (
