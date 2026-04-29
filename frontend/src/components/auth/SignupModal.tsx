@@ -1,13 +1,14 @@
 import { useState } from "react";
-import AuthInput from "../../ui/AuthInput";
-import { login } from "../../../api/auth";
+import AuthInput from "../ui/AuthInput";
+import { register } from "../../api/auth";
 
 type Props = {
   onClose: () => void;
 };
 
-export default function LoginModal({ onClose }: Props) {
+export default function SignupModal({ onClose }: Props) {
   const [isClosing, setIsClosing] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -16,8 +17,8 @@ export default function LoginModal({ onClose }: Props) {
     setTimeout(() => onClose(), 200);
   };
 
-  const handleLogin = async () => {
-    const response = await login(email, password);
+  const handleSignup = async () => {
+    const response = await register(name, email, password);
     localStorage.setItem("jwtToken", response.data.jwtToken);
   };
 
@@ -37,9 +38,16 @@ export default function LoginModal({ onClose }: Props) {
           ✕
         </button>
 
-        <h2 className="font-medium 2xl:text-3xl 2xl:mb-12">Log In</h2>
+        <h2 className="font-medium 2xl:text-3xl 2xl:mb-12">Sign Up</h2>
 
         <div className="flex flex-col 2xl:gap-5 2xl:mb-15">
+          <AuthInput
+            name="name"
+            value={name}
+            placeholder="Name"
+            onChange={(e) => setName(e.target.value)}
+          />
+
           <AuthInput
             name="email"
             value={email}
@@ -58,9 +66,9 @@ export default function LoginModal({ onClose }: Props) {
 
         <button
           className="cursor-pointer bg-white/15 duration-200 transition ease-in-out hover:bg-white/20 rounded-xl 2xl:p-2.5 2xl:mx-10 2xl:text-xl"
-          onClick={handleLogin}
+          onClick={handleSignup}
         >
-          Log In
+          Sign Up
         </button>
       </div>
     </div>

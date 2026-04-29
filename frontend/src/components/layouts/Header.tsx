@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Diamond } from "lucide-react";
-import LoginModal from "./AuthModals/LoginModal";
-import SignupModal from "./AuthModals/SignupModal";
+import LoginModal from "../auth/LoginModal";
+import SignupModal from "../auth/SignupModal";
 
 export default function Header() {
   const [modal, setModal] = useState<"login" | "signup" | null>(null);
