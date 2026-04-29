@@ -17,8 +17,9 @@ export default function SignupModal({ onClose }: Props) {
     setTimeout(() => onClose(), 200);
   };
 
-  const handleSignup = () => {
-    register(name, email, password);
+  const handleSignup = async () => {
+    const response = await register(name, email, password);
+    localStorage.setItem("jwtToken", response.data.jwtToken);
   };
 
   return (
