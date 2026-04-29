@@ -1,6 +1,8 @@
 import { useState } from "react";
 import AuthInput from "../ui/AuthInput";
 import { register } from "../../api/auth";
+import { useAuthStore } from "../../store/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   onClose: () => void;
@@ -11,6 +13,8 @@ export default function SignupModal({ onClose }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+  const navigate = useNavigate();
 
   const handleClose = () => {
     setIsClosing(true);
@@ -20,6 +24,8 @@ export default function SignupModal({ onClose }: Props) {
   const handleSignup = async () => {
     const response = await register(name, email, password);
     localStorage.setItem("jwtToken", response.data.jwtToken);
+    initializeAuth(response.data.jwtToken);
+    navigate("/dashboard");
   };
 
   return (

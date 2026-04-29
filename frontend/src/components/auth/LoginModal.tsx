@@ -1,6 +1,8 @@
 import { useState } from "react";
 import AuthInput from "../ui/AuthInput";
 import { login } from "../../api/auth";
+import { useAuthStore } from "../../store/useAuthStore";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   onClose: () => void;
@@ -10,6 +12,8 @@ export default function LoginModal({ onClose }: Props) {
   const [isClosing, setIsClosing] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+  const navigate = useNavigate();
 
   const handleClose = () => {
     setIsClosing(true);
@@ -19,6 +23,8 @@ export default function LoginModal({ onClose }: Props) {
   const handleLogin = async () => {
     const response = await login(email, password);
     localStorage.setItem("jwtToken", response.data.jwtToken);
+    initializeAuth(response.data.jwtToken);
+    navigate("/dashboard");
   };
 
   return (

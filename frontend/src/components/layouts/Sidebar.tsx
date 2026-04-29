@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { LayoutGrid, List, ChartLine, Bolt } from "lucide-react";
 
 const navItems = [
-  { label: "Dashboard", path: "/", icon: LayoutGrid },
+  { label: "Dashboard", path: "/dashboard", icon: LayoutGrid },
   { label: "Subscriptions", path: "/subscriptions", icon: List },
   { label: "Analytics", path: "/analytics", icon: ChartLine },
   { label: "Settings", path: "/settings", icon: Bolt },
