@@ -12,5 +12,5 @@ export const createSubscription = (data: WriteSubscription) =>
 export const editSubscription = (id: number, data: WriteSubscription) =>
   apiClient.put(`/subscriptions/${id}`, data);
 
-export const deleleteSubscription = (id: number) =>
+export const deleteSubscription = (id: number) =>
   apiClient.delete(`/subscriptions/${id}`);

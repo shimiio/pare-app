@@ -26,11 +26,11 @@ export interface Subscription {
 }
 
 export interface WriteSubscription {
-  name: string;
+  name?: string;
   price?: number;
-  currency: string;
-  billingCycle: BillingCycleValue;
-  status: StatusValue;
+  currency?: string;
+  billingCycle?: BillingCycleValue;
+  status?: StatusValue;
   nextBillingDate: string;
-  startDate: string;
+  startDate?: string;
 }

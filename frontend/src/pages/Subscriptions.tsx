@@ -3,10 +3,13 @@ import { Plus } from "lucide-react";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 import CreateSubscriptionModal from "../components/subscriptions/CreateSubscriptionModal";
 import EditSubscriptionModal from "../components/subscriptions/EditSubscriptionModal";
+import type { Subscription } from "../types";
 
 export default function Subscriptions() {
   const { data, isLoading, isError } = useSubscriptions();
   const [modal, setModal] = useState<"create" | "edit" | null>(null);
+  const [selectedSubscription, setSelectedSubscription] =
+    useState<Subscription | null>(null);
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>ERROR</div>;
@@ -21,9 +24,6 @@ export default function Subscriptions() {
         >
           <Plus />
         </button>
-        {modal == "create" && (
-          <CreateSubscriptionModal onClose={() => setModal(null)} />
-        )}
       </div>
       <div className="flex flex-col mx-5">
         <div className="text-xl border-b border-white/40 pb-2.5">
@@ -32,7 +32,10 @@ export default function Subscriptions() {
         {data?.map((subscription) => (
           <div key={subscription.id} className="flex flex-col">
             <button
-              onClick={() => setModal("edit")}
+              onClick={() => {
+                setModal("edit");
+                setSelectedSubscription(subscription);
+              }}
               className="flex flex-row justify-between 2xl:p-8 border-b border-white/20 hover:bg-white/5 cursor-pointer"
             >
               <div className="flex flex-row gap-7">
@@ -50,8 +53,14 @@ export default function Subscriptions() {
             </button>
           </div>
         ))}
+        {modal == "create" && (
+          <CreateSubscriptionModal onClose={() => setModal(null)} />
+        )}
         {modal == "edit" && (
-          <EditSubscriptionModal onClose={() => setModal(null)} />
+          <EditSubscriptionModal
+            subscription={selectedSubscription}
+            onClose={() => setModal(null)}
+          />
         )}
       </div>
     </>
