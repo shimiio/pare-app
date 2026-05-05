@@ -32,6 +32,9 @@ export default function EditSubscriptionModal({
     subscription?.status,
   );
   const [startDate, setStartDate] = useState(subscription?.startDate);
+  const [serviceUrl, setServiceUrl] = useState<string | undefined>(
+    subscription?.serviceUrl,
+  );
 
   const handleClose = () => {
     setIsClosing(true);
@@ -104,6 +107,7 @@ export default function EditSubscriptionModal({
       status: status,
       nextBillingDate: isoNextBilling,
       startDate: startDate,
+      serviceUrl: serviceUrl,
     };
 
     if (!subscription) return;
@@ -142,7 +146,7 @@ export default function EditSubscriptionModal({
             autoComplete="off"
           />
 
-          <div className="flex flex-row">
+          <div className="flex flex-row items-end">
             <input
               className="2xl:w-20 2xl:text-2xl focus:outline-none"
               type="text"
@@ -214,7 +218,13 @@ export default function EditSubscriptionModal({
 
         <div className="flex flex-col mb-5">
           <label className="text-white/30">Service URL</label>
-          <input placeholder="https://example.com"></input>
+          <input
+            className="focus:outline-none"
+            type="text"
+            value={serviceUrl}
+            placeholder="https://example.com"
+            onChange={(e) => setServiceUrl(e.target.value)}
+          ></input>
         </div>
 
         <div className="flex justify-between items-end">
@@ -225,8 +235,8 @@ export default function EditSubscriptionModal({
             Delete Subscription
           </button>
           <button
-            className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-2xl hover:bg-white/10 rounded-xl"
             onClick={handleEdit}
+            className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-2xl hover:bg-white/10 rounded-xl"
           >
             Edit
           </button>

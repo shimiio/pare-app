@@ -14,6 +14,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
   const [price, setPrice] = useState<string>("");
   const [currency, setCurrency] = useState("EUR"); // default value
   const [cycle, setCycle] = useState<BillingCycleValue>(0);
+  const [serviceUrl, setServiceUrl] = useState<string>("");
 
   const isoCurrent: string = new Date().toISOString().split("T")[0];
   const [startDate, setStartDate] = useState(isoCurrent);
@@ -77,6 +78,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
       status: 0,
       nextBillingDate: isoNextBilling,
       startDate: startDate,
+      serviceUrl: serviceUrl,
     };
 
     mutation.mutate(data);
@@ -108,7 +110,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
             autoComplete="off"
           />
 
-          <div className="flex flex-row">
+          <div className="flex flex-row items-end">
             <input
               className="2xl:w-20 2xl:text-2xl focus:outline-none"
               type="text"
@@ -168,13 +170,19 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
 
         <div className="flex flex-col mb-5">
           <label className="text-white/30">Service URL</label>
-          <input placeholder="https://example.com"></input>
+          <input
+            className="focus:outline-none"
+            type="text"
+            value={serviceUrl}
+            placeholder="https://example.com"
+            onChange={(e) => setServiceUrl(e.target.value)}
+          ></input>
         </div>
 
         <div className="flex justify-end">
           <button
-            className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-2xl hover:bg-white/10 rounded-xl"
             onClick={handleCreate}
+            className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-2xl hover:bg-white/10 rounded-xl"
           >
             Create
           </button>

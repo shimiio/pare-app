@@ -23,6 +23,7 @@ export interface Subscription {
   status: StatusValue;
   nextBillingDate: string;
   startDate: string;
+  serviceUrl: string;
 }
 
 export interface WriteSubscription {
@@ -33,4 +34,5 @@ export interface WriteSubscription {
   status?: StatusValue;
   nextBillingDate: string;
   startDate?: string;
+  serviceUrl?: string;
 }
