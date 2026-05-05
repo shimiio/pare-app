@@ -5,6 +5,19 @@ import CreateSubscriptionModal from "../components/subscriptions/CreateSubscript
 import EditSubscriptionModal from "../components/subscriptions/EditSubscriptionModal";
 import type { Subscription } from "../types";
 
+const formatCurrency = (amount: number | undefined, currencyCode: string) => {
+  if (amount === undefined || amount === null) {
+    return "-";
+  }
+
+  return new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: currencyCode,
+    currencyDisplay: "narrowSymbol",
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
 export default function Subscriptions() {
   const { data, isLoading, isError } = useSubscriptions();
   const [modal, setModal] = useState<"create" | "edit" | null>(null);
@@ -134,7 +147,7 @@ export default function Subscriptions() {
                               setModal("edit");
                               setSelectedSubscription(sub);
                             }}
-                            className="flex flex-row justify-between 2xl:p-6 2xl:px-10 border-b border-white/20 hover:bg-white/5 cursor-pointer"
+                            className="flex flex-row justify-between 2xl:p-6 2xl:px-14 border-b border-white/20 hover:bg-white/5 cursor-pointer"
                           >
                             <div className="flex flex-row gap-7">
                               <img
@@ -149,9 +162,8 @@ export default function Subscriptions() {
                               >
                                 <span className="font-medium">{days}</span>days
                               </div>
-
-                              <span className="flex text-xl gap-1">
-                                <span>{sub.price}</span>$
+                              <span className="flex items-center">
+                                {formatCurrency(sub.price, sub.currency)}
                               </span>
                             </div>
                           </button>

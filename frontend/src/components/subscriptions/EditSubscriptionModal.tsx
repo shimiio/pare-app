@@ -165,7 +165,7 @@ export default function EditSubscriptionModal({
               onChange={(e) => setCurrency(e.target.value)}
             >
               <option value={"EUR"}>€</option>
-              <option value={"USR"}>$</option>
+              <option value={"USD"}>$</option>
               <option value={"UAH"}>₴</option>
             </select>
           </div>
