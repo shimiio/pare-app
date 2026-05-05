@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Pare.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class RenameUserToUsers : Migration
+    public partial class AddServiceUrl : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -40,6 +40,7 @@ namespace Pare.Infrastructure.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     NextBillingDate = table.Column<DateOnly>(type: "date", nullable: false),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ServiceUrl = table.Column<string>(type: "text", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>

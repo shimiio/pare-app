@@ -41,6 +41,7 @@ public class SubscriptionService : ISubscriptionService
             Status = createDto.Status,
             NextBillingDate = createDto.NextBillingDate,
             StartDate = createDto.StartDate,
+            ServiceUrl = createDto.ServiceUrl,
             UserId = userId
         };
 
@@ -59,7 +60,8 @@ public class SubscriptionService : ISubscriptionService
             BillingCycle = updateDto.BillingCycle,
             Status = updateDto.Status,
             NextBillingDate = updateDto.NextBillingDate,
-            StartDate = updateDto.StartDate
+            StartDate = updateDto.StartDate,
+            ServiceUrl = updateDto.ServiceUrl
         };
 
         var updated = await _repo.UpdateAsync(id, userId, subscription);
@@ -84,6 +86,7 @@ public class SubscriptionService : ISubscriptionService
         BillingCycle = subscription.BillingCycle,
         Status = subscription.Status,
         NextBillingDate = subscription.NextBillingDate,
-        StartDate = subscription.StartDate
+        StartDate = subscription.StartDate,
+        ServiceUrl = subscription.ServiceUrl
     };
 }

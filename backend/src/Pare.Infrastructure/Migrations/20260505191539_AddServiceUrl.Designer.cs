@@ -12,8 +12,8 @@ using Pare.Infrastructure.Data;
 namespace Pare.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260326230901_RenameUserToUsers")]
-    partial class RenameUserToUsers
+    [Migration("20260505191539_AddServiceUrl")]
+    partial class AddServiceUrl
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,10 @@ namespace Pare.Infrastructure.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
+
+                    b.Property<string>("ServiceUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
