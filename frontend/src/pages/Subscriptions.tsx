@@ -74,6 +74,16 @@ export default function Subscriptions() {
     return "bg-green-500/20 text-green-400";
   };
 
+  // get domain from service url
+  const getDomain = (url: string) => {
+    try {
+      const withProtocol = url.startsWith("http") ? url : `https://${url}`;
+      return new URL(withProtocol).hostname.replace("www", "");
+    } catch {
+      return url;
+    }
+  };
+
   return (
     <>
       <h1 className="font-medium 2xl:text-3xl 2xl:mb-2.5">Subscriptions</h1>
@@ -127,7 +137,10 @@ export default function Subscriptions() {
                             className="flex flex-row justify-between 2xl:p-6 2xl:px-10 border-b border-white/20 hover:bg-white/5 cursor-pointer"
                           >
                             <div className="flex flex-row gap-7">
-                              <img src="/favicon.svg" width={24}></img>
+                              <img
+                                src={`https://www.google.com/s2/favicons?domain=${getDomain(sub.serviceUrl)}&sz=64`}
+                                width={32}
+                              ></img>
                               <span className="text-xl">{sub.name}</span>
                             </div>
                             <div className="flex flex-row gap-5">
