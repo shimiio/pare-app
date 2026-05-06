@@ -1,22 +1,11 @@
 import { useState } from "react";
 import { Plus, ChevronRight } from "lucide-react";
 import { useSubscriptions } from "../hooks/useSubscriptions";
+import SubscriptionCard from "../components/subscriptions/SubscriptionCard";
 import CreateSubscriptionModal from "../components/subscriptions/CreateSubscriptionModal";
 import EditSubscriptionModal from "../components/subscriptions/EditSubscriptionModal";
 import type { Subscription } from "../types";
-
-const formatCurrency = (amount: number | undefined, currencyCode: string) => {
-  if (amount === undefined || amount === null) {
-    return "-";
-  }
-
-  return new Intl.NumberFormat("de-DE", {
-    style: "currency",
-    currency: currencyCode,
-    currencyDisplay: "narrowSymbol",
-    minimumFractionDigits: 0,
-  }).format(amount);
-};
+import { readableDate } from "../utils/dateUtils";
 
 export default function Subscriptions() {
   const { data, isLoading, isError } = useSubscriptions();
@@ -58,45 +47,6 @@ export default function Subscriptions() {
 
   const groupedEntries = Object.entries(grouped ?? {});
 
-  // date converting
-  const readableDate = (dateString: string): string => {
-    const date = new Date(dateString);
-
-    return date.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
-
-  // get day difference
-  const getDaysUtil = (date: string): number => {
-    const today = new Date();
-    const target = new Date(date);
-
-    const diffMs = target.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
-    return diffDays;
-  };
-
-  // label color
-  const getLabelColor = (days: number) => {
-    if (days <= 3) return "bg-red-500/20 text-red-400";
-    if (days <= 7) return "bg-yellow-500/20 text-yellow-400";
-    return "bg-green-500/20 text-green-400";
-  };
-
-  // get domain from service url
-  const getDomain = (url: string) => {
-    try {
-      const withProtocol = url.startsWith("http") ? url : `https://${url}`;
-      return new URL(withProtocol).hostname.replace("www", "");
-    } catch {
-      return url;
-    }
-  };
-
   return (
     <>
       <h1 className="font-medium 2xl:text-3xl 2xl:mb-2.5">Subscriptions</h1>
@@ -136,40 +86,18 @@ export default function Subscriptions() {
                     <div className="2xl:text-xl border-b border-white/40 2xl:pb-2.5 2xl:px-2">
                       {readableDate(date)}
                     </div>
-                    {subs.map((sub) => {
-                      const days = getDaysUtil(sub.nextBillingDate);
-                      const labelColor = getLabelColor(days);
-
-                      return (
-                        <div key={sub.id} className="flex flex-col">
-                          <button
-                            onClick={() => {
-                              setModal("edit");
-                              setSelectedSubscription(sub);
-                            }}
-                            className="flex flex-row justify-between 2xl:p-6 2xl:px-14 border-b border-white/20 hover:bg-white/5 cursor-pointer"
-                          >
-                            <div className="flex flex-row gap-7">
-                              <img
-                                src={`https://www.google.com/s2/favicons?domain=${getDomain(sub.serviceUrl)}&sz=64`}
-                                width={32}
-                              ></img>
-                              <span className="text-xl">{sub.name}</span>
-                            </div>
-                            <div className="flex flex-row gap-5">
-                              <div
-                                className={`flex rounded-2xl p-1 px-3 font-medium gap-1 ${labelColor}`}
-                              >
-                                <span className="font-medium">{days}</span>days
-                              </div>
-                              <span className="flex items-center">
-                                {formatCurrency(sub.price, sub.currency)}
-                              </span>
-                            </div>
-                          </button>
-                        </div>
-                      );
-                    })}
+                    {subs.map((sub) => (
+                      <div key={sub.id} className="flex flex-col">
+                        <SubscriptionCard
+                          subscription={sub}
+                          onClick={() => {
+                            setModal("edit");
+                            setSelectedSubscription(sub);
+                          }}
+                          showDaysLabel
+                        />
+                      </div>
+                    ))}
                   </div>
                 ))}
             </div>
@@ -198,22 +126,13 @@ export default function Subscriptions() {
             {pausedOpen &&
               paused.map((sub) => (
                 <div key={sub.id} className="flex flex-col 2xl:mx-13">
-                  <button
+                  <SubscriptionCard
+                    subscription={sub}
                     onClick={() => {
                       setModal("edit");
                       setSelectedSubscription(sub);
                     }}
-                    className="flex flex-row justify-between 2xl:p-6 2xl:px-10 border-y border-white/20 hover:bg-white/5 cursor-pointer"
-                  >
-                    <div className="flex flex-row gap-7">
-                      <img src="/favicon.svg" width={24}></img>
-                      <span className="text-xl">{sub.name}</span>
-                    </div>
-
-                    <div className="flex text-xl gap-1">
-                      <span>{sub.price}</span>$
-                    </div>
-                  </button>
+                  />
                 </div>
               ))}
           </div>
@@ -241,23 +160,13 @@ export default function Subscriptions() {
             {cancelledOpen &&
               cancelled.map((sub) => (
                 <div key={sub.id} className="flex flex-col mx-13">
-                  <button
+                  <SubscriptionCard
+                    subscription={sub}
                     onClick={() => {
                       setModal("edit");
                       setSelectedSubscription(sub);
                     }}
-                    className="flex flex-row justify-between 2xl:p-6 2xl:px-10 border-y border-white/20 hover:bg-white/5 cursor-pointer"
-                  >
-                    <div className="flex flex-row gap-7">
-                      <img src="/favicon.svg" width={24}></img>
-                      <span className="text-xl">{sub.name}</span>
-                    </div>
-                    <div className="flex flex-row gap-6">
-                      <span className="flex text-xl gap-1">
-                        <span>{sub.price}</span>$
-                      </span>
-                    </div>
-                  </button>
+                  />
                 </div>
               ))}
           </div>

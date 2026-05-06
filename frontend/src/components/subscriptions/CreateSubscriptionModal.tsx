@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
-import { Plus } from "lucide-react";
+import Modal from "../ui/Modal";
 import { type BillingCycleValue, type WriteSubscription } from "../../types";
 import { createSubscription } from "../../api/subscriptions";
+import {
+  calculateNextBilling,
+  formatNextBilling,
+  sanitizePriceInput,
+} from "../../utils/subscriptionUtils";
 
 type Props = {
   onClose: () => void;
@@ -26,15 +31,8 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
 
   // price input validation
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputPrice = e.target.value.replace(",", ".");
-
-    if (inputPrice.length > 6) return;
-
-    const isValidFormat = /^\d*\.?\d{0,2}$/.test(inputPrice);
-
-    if (isValidFormat || inputPrice === "") {
-      setPrice(inputPrice);
-    }
+    const result = sanitizePriceInput(e.target.value);
+    if (result !== null) setPrice(result);
   };
 
   const handlePriceBlur = () => {
@@ -43,18 +41,9 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
     }
   };
 
-  const calculateNextBilling = (startDate: string, cycle: number) => {
-    const date = new Date(startDate);
-    if (cycle === 0) date.setMonth(date.getMonth() + 1);
-    if (cycle === 1) date.setFullYear(date.getFullYear() + 1);
-    if (cycle === 2) date.setDate(date.getDate() + 7);
-    return date.toISOString().split("T")[0];
-  };
-
+  // calculate and format next billing date
   const isoNextBilling = calculateNextBilling(startDate, cycle);
-  const [year, month, day] = isoNextBilling.split("T")[0].split("-");
-
-  const convertedNextBilling: string = `${day}/${month}/${year}`;
+  const convertedNextBilling: string = formatNextBilling(isoNextBilling);
 
   // mutation
   const queryClient = useQueryClient();
@@ -67,7 +56,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
     },
   });
 
-  // axios request
+  // axios create request
   const handleCreate = () => {
     const convertedPrice = Number(price);
     const data: WriteSubscription = {
@@ -85,109 +74,102 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
   };
 
   return (
-    <div
-      className={`flex fixed inset-0 items-center justify-center bg-black/50 ${isClosing ? "animate-fadeOut" : "animate-fadeIn"}`}
-      onClick={handleClose}
-    >
-      <div
-        className={`flex flex-col relative bg-black/30 backdrop-blur-sm 2xl:w-130 w-50 rounded-3xl 2xl:p-13 2xl:py-18 ${isClosing ? "animate-scaleOut" : "animate-scaleIn"}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          className="absolute top-5 right-1/28 cursor-pointer text-white duration-200 transition ease-in-out hover:bg-white/15 rounded-full 2xl:p-1"
-          onClick={handleClose}
-        >
-          <Plus className="rotate-45 h-8 w-8" />
-        </button>
+    <Modal onClose={handleClose} isClosing={isClosing} className="w-130">
+      <div className="flex flex-row justify-between mb-10 items-end">
+        {/* Subscription title */}
+        <input
+          className="2xl:w-60 2xl:text-3xl focus:outline-none"
+          name="subscription title"
+          value={title}
+          placeholder="Subscription title"
+          onChange={(e) => setTitle(e.target.value)}
+          autoComplete="off"
+        />
 
-        <div className="flex flex-row justify-between mb-10 items-end">
+        <div className="flex flex-row items-end">
+          {/* Price */}
           <input
-            className="2xl:w-60 2xl:text-3xl focus:outline-none"
-            name="subscription title"
-            value={title}
-            placeholder="Subscription title"
-            onChange={(e) => setTitle(e.target.value)}
+            className="2xl:w-20 2xl:text-2xl focus:outline-none"
+            type="text"
+            inputMode="decimal"
+            name="price"
+            value={price}
+            placeholder="Price"
+            onChange={handlePriceChange}
+            onBlur={handlePriceBlur}
             autoComplete="off"
           />
 
-          <div className="flex flex-row items-end">
-            <input
-              className="2xl:w-20 2xl:text-2xl focus:outline-none"
-              type="text"
-              inputMode="decimal"
-              name="price"
-              value={price}
-              placeholder="Price"
-              onChange={handlePriceChange}
-              onBlur={handlePriceBlur}
-              autoComplete="off"
-            />
-
-            <select
-              className="cursor-pointer bg-black text-2xl"
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-            >
-              <option value={"EUR"}>€</option>
-              <option value={"USR"}>$</option>
-              <option value={"UAH"}>₴</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex flex-col">
-            <label className="text-white/30 text-sm">Billing Cycle</label>
-            <select
-              className="bg-black cursor-pointer"
-              value={cycle}
-              onChange={(e) =>
-                setCycle(Number(e.target.value) as BillingCycleValue)
-              }
-            >
-              <option value={0}>Monthly</option>
-              <option value={1}>Yearly</option>
-              <option value={2}>Weekly</option>
-            </select>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div className="flex flex-col">
-              <label className="text-white/30 text-sm">Start Date</label>
-              <input
-                className="rounded"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="text-white/30 text-sm">Next Billing Date</label>
-              <div>{convertedNextBilling}</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col mb-5">
-          <label className="text-white/30">Service URL</label>
-          <input
-            className="focus:outline-none"
-            type="text"
-            value={serviceUrl}
-            placeholder="https://example.com"
-            onChange={(e) => setServiceUrl(e.target.value)}
-          ></input>
-        </div>
-
-        <div className="flex justify-end">
-          <button
-            onClick={handleCreate}
-            className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-2xl hover:bg-white/10 rounded-xl"
+          {/* Currency */}
+          <select
+            className="cursor-pointer bg-black text-2xl"
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
           >
-            Create
-          </button>
+            <option value={"EUR"}>€</option>
+            <option value={"USD"}>$</option>
+            <option value={"UAH"}>₴</option>
+          </select>
         </div>
       </div>
-    </div>
+
+      <div className="flex items-start justify-between mb-4">
+        {/* Billing Cycle */}
+        <div className="flex flex-col">
+          <label className="text-white/30 text-sm">Billing Cycle</label>
+          <select
+            className="bg-black cursor-pointer"
+            value={cycle}
+            onChange={(e) =>
+              setCycle(Number(e.target.value) as BillingCycleValue)
+            }
+          >
+            <option value={0}>Monthly</option>
+            <option value={1}>Yearly</option>
+            <option value={2}>Weekly</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          {/* Start Date */}
+          <div className="flex flex-col">
+            <label className="text-white/30 text-sm">Start Date</label>
+            <input
+              className="rounded"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
+          {/* Next Billing Date */}
+          <div>
+            <label className="text-white/30 text-sm">Next Billing Date</label>
+            <div>{convertedNextBilling}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Service URL */}
+      <div className="flex flex-col mb-5">
+        <label className="text-white/30">Service URL</label>
+        <input
+          className="focus:outline-none"
+          type="text"
+          value={serviceUrl}
+          placeholder="https://example.com"
+          onChange={(e) => setServiceUrl(e.target.value)}
+        ></input>
+      </div>
+
+      <div className="flex justify-end">
+        {/* Create Button */}
+        <button
+          onClick={handleCreate}
+          className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-2xl hover:bg-white/10 duration-200 rounded-xl"
+        >
+          Create
+        </button>
+      </div>
+    </Modal>
   );
 }

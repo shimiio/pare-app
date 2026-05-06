@@ -9,7 +9,7 @@ export default function Header() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
-    <header className="flex flex-row justify-between 2xl:p-8 2xl:px-30 border-b border-white/50">
+    <header className="flex flex-row justify-between 2xl:p-8 2xl:px-30 border-b border-dashed border-white/50">
       <div className="flex items-center 2xl:gap-2">
         <Diamond size={32} />
         <span className="flex 2xl:text-2xl">Pare.</span>
@@ -17,15 +17,16 @@ export default function Header() {
       {isAuthenticated ? (
         <span className="2xl:text-2xl font-medium">username</span>
       ) : (
-        <div className="flex 2xl:gap-7">
+        <div className="flex 2xl:gap-6">
           <button
             className="cursor-pointer 2xl:text-xl duration-200 transition ease-in-out hover:text-white/75"
             onClick={() => setModal("login")}
           >
             Log In
           </button>
+
           <button
-            className="cursor-pointer text-black bg-white rounded-xl font-medium 2xl:p-3 2xl:px-4 2xl:text-xl transition duration-200 ease-in-out hover:bg-white/80"
+            className="cursor-pointer text-black bg-white rounded-2xl font-medium 2xl:p-2.5 2xl:px-4 2xl:text-xl transition duration-200 ease-in-out hover:bg-white/80"
             onClick={() => setModal("signup")}
           >
             Sign Up
