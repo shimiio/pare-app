@@ -56,6 +56,7 @@ public class SubscriptionRepository : ISubscriptionRepository
         updated.Status = subscription.Status;
         updated.NextBillingDate = subscription.NextBillingDate;
         updated.StartDate = subscription.StartDate;
+        updated.ServiceUrl = subscription.ServiceUrl;
 
         await _db.SaveChangesAsync();
         return updated;

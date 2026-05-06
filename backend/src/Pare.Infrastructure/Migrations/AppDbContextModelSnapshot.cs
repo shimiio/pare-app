@@ -47,6 +47,10 @@ namespace Pare.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("ServiceUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
