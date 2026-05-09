@@ -2,6 +2,14 @@ import { useSubscriptions } from "../hooks/useSubscriptions";
 import type { Subscription } from "../types";
 import { getDaysUtil, getLabelColor } from "../utils/dateUtils";
 import { formatCurrency, getDomain } from "../utils/formatUtils";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface INextPayment {
   name: string;
@@ -84,6 +92,15 @@ export default function Dashboard() {
 
   const nextPayment = getNextPayment(active ?? []);
 
+  // chart data
+  const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"];
+  const monthlyTotal = getMonthlyExpenses(active ?? []);
+
+  const chartData = months.map((month) => ({
+    month,
+    amount: monthlyTotal,
+  }));
+
   return (
     <>
       <h1 className="2xl:text-3xl 2xl:mb-10">Dashboard</h1>
@@ -153,7 +170,24 @@ export default function Dashboard() {
         })}
       </div>
 
-      <h2 className="text-white/80 2xl:text-3xl">Monthly expenses</h2>
+      {/* Monthly Expenses */}
+      <h2 className="text-white/80 2xl:text-3xl mb-10">Monthly Expenses</h2>
+      <div className="flex justify-center">
+        <ResponsiveContainer width="90%" height={300}>
+          <BarChart data={chartData}>
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "rgba(0,0,0,0.8)",
+                border: "1px solid rgba(255,255,255,0.2)",
+              }}
+              labelStyle={{ color: "white" }}
+            />
+            <Bar dataKey="amount" fill="rgba(255,255,255,0.4)" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </>
   );
 }
