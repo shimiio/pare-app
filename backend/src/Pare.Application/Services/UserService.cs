@@ -69,4 +69,55 @@ public class UserService : IUserService
 
         return jwtToken;
     }
+
+    // GET user data
+    public async Task<UserDto?> GetByIdAsync(int id)
+    {
+        var user = await _repo.GetByIdAsync(id);
+        if (user is null) throw new NotFoundException("User not found");
+
+        return new UserDto
+        {
+            Name = user.Name,
+            Email = user.Email,
+        };
+    }
+
+    // PUT update username
+    public async Task<UpdateUsernameDto> UpdateUsernameAsync(int id, UpdateUsernameDto change)
+    {
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        // Update username
+        existing.Name = change.Username;
+        await _repo.UpdateAsync(existing);
+
+        return change;
+    }
+
+    // PUT change email
+    public async Task<ChangeEmailDto> ChangeEmailAsync(int id, ChangeEmailDto change)
+    {
+        return change;
+    }
+
+    // PUT change password
+    public async Task<ChangePasswordDto> ChangePasswordAsync(int id, ChangePasswordDto change)
+    {
+        return change;
+    }
+
+    // PUT update default currency
+    public async Task<UpdateDefaultCurrencyDto> UpdateDefaultCurrencyAsync(int id, UpdateDefaultCurrencyDto change)
+    {
+        return change;
+    }
+
+    // DELETE user
+    public async Task<bool> DeleteByIdAsync(int id)
+    {
+        return false;
+    }
 }
