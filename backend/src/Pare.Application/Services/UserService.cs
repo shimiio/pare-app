@@ -33,7 +33,8 @@ public class UserService : IUserService
         {
             Name = request.Name,
             Email = request.Email,
-            PasswordHash = hash
+            PasswordHash = hash,
+            DefaultCurrency = "EUR"
         };
 
         // Create user
@@ -80,26 +81,35 @@ public class UserService : IUserService
         {
             Name = user.Name,
             Email = user.Email,
+            DefaultCurrency = user.DefaultCurrency
         };
     }
 
     // PUT update username
-    public async Task<UpdateUsernameDto> UpdateUsernameAsync(int id, UpdateUsernameDto change)
+    public async Task<UpdateUsernameDto> UpdateUsernameAsync(int id, UpdateUsernameDto update)
     {
         // Get user data
         var existing = await _repo.GetByIdAsync(id);
         if (existing is null) throw new NotFoundException("User not found");
 
         // Update username
-        existing.Name = change.Username;
+        existing.Name = update.Username;
         await _repo.UpdateAsync(existing);
 
-        return change;
+        return update;
     }
 
     // PUT change email
     public async Task<ChangeEmailDto> ChangeEmailAsync(int id, ChangeEmailDto change)
     {
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        // Change email
+        existing.Email = change.Email;
+        await _repo.UpdateAsync(existing);
+
         return change;
     }
 
@@ -110,9 +120,17 @@ public class UserService : IUserService
     }
 
     // PUT update default currency
-    public async Task<UpdateDefaultCurrencyDto> UpdateDefaultCurrencyAsync(int id, UpdateDefaultCurrencyDto change)
+    public async Task<UpdateDefaultCurrencyDto> UpdateDefaultCurrencyAsync(int id, UpdateDefaultCurrencyDto update)
     {
-        return change;
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        // Change email
+        existing.DefaultCurrency = update.DefaultCurrency;
+        await _repo.UpdateAsync(existing);
+
+        return update;
     }
 
     // DELETE user

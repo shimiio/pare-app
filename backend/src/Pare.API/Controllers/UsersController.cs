@@ -25,20 +25,30 @@ public class UsersController : ControllerBase
 
     // PUT /api/users/id/update-username
     [HttpPut("{id}/update-username")]
-    public async Task<IActionResult> UpdateUsernameAsync(int id, [FromBody] UpdateUsernameDto change)
+    public async Task<IActionResult> UpdateUsernameAsync(int id, [FromBody] UpdateUsernameDto update)
     {
-        var updated = await _service.UpdateUsernameAsync(id, change);
+        var updated = await _service.UpdateUsernameAsync(id, update);
         return Ok(updated);
     }
 
-    // PUT change email
-
+    // PUT /api/users/id/change-email
+    [HttpPut("{id}/change-email")]
+    public async Task<IActionResult> ChangeEmailAsync(int id, [FromBody] ChangeEmailDto change)
+    {
+        var changed = await _service.ChangeEmailAsync(id, change);
+        return Ok(changed);
+    }
 
     // PUT change password
 
 
-    // PUT update default currency
-
+    // PUT /api/users/id/change-currency
+    [HttpPut("{id}/change-currency")]
+    public async Task<IActionResult> UpdateCurrencyAsync(int id, [FromBody] UpdateDefaultCurrencyDto update)
+    {
+        var updated = await _service.UpdateDefaultCurrencyAsync(id, update);
+        return Ok(updated);
+    }
 
     // DELETE deactivate user
 
