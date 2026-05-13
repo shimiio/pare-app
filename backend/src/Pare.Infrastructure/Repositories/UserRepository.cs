@@ -47,6 +47,12 @@ public class UserRepository : IUserRepository
     // DELETE delete user by id
     public async Task<bool> DeleteByIdAsync(int id)
     {
-        return false;
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+        if (user is null) return false;
+
+        _db.Users.Remove(user);
+        await _db.SaveChangesAsync();
+
+        return true;
     }
 }

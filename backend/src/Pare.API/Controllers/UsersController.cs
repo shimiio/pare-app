@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Pare.Application.Interfaces;
 using Pare.Application.DTOs;
 
 namespace Pare.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
@@ -49,12 +51,19 @@ public class UsersController : ControllerBase
 
     // PUT /api/users/id/update-currency
     [HttpPut("{id}/update-currency")]
-    public async Task<IActionResult> UpdateCurrencyAsync(int id, [FromBody] UpdateDefaultCurrencyDto update)
+    public async Task<IActionResult> UpdateCurrencyAsync(int id, [FromBody] UpdateCurrencyDto update)
     {
-        var updated = await _service.UpdateDefaultCurrencyAsync(id, update);
+        var updated = await _service.UpdateCurrencyAsync(id, update);
         return Ok(updated);
     }
 
-    // DELETE deactivate user
+    // DELETE /api/users/id
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteByIdAsync(int id)
+    {
+        var deleted = await _service.DeleteByIdAsync(id);
+        if (!deleted) return BadRequest("Failed to delete user");
 
+        return NoContent();
+    }
 }

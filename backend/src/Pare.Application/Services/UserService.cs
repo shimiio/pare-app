@@ -34,7 +34,7 @@ public class UserService : IUserService
             Name = request.Name,
             Email = request.Email,
             PasswordHash = hash,
-            DefaultCurrency = "EUR"
+            Currency = "EUR"
         };
 
         // Create user
@@ -81,7 +81,7 @@ public class UserService : IUserService
         {
             Name = user.Name,
             Email = user.Email,
-            DefaultCurrency = user.DefaultCurrency
+            Currency = user.Currency
         };
     }
 
@@ -137,15 +137,15 @@ public class UserService : IUserService
         return change;
     }
 
-    // PUT update default currency
-    public async Task<UpdateDefaultCurrencyDto> UpdateDefaultCurrencyAsync(int id, UpdateDefaultCurrencyDto update)
+    // PUT update currency
+    public async Task<UpdateCurrencyDto> UpdateCurrencyAsync(int id, UpdateCurrencyDto update)
     {
         // Get user data
         var existing = await _repo.GetByIdAsync(id);
         if (existing is null) throw new NotFoundException("User not found");
 
-        // Change default currency
-        existing.DefaultCurrency = update.DefaultCurrency;
+        // Change currency
+        existing.Currency = update.Currency;
         await _repo.UpdateAsync(existing);
 
         return update;
@@ -154,6 +154,10 @@ public class UserService : IUserService
     // DELETE user
     public async Task<bool> DeleteByIdAsync(int id)
     {
-        return false;
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        return await _repo.DeleteByIdAsync(id);
     }
 }
