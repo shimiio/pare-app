@@ -35,7 +35,7 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    // PUT update user data (name, email, password)
+    // PUT update user data (name, email, password, currency)
     public async Task<User> UpdateAsync(User user)
     {
         _db.Users.Update(user);

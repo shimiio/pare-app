@@ -106,6 +106,10 @@ public class UserService : IUserService
         var existing = await _repo.GetByIdAsync(id);
         if (existing is null) throw new NotFoundException("User not found");
 
+        // Check if new email already exists
+        var emailExists = await _repo.GetByEmailAsync(change.Email);
+        if (emailExists != null) throw new ConflictException("Email already exists");
+
         // Change email
         existing.Email = change.Email;
         await _repo.UpdateAsync(existing);
@@ -116,6 +120,20 @@ public class UserService : IUserService
     // PUT change password
     public async Task<ChangePasswordDto> ChangePasswordAsync(int id, ChangePasswordDto change)
     {
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        // Verify password
+        bool verify = _hasher.Verify(change.OldPassword, existing.PasswordHash);
+        if (!verify) throw new UnauthorizedException("Invalid password");
+
+        // Hash the new password
+        string hash = _hasher.Hash(change.NewPassword);
+        existing.PasswordHash = hash;
+
+        await _repo.UpdateAsync(existing);
+
         return change;
     }
 
@@ -126,7 +144,7 @@ public class UserService : IUserService
         var existing = await _repo.GetByIdAsync(id);
         if (existing is null) throw new NotFoundException("User not found");
 
-        // Change email
+        // Change default currency
         existing.DefaultCurrency = update.DefaultCurrency;
         await _repo.UpdateAsync(existing);
 

@@ -39,11 +39,16 @@ public class UsersController : ControllerBase
         return Ok(changed);
     }
 
-    // PUT change password
+    // PUT /api/users/id/change-password 
+    [HttpPut("{id}/change-password")]
+    public async Task<IActionResult> ChangePasswordAsync(int id, [FromBody] ChangePasswordDto change)
+    {
+        var changed = await _service.ChangePasswordAsync(id, change);
+        return Ok(changed);
+    }
 
-
-    // PUT /api/users/id/change-currency
-    [HttpPut("{id}/change-currency")]
+    // PUT /api/users/id/update-currency
+    [HttpPut("{id}/update-currency")]
     public async Task<IActionResult> UpdateCurrencyAsync(int id, [FromBody] UpdateDefaultCurrencyDto update)
     {
         var updated = await _service.UpdateDefaultCurrencyAsync(id, update);
