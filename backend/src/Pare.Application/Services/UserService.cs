@@ -85,21 +85,21 @@ public class UserService : IUserService
         };
     }
 
-    // PUT update username
-    public async Task<UpdateUsernameDto> UpdateUsernameAsync(int id, UpdateUsernameDto update)
+    // PATCH update Name
+    public async Task<UpdateNameDto> UpdateNameAsync(int id, UpdateNameDto update)
     {
         // Get user data
         var existing = await _repo.GetByIdAsync(id);
         if (existing is null) throw new NotFoundException("User not found");
 
-        // Update username
-        existing.Name = update.Username;
+        // Update name
+        existing.Name = update.Name;
         await _repo.UpdateAsync(existing);
 
         return update;
     }
 
-    // PUT change email
+    // PATCH change email
     public async Task<ChangeEmailDto> ChangeEmailAsync(int id, ChangeEmailDto change)
     {
         // Get user data
@@ -117,7 +117,7 @@ public class UserService : IUserService
         return change;
     }
 
-    // PUT change password
+    // PATCH change password
     public async Task<ChangePasswordDto> ChangePasswordAsync(int id, ChangePasswordDto change)
     {
         // Get user data
@@ -125,7 +125,7 @@ public class UserService : IUserService
         if (existing is null) throw new NotFoundException("User not found");
 
         // Verify password
-        bool verify = _hasher.Verify(change.OldPassword, existing.PasswordHash);
+        bool verify = _hasher.Verify(change.CurrentPassword, existing.PasswordHash);
         if (!verify) throw new UnauthorizedException("Invalid password");
 
         // Hash the new password
@@ -137,7 +137,7 @@ public class UserService : IUserService
         return change;
     }
 
-    // PUT update currency
+    // PATCH update currency
     public async Task<UpdateCurrencyDto> UpdateCurrencyAsync(int id, UpdateCurrencyDto update)
     {
         // Get user data
