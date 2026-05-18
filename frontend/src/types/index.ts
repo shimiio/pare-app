@@ -36,3 +36,9 @@ export interface WriteSubscription {
   startDate?: string;
   serviceUrl?: string;
 }
+
+export interface User {
+  name: string;
+  email: string;
+  currency: string;
+}

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Diamond } from "lucide-react";
 import LoginModal from "../auth/LoginModal";
 import SignupModal from "../auth/SignupModal";
 import { useAuthStore } from "../../store/useAuthStore";
@@ -9,13 +8,10 @@ export default function Header() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
-    <header className="flex flex-row justify-between 2xl:p-8 2xl:px-30 border-b border-dashed border-white/50">
-      <div className="flex items-center 2xl:gap-2">
-        <Diamond size={32} />
-        <span className="flex 2xl:text-2xl">Pare.</span>
-      </div>
+    <header className="flex flex-row justify-between 2xl:p-8 2xl:px-35 border-b border-dashed border-white/50">
+      <span className="flex 2xl:text-2xl font-mono items-center">Pare</span>
       {isAuthenticated ? (
-        <span className="2xl:text-2xl font-medium">username</span>
+        <span className="2xl:text-2xl font-medium">name</span>
       ) : (
         <div className="flex 2xl:gap-6">
           <button

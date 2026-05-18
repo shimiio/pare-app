@@ -1,7 +1,12 @@
+import { useUser } from "../hooks/useUser";
+import SettingsForm from "./SettingsForm";
+
 export default function Settings() {
-  return (
-    <>
-      <h1 className="2xl:text-3xl">Settings</h1>
-    </>
-  );
+  const { data, isLoading, isError } = useUser();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>ERROR</div>;
+  if (!data) return <div>No user data</div>;
+
+  return <SettingsForm user={data} />;
 }
