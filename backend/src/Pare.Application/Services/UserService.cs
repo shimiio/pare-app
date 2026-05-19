@@ -33,7 +33,8 @@ public class UserService : IUserService
         {
             Name = request.Name,
             Email = request.Email,
-            PasswordHash = hash
+            PasswordHash = hash,
+            Currency = "EUR"
         };
 
         // Create user
@@ -68,5 +69,95 @@ public class UserService : IUserService
         };
 
         return jwtToken;
+    }
+
+    // GET user data
+    public async Task<UserDto?> GetByIdAsync(int id)
+    {
+        var user = await _repo.GetByIdAsync(id);
+        if (user is null) throw new NotFoundException("User not found");
+
+        return new UserDto
+        {
+            Name = user.Name,
+            Email = user.Email,
+            Currency = user.Currency
+        };
+    }
+
+    // PATCH update Name
+    public async Task<UpdateNameDto> UpdateNameAsync(int id, UpdateNameDto update)
+    {
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        // Update name
+        existing.Name = update.Name;
+        await _repo.UpdateAsync(existing);
+
+        return update;
+    }
+
+    // PATCH change email
+    public async Task<ChangeEmailDto> ChangeEmailAsync(int id, ChangeEmailDto change)
+    {
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        // Check if new email already exists
+        var emailExists = await _repo.GetByEmailAsync(change.Email);
+        if (emailExists != null) throw new ConflictException("Email already exists");
+
+        // Change email
+        existing.Email = change.Email;
+        await _repo.UpdateAsync(existing);
+
+        return change;
+    }
+
+    // PATCH change password
+    public async Task<ChangePasswordDto> ChangePasswordAsync(int id, ChangePasswordDto change)
+    {
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        // Verify password
+        bool verify = _hasher.Verify(change.CurrentPassword, existing.PasswordHash);
+        if (!verify) throw new UnauthorizedException("Invalid password");
+
+        // Hash the new password
+        string hash = _hasher.Hash(change.NewPassword);
+        existing.PasswordHash = hash;
+
+        await _repo.UpdateAsync(existing);
+
+        return change;
+    }
+
+    // PATCH update currency
+    public async Task<UpdateCurrencyDto> UpdateCurrencyAsync(int id, UpdateCurrencyDto update)
+    {
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        // Change currency
+        existing.Currency = update.Currency;
+        await _repo.UpdateAsync(existing);
+
+        return update;
+    }
+
+    // DELETE user
+    public async Task<bool> DeleteByIdAsync(int id)
+    {
+        // Get user data
+        var existing = await _repo.GetByIdAsync(id);
+        if (existing is null) throw new NotFoundException("User not found");
+
+        return await _repo.DeleteByIdAsync(id);
     }
 }

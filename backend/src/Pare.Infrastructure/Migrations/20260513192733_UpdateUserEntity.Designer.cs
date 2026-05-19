@@ -12,8 +12,8 @@ using Pare.Infrastructure.Data;
 namespace Pare.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260326230901_RenameUserToUsers")]
-    partial class RenameUserToUsers
+    [Migration("20260513192733_UpdateUserEntity")]
+    partial class UpdateUserEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,10 @@ namespace Pare.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("ServiceUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
@@ -73,6 +77,10 @@ namespace Pare.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()

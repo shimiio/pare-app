@@ -12,4 +12,5 @@ public class SubscriptionDto
     public Status Status { get; set; }
     public DateOnly NextBillingDate { get; set; }
     public DateOnly StartDate { get; set; }
+    public string ServiceUrl { get; set; } = string.Empty;
 }
