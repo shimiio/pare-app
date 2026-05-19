@@ -1,3 +1,5 @@
+import type { Subscription } from "../types";
+
 // price input validation
 export const sanitizePriceInput = (value: string): string | null => {
   const input = value.replace(",", ".");
@@ -22,4 +24,24 @@ export const calculateNextBilling = (
 export const formatNextBilling = (isoDate: string): string => {
   const [year, month, day] = isoDate.split("-");
   return `${day}/${month}/${year}`;
+};
+
+// get monthly amount from subscription
+export const getMonthlyAmount = (
+  sub: Subscription,
+  toDefaultCurrency: (amount: number, fromCurrency: string) => number,
+): number => {
+  const price = sub.price ?? 0;
+  const inDefault = toDefaultCurrency(price, sub.currency);
+
+  switch (sub.billingCycle) {
+    case 0:
+      return inDefault;
+    case 1:
+      return inDefault / 12;
+    case 2:
+      return inDefault * 4.33;
+    default:
+      return inDefault;
+  }
 };
