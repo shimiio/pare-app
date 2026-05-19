@@ -14,7 +14,11 @@ import { useCurrencyRates } from "../hooks/useCurrencyRates";
 import type { Subscription } from "../types";
 import { getDaysUtil, getLabelColor } from "../utils/dateUtils";
 import { formatCurrency, getDomain } from "../utils/formatUtils";
-import { getMonthlyAmount } from "../utils/subscriptionUtils";
+import {
+  getMonthlyAmount,
+  getMonthlyExpenses,
+  getYearlyExpenses,
+} from "../utils/subscriptionUtils";
 import CreateSubscriptionModal from "../components/subscriptions/CreateSubscriptionModal";
 
 interface INextPayment {
@@ -53,20 +57,6 @@ export default function Dashboard() {
     return inBase * (rates[currency] ?? 1);
   };
 
-  // get monthly expenses
-  const getMonthlyExpenses = (subs: Subscription[]) => {
-    return subs.reduce(
-      (sum, sub) => sum + getMonthlyAmount(sub, toDefaultCurrency),
-      0,
-    );
-  };
-
-  // get yearly exprenses
-  const getYearlyExprenses = (subscription: Subscription[]) => {
-    const monthly = getMonthlyExpenses(subscription);
-    return monthly * 12;
-  };
-
   // get most expensive subscription name
   const mostExpensive = active?.length
     ? active.reduce((max, sub) =>
@@ -100,7 +90,7 @@ export default function Dashboard() {
 
   // chart data
   const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"];
-  const monthlyTotal = getMonthlyExpenses(active ?? []);
+  const monthlyTotal = getMonthlyExpenses(active ?? [], toDefaultCurrency);
 
   const chartData = months.map((month) => ({
     month,
@@ -125,7 +115,10 @@ export default function Dashboard() {
             <div className="bg-white/7 rounded-2xl 2xl:py-5 2xl:px-11 2xl:w-60">
               <div className="text-white/70 2xl:text-xl mb-1.5">Per Month</div>
               <div className="2xl:text-2xl mb-0.5">
-                {formatCurrency(getMonthlyExpenses(active ?? []), currency)}
+                {formatCurrency(
+                  getMonthlyExpenses(active ?? [], toDefaultCurrency),
+                  currency,
+                )}
               </div>
               <div className="text-white/60 2xl:text-lg">
                 {active?.length} active
@@ -137,7 +130,10 @@ export default function Dashboard() {
                 Per Year
               </div>
               <div className="2xl:text-2xl 2xl:mb-0.5">
-                {formatCurrency(getYearlyExprenses(active ?? []), currency)}
+                {formatCurrency(
+                  getYearlyExpenses(active ?? [], toDefaultCurrency),
+                  currency,
+                )}
               </div>
               <div className="text-white/60 2xl:text-lg">
                 Expensive: {mostExpensive?.name ?? "N/A"}

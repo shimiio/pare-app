@@ -45,3 +45,23 @@ export const getMonthlyAmount = (
       return inDefault;
   }
 };
+
+// get monthly expenses subscription
+export const getMonthlyExpenses = (
+  subs: Subscription[],
+  toDefaultCurrency: (amount: number, fromCurrency: string) => number,
+) => {
+  return subs.reduce(
+    (sum, sub) => sum + getMonthlyAmount(sub, toDefaultCurrency),
+    0,
+  );
+};
+
+// get yearly expenses subscription
+export const getYearlyExpenses = (
+  subscription: Subscription[],
+  toDefaultCurrency: (amount: number, fromCurrency: string) => number,
+) => {
+  const monthly = getMonthlyExpenses(subscription, toDefaultCurrency);
+  return monthly * 12;
+};

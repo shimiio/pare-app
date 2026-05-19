@@ -3,7 +3,11 @@ import { Plus } from "lucide-react";
 import CreateSubscriptionModal from "../components/subscriptions/CreateSubscriptionModal";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 import type { Subscription } from "../types";
-import { getMonthlyAmount } from "../utils/subscriptionUtils";
+import {
+  getMonthlyAmount,
+  getMonthlyExpenses,
+  getYearlyExpenses,
+} from "../utils/subscriptionUtils";
 import { useCurrencyRates } from "../hooks/useCurrencyRates";
 import { useUser } from "../hooks/useUser";
 import { formatCurrency } from "../utils/formatUtils";
@@ -55,7 +59,28 @@ export default function Analytics() {
       ) : (
         <div className="flex 2xl:mt-12 w-full px-4 gap-15">
           <div className="flex flex-col w-full">
-            <div className="space-y-2 mb-12">
+            <div className="text-xl mb-12">
+              <h2 className="2xl:text-2xl mb-5">Main Info</h2>
+              <div className="px-3 space-y-1">
+                <div>Active - {active?.length ?? 0}</div>
+                <div>
+                  Per Month -{" "}
+                  {formatCurrency(
+                    getMonthlyExpenses(active ?? [], toDefaultCurrency),
+                    currency,
+                  )}
+                </div>
+                <div>
+                  Per Year -{" "}
+                  {formatCurrency(
+                    getYearlyExpenses(active ?? [], toDefaultCurrency),
+                    currency,
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
               <h2 className="2xl:text-2xl 2xl:mb-5">
                 Top 3 the most expensive
               </h2>
@@ -87,13 +112,6 @@ export default function Analytics() {
                   </div>
                 );
               })}
-            </div>
-            <div className="text-xl">
-              <h2 className="2xl:text-2xl mb-5">Per Month & Per Year</h2>
-              <div className="px-3 space-y-1">
-                <div>Per Month - </div>
-                <div>Per Year - </div>
-              </div>
             </div>
           </div>
 
