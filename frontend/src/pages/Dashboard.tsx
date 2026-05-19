@@ -1,3 +1,11 @@
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useSubscriptions } from "../hooks/useSubscriptions";
@@ -7,13 +15,10 @@ import type { Subscription } from "../types";
 import { getDaysUtil, getLabelColor } from "../utils/dateUtils";
 import { formatCurrency, getDomain } from "../utils/formatUtils";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+  getMonthlyAmount,
+  getMonthlyExpenses,
+  getYearlyExpenses,
+} from "../utils/subscriptionUtils";
 import CreateSubscriptionModal from "../components/subscriptions/CreateSubscriptionModal";
 
 interface INextPayment {
@@ -52,39 +57,16 @@ export default function Dashboard() {
     return inBase * (rates[currency] ?? 1);
   };
 
-  const getMonthlyAmount = (sub: Subscription): number => {
-    const price = sub.price ?? 0;
-    const inDefault = toDefaultCurrency(price, sub.currency);
-
-    switch (sub.billingCycle) {
-      case 0:
-        return inDefault;
-      case 1:
-        return inDefault / 12;
-      case 2:
-        return inDefault * 4.33;
-      default:
-        return inDefault;
-    }
-  };
-
-  // get monthly expenses
-  const getMonthlyExpenses = (subs: Subscription[]) => {
-    return subs.reduce((sum, sub) => sum + getMonthlyAmount(sub), 0);
-  };
-
-  // get yearly exprenses
-  const getYearlyExprenses = (subscription: Subscription[]) => {
-    const monthly = getMonthlyExpenses(subscription);
-    return monthly * 12;
-  };
-
   // get most expensive subscription name
   const mostExpensive = active?.length
     ? active.reduce((max, sub) =>
-        getMonthlyAmount(sub) > getMonthlyAmount(max) ? sub : max,
+        getMonthlyAmount(sub, toDefaultCurrency) >
+        getMonthlyAmount(max, toDefaultCurrency)
+          ? sub
+          : max,
       )
     : null;
+
   // get next payment info from sorted array
   const getNextPayment = (
     subscription: Subscription[],
@@ -108,7 +90,7 @@ export default function Dashboard() {
 
   // chart data
   const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr"];
-  const monthlyTotal = getMonthlyExpenses(active ?? []);
+  const monthlyTotal = getMonthlyExpenses(active ?? [], toDefaultCurrency);
 
   const chartData = months.map((month) => ({
     month,
@@ -133,7 +115,10 @@ export default function Dashboard() {
             <div className="bg-white/7 rounded-2xl 2xl:py-5 2xl:px-11 2xl:w-60">
               <div className="text-white/70 2xl:text-xl mb-1.5">Per Month</div>
               <div className="2xl:text-2xl mb-0.5">
-                {formatCurrency(getMonthlyExpenses(active ?? []), currency)}
+                {formatCurrency(
+                  getMonthlyExpenses(active ?? [], toDefaultCurrency),
+                  currency,
+                )}
               </div>
               <div className="text-white/60 2xl:text-lg">
                 {active?.length} active
@@ -145,7 +130,10 @@ export default function Dashboard() {
                 Per Year
               </div>
               <div className="2xl:text-2xl 2xl:mb-0.5">
-                {formatCurrency(getYearlyExprenses(active ?? []), currency)}
+                {formatCurrency(
+                  getYearlyExpenses(active ?? [], toDefaultCurrency),
+                  currency,
+                )}
               </div>
               <div className="text-white/60 2xl:text-lg">
                 Expensive: {mostExpensive?.name ?? "N/A"}
@@ -174,7 +162,7 @@ export default function Dashboard() {
 
               return (
                 <div key={sub.id} className="flex flex-col">
-                  <button className="flex flex-row justify-between 2xl:p-6 2xl:px-16 mx-20 bg-white/5 rounded-xl">
+                  <button className="flex flex-row justify-between 2xl:p-5 2xl:px-16 mx-20 bg-white/5 rounded-xl">
                     <div className="flex flex-row gap-7">
                       <img
                         src={`https://www.google.com/s2/favicons?domain=${getDomain(sub.serviceUrl)}&sz=64`}
