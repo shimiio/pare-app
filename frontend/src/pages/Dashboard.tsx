@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { useSubscriptions } from "../hooks/useSubscriptions";
+import { useUser } from "../hooks/useUser";
+import { useCurrencyRates } from "../hooks/useCurrencyRates";
 import type { Subscription } from "../types";
 import { getDaysUtil, getLabelColor } from "../utils/dateUtils";
 import { formatCurrency, getDomain } from "../utils/formatUtils";
@@ -23,6 +25,9 @@ interface INextPayment {
 
 export default function Dashboard() {
   const { data, isLoading, isError } = useSubscriptions();
+  const { data: user } = useUser();
+  const currency = user?.currency ?? "EUR";
+  const { data: rates } = useCurrencyRates(currency);
   const [modal, setModal] = useState<"create" | null>(null);
 
   if (isLoading) return <div>Loading...</div>;
@@ -41,28 +46,25 @@ export default function Dashboard() {
   });
 
   // currency
-  const RATES: Record<string, number> = {
-    EUR: 1,
-    USD: 1.08,
-    UAH: 0.025,
+  const toDefaultCurrency = (amount: number, fromCurrency: string): number => {
+    if (!rates) return amount;
+    const inBase = amount / (rates[fromCurrency] ?? 1);
+    return inBase * (rates[currency] ?? 1);
   };
-
-  const toEur = (amount: number, currency: string): number =>
-    amount * (RATES[currency] ?? 1);
 
   const getMonthlyAmount = (sub: Subscription): number => {
     const price = sub.price ?? 0;
-    const inEur = toEur(price, sub.currency);
+    const inDefault = toDefaultCurrency(price, sub.currency);
 
     switch (sub.billingCycle) {
       case 0:
-        return inEur;
+        return inDefault;
       case 1:
-        return inEur / 12;
+        return inDefault / 12;
       case 2:
-        return inEur * 4.33;
+        return inDefault * 4.33;
       default:
-        return inEur;
+        return inDefault;
     }
   };
 
@@ -127,11 +129,11 @@ export default function Dashboard() {
         </button>
       ) : (
         <>
-          <div className="flex flex-row justify-around mt-7.5 mb-10 mx-10">
+          <div className="flex flex-row justify-around mt-7.5 mb-12 mx-10">
             <div className="bg-white/7 rounded-2xl 2xl:py-5 2xl:px-11 2xl:w-60">
               <div className="text-white/70 2xl:text-xl mb-1.5">Per Month</div>
               <div className="2xl:text-2xl mb-0.5">
-                {formatCurrency(getMonthlyExpenses(active ?? []), "EUR")}
+                {formatCurrency(getMonthlyExpenses(active ?? []), currency)}
               </div>
               <div className="text-white/60 2xl:text-lg">
                 {active?.length} active
@@ -143,7 +145,7 @@ export default function Dashboard() {
                 Per Year
               </div>
               <div className="2xl:text-2xl 2xl:mb-0.5">
-                {formatCurrency(getYearlyExprenses(active ?? []), "EUR")}
+                {formatCurrency(getYearlyExprenses(active ?? []), currency)}
               </div>
               <div className="text-white/60 2xl:text-lg">
                 Expensive: {mostExpensive?.name ?? "N/A"}
@@ -164,8 +166,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <h2 className="2xl:text-3xl text-white/80 mb-8">Upcoming payment</h2>
-          <div className="space-y-2 mb-10">
+          <h2 className="2xl:text-2xl mb-8">Upcoming payment</h2>
+          <div className="space-y-2 mb-12">
             {sorted?.slice(0, 3).map((sub) => {
               const days = getDaysUtil(sub.nextBillingDate);
               const labelColor = getLabelColor(days);
@@ -197,7 +199,7 @@ export default function Dashboard() {
           </div>
 
           {/* Monthly Expenses */}
-          <h2 className="text-white/80 2xl:text-3xl mb-10">Monthly Expenses</h2>
+          <h2 className="2xl:text-2xl mb-10">Monthly Expenses</h2>
           <div className="flex justify-center">
             <ResponsiveContainer width="90%" height={300}>
               <BarChart data={chartData}>
