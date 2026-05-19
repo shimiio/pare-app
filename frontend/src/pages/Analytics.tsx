@@ -13,6 +13,14 @@ import { useUser } from "../hooks/useUser";
 import { formatCurrency } from "../utils/formatUtils";
 import { getDaysUtil, getLabelColor } from "../utils/dateUtils";
 import { getDomain } from "../utils/formatUtils";
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+} from "recharts";
 
 export default function Analytics() {
   const { data, isLoading, isError } = useSubscriptions();
@@ -115,8 +123,82 @@ export default function Analytics() {
             </div>
           </div>
 
-          <div className="flex w-full">
-            <h2 className="2xl:text-2xl">Pie chart</h2>
+          <div className="flex w-full flex-col gap-6">
+            <div className="flex items-end 2xl:mb-5 justify-between">
+              <h2 className="2xl:text-2xl">Pie Chart</h2>
+              <span className="text-sm text-white/70">
+                Monthly cost split by subscription
+              </span>
+            </div>
+            <div className="rounded-3xl p-4 w-full">
+              <ResponsiveContainer width="100%" height={320}>
+                <PieChart>
+                  <Pie
+                    data={sortedByPrice.map((sub) => ({
+                      name: sub.name,
+                      value: getMonthlyAmount(sub, toDefaultCurrency),
+                    }))}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={70}
+                    outerRadius={110}
+                    paddingAngle={3}
+                    label={({ name, percent }) =>
+                      `${name}: ${((percent ?? 0) * 100).toFixed(0)}%`
+                    }
+                  >
+                    {sortedByPrice.map((sub, index) => {
+                      const colors = [
+                        "#3b82f6",
+                        "#14b8a6",
+                        "#f97316",
+                        "#e11d48",
+                        "#8b5cf6",
+                        "#22c55e",
+                        "#facc15",
+                        "#0ea5e9",
+                      ];
+                      return (
+                        <Cell
+                          key={sub.id}
+                          fill={colors[index % colors.length]}
+                        />
+                      );
+                    })}
+                  </Pie>
+                  <Tooltip
+                    formatter={(
+                      value:
+                        | number
+                        | string
+                        | readonly (string | number)[]
+                        | undefined,
+                    ) => {
+                      const actualValue = Array.isArray(value)
+                        ? value[0]
+                        : value;
+
+                      return formatCurrency(
+                        typeof actualValue === "number"
+                          ? actualValue
+                          : Number(actualValue ?? 0),
+                        currency,
+                      );
+                    }}
+                    contentStyle={{
+                      backgroundColor: "rgba(15, 23, 42, 0.95)",
+                      border: "1px solid rgba(255,255,255,0.12)",
+                    }}
+                  />
+                  <Legend
+                    verticalAlign="bottom"
+                    height={48}
+                    iconType="circle"
+                    wrapperStyle={{ paddingTop: 16 }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       )}
