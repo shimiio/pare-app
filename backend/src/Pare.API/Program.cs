@@ -41,8 +41,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
 
 // Subscriptions
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Pare.Application.Subscriptions.Queries.GetAllSubscriptions.GetAllSubscriptionsQuery).Assembly));
+
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
-builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
 // JWT token
 builder.Services.AddAuthentication(options =>
