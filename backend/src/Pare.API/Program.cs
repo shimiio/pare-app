@@ -41,7 +41,10 @@ builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
 
 // Subscriptions
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Pare.Application.Subscriptions.Queries.GetAllSubscriptions.GetAllSubscriptionsQuery).Assembly));
+{
+    cfg.RegisterServicesFromAssembly(typeof(Pare.Application.Subscriptions.Queries.GetAllSubscriptions.GetAllSubscriptionsQuery).Assembly);
+    cfg.LicenseKey = builder.Configuration["MediatR:LicenseKey"] ?? throw new InvalidOperationException("MediatR:LicenseKey not configured");
+});
 
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
