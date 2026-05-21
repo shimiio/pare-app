@@ -5,13 +5,10 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.Subscriptions.Commands.CreateSubscription;
 
-public class CreateSubscriptionHandler
-    : IRequestHandler<CreateSubscriptionCommand, SubscriptionDto>
+public class CreateSubscriptionHandler(ISubscriptionRepository repo)
+        : IRequestHandler<CreateSubscriptionCommand, SubscriptionDto>
 {
-    private readonly ISubscriptionRepository _repo;
-
-    public CreateSubscriptionHandler(ISubscriptionRepository repo)
-        => _repo = repo;
+    private readonly ISubscriptionRepository _repo = repo;
 
     public async Task<SubscriptionDto> Handle(
         CreateSubscriptionCommand command,

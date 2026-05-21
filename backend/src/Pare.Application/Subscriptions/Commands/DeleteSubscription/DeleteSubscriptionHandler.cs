@@ -4,13 +4,10 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.Subscriptions.Commands.DeleteSubscription;
 
-public class DeleteSubscriptionHandler
-    : IRequestHandler<DeleteSubscriptionCommand, bool>
+public class DeleteSubscriptionHandler(ISubscriptionRepository repo)
+        : IRequestHandler<DeleteSubscriptionCommand, bool>
 {
-    private readonly ISubscriptionRepository _repo;
-
-    public DeleteSubscriptionHandler(ISubscriptionRepository repo)
-        => _repo = repo;
+    private readonly ISubscriptionRepository _repo = repo;
 
     public async Task<bool> Handle(
         DeleteSubscriptionCommand command,

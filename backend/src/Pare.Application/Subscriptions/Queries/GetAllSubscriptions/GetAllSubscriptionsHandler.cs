@@ -4,13 +4,10 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.Subscriptions.Queries.GetAllSubscriptions;
 
-public class GetAllSubscriptionsHandler
-    : IRequestHandler<GetAllSubscriptionsQuery, IEnumerable<SubscriptionDto>>
+public class GetAllSubscriptionsHandler(ISubscriptionRepository repo)
+        : IRequestHandler<GetAllSubscriptionsQuery, IEnumerable<SubscriptionDto>>
 {
-    private readonly ISubscriptionRepository _repo;
-
-    public GetAllSubscriptionsHandler(ISubscriptionRepository repo)
-        => _repo = repo;
+    private readonly ISubscriptionRepository _repo = repo;
 
     public async Task<IEnumerable<SubscriptionDto>> Handle(
         GetAllSubscriptionsQuery query,

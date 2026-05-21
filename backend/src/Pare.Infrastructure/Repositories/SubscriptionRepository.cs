@@ -5,14 +5,9 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Repositories;
 
-public class SubscriptionRepository : ISubscriptionRepository
+public class SubscriptionRepository(AppDbContext db) : ISubscriptionRepository
 {
-    private readonly AppDbContext _db;
-
-    public SubscriptionRepository(AppDbContext db)
-    {
-        _db = db;
-    }
+    private readonly AppDbContext _db = db;
 
     // GET all
     public async Task<IEnumerable<Subscription>> GetAllAsync(int userId)

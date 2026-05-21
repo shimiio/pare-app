@@ -1,27 +1,22 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using MediatR;
 using Pare.Application.Subscriptions.DTOs;
 using Pare.Application.Subscriptions.Queries.GetAllSubscriptions;
 using Pare.Application.Subscriptions.Queries.GetSubscriptionById;
 using Pare.Application.Subscriptions.Commands.CreateSubscription;
 using Pare.Application.Subscriptions.Commands.UpdateSubscription;
 using Pare.Application.Subscriptions.Commands.DeleteSubscription;
-using MediatR;
 
 namespace Pare.API.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class SubscriptionsController : ControllerBase
+public class SubscriptionsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public SubscriptionsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    private readonly IMediator _mediator = mediator;
 
     private int GetUserId() => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 

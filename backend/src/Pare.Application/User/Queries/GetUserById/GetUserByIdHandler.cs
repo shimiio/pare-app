@@ -5,13 +5,10 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Queries.GetUserById;
 
-public class GetUserByIdHandler
-    : IRequestHandler<GetUserByIdQuery, UserDto>
+public class GetUserByIdHandler(IUserRepository repo)
+        : IRequestHandler<GetUserByIdQuery, UserDto>
 {
-    private readonly IUserRepository _repo;
-
-    public GetUserByIdHandler(IUserRepository repo)
-        => _repo = repo;
+    private readonly IUserRepository _repo = repo;
 
     public async Task<UserDto> Handle(
         GetUserByIdQuery query,
