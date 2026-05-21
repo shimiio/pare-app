@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Pare.Application.Interfaces;
-using Pare.Application.DTOs;
+using MediatR;
+using Pare.Application.User.DTOs;
+using Pare.Application.User.Commands.RegisterUser;
+using Pare.Application.User.Commands.LoginUser;
 
 namespace Pare.API.Controllers;
 
@@ -8,18 +10,18 @@ namespace Pare.API.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IUserService _service;
+    private readonly IMediator _mediator;
 
-    public AuthController(IUserService service)
+    public AuthController(IMediator mediator)
     {
-        _service = service;
+        _mediator = mediator;
     }
 
     // POST register
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
     {
-        var jwtToken = await _service.RegisterAsync(request);
+        var jwtToken = await _mediator.Send(new RegisterUserCommand(request));
         return Created("", jwtToken);
     }
 
@@ -27,7 +29,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
-        var jwtToken = await _service.LoginAsync(request);
+        var jwtToken = await _mediator.Send(new LoginUserCommand(request));
         return Ok(jwtToken);
     }
 }

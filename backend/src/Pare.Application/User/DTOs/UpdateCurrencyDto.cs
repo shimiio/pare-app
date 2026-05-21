@@ -1,4 +1,4 @@
-namespace Pare.Application.DTOs;
+namespace Pare.Application.User.DTOs;
 
 public class UpdateCurrencyDto
 {
