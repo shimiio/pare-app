@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Pare.Application.Interfaces;
-using Pare.Application.Services;
 using Pare.Infrastructure.Repositories;
 using Pare.Infrastructure.Data;
 using Pare.Infrastructure.Auth;
@@ -70,8 +69,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // Users & Auth
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Pare.Application.User.Queries.GetUserById.GetUserByIdQuery).Assembly));
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
 
 // Hash
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();

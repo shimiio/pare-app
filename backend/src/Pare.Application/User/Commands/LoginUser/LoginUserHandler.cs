@@ -3,17 +3,17 @@ using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
 using Pare.Application.User.DTOs;
 
-namespace Pare.Application.User.Commands.RegisterUser;
+namespace Pare.Application.User.Commands.LoginUser;
 
 public class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwtTokenService jwtService)
-        : IRequestHandler<RegisterUserCommand, AuthResponseDto>
+        : IRequestHandler<LoginUserCommand, AuthResponseDto>
 {
     private readonly IUserRepository _repo = repo;
     private readonly IPasswordHasher _hasher = hasher;
     private readonly IJwtTokenService _jwtService = jwtService;
 
     public async Task<AuthResponseDto> Handle(
-        RegisterUserCommand command,
+        LoginUserCommand command,
         CancellationToken ct)
     {
         var request = command.Request;
