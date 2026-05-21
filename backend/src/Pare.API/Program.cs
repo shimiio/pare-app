@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Pare.Application.Interfaces;
-using Pare.Application.Services;
 using Pare.Infrastructure.Repositories;
 using Pare.Infrastructure.Data;
 using Pare.Infrastructure.Auth;
@@ -41,8 +40,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
 
 // Subscriptions
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(Pare.Application.Subscriptions.Queries.GetAllSubscriptions.GetAllSubscriptionsQuery).Assembly);
+    cfg.LicenseKey = builder.Configuration["MediatR:LicenseKey"] ?? throw new InvalidOperationException("MediatR:LicenseKey not configured");
+});
+
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
-builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
 // JWT token
 builder.Services.AddAuthentication(options =>
@@ -68,8 +72,10 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 
 // Users & Auth
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Pare.Application.User.Queries.GetUserById.GetUserByIdQuery).Assembly));
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
 
 // Hash
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();

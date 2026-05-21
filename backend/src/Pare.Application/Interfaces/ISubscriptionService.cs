@@ -1,4 +1,4 @@
-using Pare.Application.DTOs;
+using Pare.Application.Subscriptions.DTOs;
 
 namespace Pare.Application.Interfaces;
 

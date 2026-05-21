@@ -5,14 +5,9 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(AppDbContext db) : IUserRepository
 {
-    private readonly AppDbContext _db;
-
-    public UserRepository(AppDbContext db)
-    {
-        _db = db;
-    }
+    private readonly AppDbContext _db = db;
 
     // GET by email
     public async Task<User?> GetByEmailAsync(string email)

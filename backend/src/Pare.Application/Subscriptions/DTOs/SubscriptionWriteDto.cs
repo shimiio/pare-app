@@ -1,6 +1,6 @@
 using Pare.Domain.Emums;
 
-namespace Pare.Application.DTOs;
+namespace Pare.Application.Subscriptions.DTOs;
 
 public class SubscriptionWriteDto
 {

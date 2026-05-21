@@ -7,14 +7,9 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Auth;
 
-public class JwtTokenService : IJwtTokenService
+public class JwtTokenService(IConfiguration config) : IJwtTokenService
 {
-    private readonly IConfiguration _config;
-
-    public JwtTokenService(IConfiguration config)
-    {
-        _config = config;
-    }
+    private readonly IConfiguration _config = config;
 
     public string GenerateToken(int userId, string email)
     {
