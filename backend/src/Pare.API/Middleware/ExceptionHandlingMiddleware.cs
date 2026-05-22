@@ -1,4 +1,5 @@
 using Pare.Application.Exceptions;
+using FluentValidation;
 
 namespace Pare.API.Middleware;
 
@@ -11,6 +12,17 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
         try
         {
             await _next(context);
+        }
+        catch (ValidationException ex)
+        {
+            context.Response.StatusCode = 400;
+            var errors = ex.Errors
+                .GroupBy(e => e.PropertyName)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(e => e.ErrorMessage).ToArray()
+                );
+            await context.Response.WriteAsJsonAsync(new { errors });
         }
         catch (NotFoundException ex)
         {

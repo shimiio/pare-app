@@ -3,11 +3,14 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using FluentValidation;
+using MediatR;
 using Pare.Application.Interfaces;
 using Pare.Infrastructure.Repositories;
 using Pare.Infrastructure.Data;
 using Pare.Infrastructure.Auth;
 using Pare.API.Middleware;
+using Pare.Application.Behaviours;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,11 +42,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Routing
 builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
 
+// Validation
+builder.Services.AddValidatorsFromAssembly(
+    typeof(Pare.Application.Subscriptions.Validators.SubscriptionWriteDtoValidator).Assembly);
+
 // Subscriptions
 builder.Services.AddMediatR(cfg =>
 {
-    cfg.RegisterServicesFromAssembly(typeof(Pare.Application.Subscriptions.Queries.GetAllSubscriptions.GetAllSubscriptionsQuery).Assembly);
     cfg.LicenseKey = builder.Configuration["MediatR:LicenseKey"] ?? throw new InvalidOperationException("MediatR:LicenseKey not configured");
+    cfg.RegisterServicesFromAssembly(typeof(Pare.Application.Subscriptions.Queries.GetAllSubscriptions.GetAllSubscriptionsQuery).Assembly);
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 });
 
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
