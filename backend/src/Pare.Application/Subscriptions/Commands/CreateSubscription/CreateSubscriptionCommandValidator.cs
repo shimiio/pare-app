@@ -1,7 +1,7 @@
 using FluentValidation;
-using Pare.Application.Subscriptions.Commands.CreateSubscription;
+using Pare.Application.Subscriptions.Validators;
 
-namespace Pare.Application.Subscriptions.Validators;
+namespace Pare.Application.Subscriptions.Commands.CreateSubscription;
 
 public class CreateSubscriptionCommandValidator : AbstractValidator<CreateSubscriptionCommand>
 {

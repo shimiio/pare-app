@@ -1,7 +1,7 @@
 using FluentValidation;
-using Pare.Application.Subscriptions.Commands.UpdateSubscription;
+using Pare.Application.Subscriptions.Validators;
 
-namespace Pare.Application.Subscriptions.Validators;
+namespace Pare.Application.Subscriptions.Commands.UpdateSubscription;
 
 public class UpdateSubscriptionCommandValidator : AbstractValidator<UpdateSubscriptionCommand>
 {
