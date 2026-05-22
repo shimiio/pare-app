@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using FluentValidation;
 using MediatR;
+using Serilog;
 using Pare.Application.Interfaces;
 using Pare.Infrastructure.Repositories;
 using Pare.Infrastructure.Data;
@@ -13,6 +14,15 @@ using Pare.API.Middleware;
 using Pare.Application.Behaviours;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Serilog
+builder.Host.UseSerilog((ctx, config) =>
+{
+    config
+        .ReadFrom.Configuration(ctx.Configuration)
+        .WriteTo.Console()
+        .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day);
+});
 
 // CORS
 builder.Services.AddCors(options =>
@@ -51,9 +61,11 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.LicenseKey = builder.Configuration["MediatR:LicenseKey"] ?? throw new InvalidOperationException("MediatR:LicenseKey not configured");
     cfg.RegisterServicesFromAssembly(typeof(Pare.Application.Subscriptions.Queries.GetAllSubscriptions.GetAllSubscriptionsQuery).Assembly);
-    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>));    // Serilog
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>)); // Validation
 });
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
 // JWT token
@@ -78,12 +90,6 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
-
-// Users & Auth
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Pare.Application.User.Queries.GetUserById.GetUserByIdQuery).Assembly));
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Hash
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
