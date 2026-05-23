@@ -16,6 +16,7 @@ using Pare.Infrastructure.Data;
 using Pare.Infrastructure.Auth;
 using Pare.API.Middleware;
 using Pare.Application.Behaviours;
+using Pare.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,9 @@ builder.Services.AddHangfire(config =>
 
 builder.Services.AddHangfireServer();
 builder.Services.AddScoped<RenewalJob>();
+
+builder.Services.AddScoped<ReminderJob>();
+builder.Services.AddScoped<EmailService>();
 
 // Routing
 builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
@@ -164,6 +168,12 @@ app.UseHangfireDashboard("/hangfire");
 using var scope = app.Services.CreateScope();
 RecurringJob.AddOrUpdate<RenewalJob>(
     "renewal-job",
+    job => job.ExecuteAsync(),
+    Cron.Daily
+);
+
+RecurringJob.AddOrUpdate<ReminderJob>(
+    "reminder-job",
     job => job.ExecuteAsync(),
     Cron.Daily
 );
