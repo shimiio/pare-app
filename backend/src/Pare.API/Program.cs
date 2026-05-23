@@ -7,12 +7,16 @@ using Microsoft.OpenApi.Models;
 using FluentValidation;
 using MediatR;
 using Serilog;
+using Hangfire;
+using Hangfire.PostgreSql;
+using Pare.Infrastructure.Jobs;
 using Pare.Application.Interfaces;
 using Pare.Infrastructure.Repositories;
 using Pare.Infrastructure.Data;
 using Pare.Infrastructure.Auth;
 using Pare.API.Middleware;
 using Pare.Application.Behaviours;
+using Pare.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +53,18 @@ var connectionString = $"Host=localhost;Port=5432;Database={dbName};Username={db
 // Connection to database
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// Hangfire
+builder.Services.AddHangfire(config =>
+    config.UsePostgreSqlStorage(options =>
+        options.UseNpgsqlConnection(connectionString)
+    ));
+
+builder.Services.AddHangfireServer();
+builder.Services.AddScoped<RenewalJob>();
+
+builder.Services.AddScoped<ReminderJob>();
+builder.Services.AddScoped<EmailService>();
 
 // Routing
 builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
@@ -144,6 +160,23 @@ app.UseCors("AllowedOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Hangfire Dashboard
+app.UseHangfireDashboard("/hangfire");
+
+// Recurring jobs
+using var scope = app.Services.CreateScope();
+RecurringJob.AddOrUpdate<RenewalJob>(
+    "renewal-job",
+    job => job.ExecuteAsync(),
+    Cron.Daily
+);
+
+RecurringJob.AddOrUpdate<ReminderJob>(
+    "reminder-job",
+    job => job.ExecuteAsync(),
+    Cron.Daily
+);
 
 app.MapControllers();
 
