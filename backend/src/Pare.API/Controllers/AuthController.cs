@@ -3,8 +3,8 @@ using MediatR;
 using Pare.Application.User.DTOs;
 using Pare.Application.User.Commands.RegisterUser;
 using Pare.Application.User.Commands.LoginUser;
-using brevo_csharp.Model;
 using Pare.Application.User.Commands.RefreshUser;
+using Pare.Application.User.Commands.LogoutUser;
 
 namespace Pare.API.Controllers;
 
@@ -28,6 +28,14 @@ public class AuthController(IMediator mediator) : ControllerBase
     {
         var jwtToken = await _mediator.Send(new LoginUserCommand(request));
         return Ok(jwtToken);
+    }
+
+    // POST logout
+    [HttpPost("logout")]
+    public async Task<IActionResult> LogoutAsync([FromBody] RefreshTokenDto refreshToken)
+    {
+        await _mediator.Send(new LogoutUserCommand(refreshToken));
+        return NoContent();
     }
 
     // POST refresh
