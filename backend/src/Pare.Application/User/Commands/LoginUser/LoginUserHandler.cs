@@ -36,14 +36,15 @@ public class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwt
         existing.RefreshToken = refreshToken;
         existing.RefreshTokenExpiry = refreshTokenExpiry;
 
-        // Add generater token
+        // Add generated token
         await _repo.UpdateAsync(existing);
 
         // Generate JWT token
         var token = _jwtService.GenerateToken(existing.Id, existing.Email);
         var jwtToken = new AuthResponseDto
         {
-            JwtToken = token
+            JwtToken = token,
+            RefreshToken = refreshToken
         };
 
         return jwtToken;

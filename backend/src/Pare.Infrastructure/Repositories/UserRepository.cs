@@ -21,6 +21,12 @@ public class UserRepository(AppDbContext db) : IUserRepository
         return await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
     }
 
+    // GET by refresh token
+    public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+    {
+        return await _db.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+    }
+
     // POST create new user
     public async Task<User> CreateAsync(User user)
     {

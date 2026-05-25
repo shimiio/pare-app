@@ -50,7 +50,8 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
         var token = _jwtService.GenerateToken(user.Id, user.Email);
         var jwtToken = new AuthResponseDto
         {
-            JwtToken = token
+            JwtToken = token,
+            RefreshToken = refreshToken
         };
 
         return jwtToken;

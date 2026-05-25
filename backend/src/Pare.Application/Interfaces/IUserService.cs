@@ -6,6 +6,7 @@ public interface IUserService
 {
     Task<AuthResponseDto?> RegisterAsync(RegisterRequest request);
     Task<AuthResponseDto?> LoginAsync(LoginRequest request);
+    Task<AuthResponseDto?> RefreshAsync(RefreshTokenDto refreshToken);
     Task<UserDto?> GetByIdAsync(int id);
     Task<UpdateNameDto> UpdateNameAsync(int id, UpdateNameDto change);
     Task<ChangeEmailDto> ChangeEmailAsync(int id, ChangeEmailDto change);
