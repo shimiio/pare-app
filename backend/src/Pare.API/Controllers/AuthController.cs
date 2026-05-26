@@ -18,31 +18,65 @@ public class AuthController(IMediator mediator) : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequest request)
     {
-        var jwtToken = await _mediator.Send(new RegisterUserCommand(request));
-        return Created("", jwtToken);
+        var result = await _mediator.Send(new RegisterUserCommand(request));
+
+        Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays(30)
+        });
+
+        return Created("", new { jwtToken = result.JwtToken });
     }
 
     // POST login
     [HttpPost("login")]
     public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request)
     {
-        var jwtToken = await _mediator.Send(new LoginUserCommand(request));
-        return Ok(jwtToken);
+        var result = await _mediator.Send(new LoginUserCommand(request));
+
+        Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays(30)
+        });
+
+        return Ok(new { jwtToken = result.JwtToken });
     }
 
     // POST logout
     [HttpPost("logout")]
-    public async Task<IActionResult> LogoutAsync([FromBody] RefreshTokenDto refreshToken)
+    public async Task<IActionResult> LogoutAsync()
     {
-        await _mediator.Send(new LogoutUserCommand(refreshToken));
+        var refreshToken = Request.Cookies["refreshToken"];
+        if (refreshToken != null)
+            await _mediator.Send(new LogoutUserCommand(new RefreshTokenDto { RefreshToken = refreshToken }));
+
+        Response.Cookies.Delete("refreshToken");
         return NoContent();
     }
 
     // POST refresh
     [HttpPost("refresh")]
-    public async Task<IActionResult> RefreshAsync([FromBody] RefreshTokenDto refreshToken)
+    public async Task<IActionResult> RefreshAsync()
     {
-        var jwtToken = await _mediator.Send(new RefreshUserCommand(refreshToken));
-        return Ok(jwtToken);
+        var refreshToken = Request.Cookies["refreshToken"];
+        if (refreshToken == null) return Unauthorized();
+
+        var result = await _mediator.Send(new RefreshUserCommand(new RefreshTokenDto { RefreshToken = refreshToken }));
+
+        Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays(30)
+        });
+
+        return Ok(new { jwtToken = result.JwtToken });
     }
 }
