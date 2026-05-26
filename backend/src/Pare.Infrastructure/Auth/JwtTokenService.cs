@@ -25,7 +25,7 @@ public class JwtTokenService(IConfiguration config) : IJwtTokenService
 
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(Convert.ToDouble(_config["Jwt:ExpiresInHours"])),
+            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_config["Jwt:ExpiresInMinutes"] ?? "15")),
             signingCredentials: creds
         );
 
