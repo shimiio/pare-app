@@ -1,6 +1,7 @@
 import { useState } from "react";
-import type { User } from "../types";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "react-query";
+import type { User } from "../types";
 import {
   changeUserEmail,
   changeUserPassword,
@@ -8,15 +9,19 @@ import {
   updateUserCurrency,
   updateUserName,
 } from "../api/user";
+import { logout } from "../api/auth";
+import { useAuthStore } from "../store/useAuthStore";
 
 export default function SettingsForm({ user }: { user: User }) {
   const [name, setName] = useState<string>(user.name);
   const [email, setEmail] = useState<string>(user.email);
-  const [currentPassword, setCurrenctPassword] = useState<string>("");
+  const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [currency, setCurrency] = useState<string>(user.currency);
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
+  const navigate = useNavigate();
 
   // mutations
   const queryClient = useQueryClient();
@@ -58,7 +63,18 @@ export default function SettingsForm({ user }: { user: User }) {
   const deleteMutation = useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.clear();
+      clearAuth();
+      navigate("/");
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      queryClient.clear();
+      clearAuth();
+      navigate("/");
     },
   });
 
@@ -82,6 +98,10 @@ export default function SettingsForm({ user }: { user: User }) {
 
   const handleDeleteUser = () => {
     deleteMutation.mutate();
+  };
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
   };
 
   return (
@@ -118,6 +138,15 @@ export default function SettingsForm({ user }: { user: User }) {
                 autoComplete="off"
               />
             </div>
+
+            {!isEditing && (
+              <button
+                onClick={handleLogout}
+                className="hover:underline cursor-pointer mt-5"
+              >
+                Logout
+              </button>
+            )}
           </div>
 
           {isEditing ? (
@@ -165,7 +194,7 @@ export default function SettingsForm({ user }: { user: User }) {
                       type="password"
                       value={currentPassword}
                       placeholder="Current Password"
-                      onChange={(e) => setCurrenctPassword(e.target.value)}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
                       autoComplete="off"
                     />
 
@@ -185,7 +214,7 @@ export default function SettingsForm({ user }: { user: User }) {
                       onClick={() => {
                         setIsPasswordEditing(false);
                         handleChangePassword();
-                        setCurrenctPassword("");
+                        setCurrentPassword("");
                         setNewPassword("");
                       }}
                       className="2xl:text-xl text-white hover:bg-white/5 p-2 px-5 rounded-xl duration-100 cursor-pointer font-medium"
@@ -196,7 +225,7 @@ export default function SettingsForm({ user }: { user: User }) {
                     <button
                       onClick={() => {
                         setIsPasswordEditing(false);
-                        setCurrenctPassword("");
+                        setCurrentPassword("");
                         setNewPassword("");
                       }}
                       className="2xl:text-xl text-red-400 hover:bg-red-500/10 p-2 px-5 rounded-xl duration-100 cursor-pointer font-medium"
