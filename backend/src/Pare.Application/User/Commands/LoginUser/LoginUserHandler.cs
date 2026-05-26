@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using MediatR;
 using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
@@ -25,11 +26,25 @@ public class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwt
         bool verify = _hasher.Verify(request.Password, existing.PasswordHash);
         if (!verify) throw new UnauthorizedException("Invalid email or password");
 
+        // Generate refresh token
+        var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+
+        // Create refresh token expiry
+        var refreshTokenExpiry = DateTime.UtcNow.AddDays(30);
+
+        // Update user with new refresh token and expiry
+        existing.RefreshToken = refreshToken;
+        existing.RefreshTokenExpiry = refreshTokenExpiry;
+
+        // Add generated token
+        await _repo.UpdateAsync(existing);
+
         // Generate JWT token
         var token = _jwtService.GenerateToken(existing.Id, existing.Email);
         var jwtToken = new AuthResponseDto
         {
-            JwtToken = token
+            JwtToken = token,
+            RefreshToken = refreshToken
         };
 
         return jwtToken;

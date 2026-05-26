@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using MediatR;
 using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
@@ -25,13 +26,21 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
         // Hash the password
         string hash = _hasher.Hash(request.Password);
 
+        // Generate refresh token
+        var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+
+        // Create refresh token expiry
+        var refreshTokenExpiry = DateTime.UtcNow.AddDays(30);
+
         // Create the user
         var user = new Domain.Entities.User
         {
             Name = request.Name,
             Email = request.Email,
             PasswordHash = hash,
-            Currency = "EUR"
+            Currency = "EUR",
+            RefreshToken = refreshToken,
+            RefreshTokenExpiry = refreshTokenExpiry
         };
 
         // Create user
@@ -41,7 +50,8 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
         var token = _jwtService.GenerateToken(user.Id, user.Email);
         var jwtToken = new AuthResponseDto
         {
-            JwtToken = token
+            JwtToken = token,
+            RefreshToken = refreshToken
         };
 
         return jwtToken;

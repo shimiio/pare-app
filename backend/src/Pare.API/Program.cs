@@ -30,14 +30,18 @@ builder.Host.UseSerilog((ctx, config) =>
 });
 
 // CORS
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? throw new InvalidOperationException("Cors:AllowedOrigins not configured");
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowedOrigins", policy =>
     {
         policy
-            .AllowAnyOrigin()
+            .WithOrigins(allowedOrigins)
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
@@ -54,7 +58,7 @@ var connectionString = $"Host=localhost;Port=5432;Database={dbName};Username={db
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Hangfire
+// Hangfire jobs
 builder.Services.AddHangfire(config =>
     config.UsePostgreSqlStorage(options =>
         options.UseNpgsqlConnection(connectionString)
@@ -65,6 +69,8 @@ builder.Services.AddScoped<RenewalJob>();
 
 builder.Services.AddScoped<ReminderJob>();
 builder.Services.AddScoped<EmailService>();
+
+builder.Services.AddScoped<TokenCleanupJob>();
 
 // Routing
 builder.Services.AddRouting(options => { options.LowercaseUrls = true; });
@@ -174,6 +180,12 @@ RecurringJob.AddOrUpdate<RenewalJob>(
 
 RecurringJob.AddOrUpdate<ReminderJob>(
     "reminder-job",
+    job => job.ExecuteAsync(),
+    Cron.Daily
+);
+
+RecurringJob.AddOrUpdate<TokenCleanupJob>(
+    "token-cleanup-job",
     job => job.ExecuteAsync(),
     Cron.Daily
 );
