@@ -4,10 +4,11 @@ using Task = System.Threading.Tasks.Task;
 using brevo_csharp.Api;
 using BrevoConfiguration = brevo_csharp.Client.Configuration;
 using brevo_csharp.Model;
+using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Services;
 
-public class EmailService(IConfiguration config, ILogger<EmailService> logger)
+public class EmailService(IConfiguration config, ILogger<EmailService> logger) : IEmailService
 {
     public async Task SendReminderAsync(string toEmail, string toName, string subscriptionName, decimal price, string currency, DateOnly billingDate)
     {

@@ -2,11 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Pare.Domain.Emums;
 using Pare.Infrastructure.Data;
-using Pare.Infrastructure.Services;
+using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Jobs;
 
-public class ReminderJob(AppDbContext db, EmailService emailService, ILogger<ReminderJob> logger)
+public class ReminderJob(AppDbContext db, IEmailService emailService, ILogger<ReminderJob> logger)
 {
     public async Task ExecuteAsync()
     {
