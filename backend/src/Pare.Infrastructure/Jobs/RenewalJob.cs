@@ -23,13 +23,7 @@ public class RenewalJob(AppDbContext db, ILogger<RenewalJob> logger)
 
         foreach (var subscription in subscriptions)
         {
-            subscription.NextBillingDate = subscription.BillingCycle switch
-            {
-                BillingCycle.Monthly => subscription.NextBillingDate.AddMonths(1),
-                BillingCycle.Yearly => subscription.NextBillingDate.AddYears(1),
-                BillingCycle.Weekly => subscription.NextBillingDate.AddDays(7),
-                _ => subscription.NextBillingDate
-            };
+            subscription.NextBillingDate = subscription.CalculateNextBillingDate();
 
             logger.LogInformation(
                 "RenewalJob: renewed subscription {Id} for user {UserId}, next billing {Date}",
