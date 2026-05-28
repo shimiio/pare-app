@@ -5,4 +5,7 @@
     <Project Path="src/Pare.Domain/Pare.Domain.csproj" />
     <Project Path="src/Pare.Infrastructure/Pare.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Pare.UnitTests/Pare.UnitTests.csproj" />
+  </Folder>
 </Solution>
