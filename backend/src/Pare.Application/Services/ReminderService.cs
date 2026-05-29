@@ -10,6 +10,7 @@ public class ReminderService(IEmailService emailService, ISubscriptionRepository
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var reminderDate = today.AddDays(3);
 
+        // get subscriptions
         var subscriptions = await subscriptionRepository.GetActiveWithBillingDateAsync(reminderDate);
 
         if (!subscriptions.Any())
@@ -18,16 +19,15 @@ public class ReminderService(IEmailService emailService, ISubscriptionRepository
             return;
         }
 
-        foreach (var subscription in subscriptions)
+        // Group subscriptions by user
+        var grouped = subscriptions.GroupBy(s => s.User);
+
+        foreach (var group in grouped)
         {
             await emailService.SendReminderAsync(
-                toEmail: subscription.User.Email,
-                toName: subscription.User.Name,
-                subscriptionName: subscription.Name,
-                price: subscription.Price,
-                currency: subscription.Currency,
-                billingDate: subscription.NextBillingDate
-            );
+                toEmail: group.Key.Email,
+                toName: group.Key.Name,
+                subscriptions: [.. group]);
         }
 
         logger.LogInformation("ReminderService: sent {Count} reminders", subscriptions.Count());

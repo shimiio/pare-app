@@ -70,7 +70,11 @@ builder.Services.AddScoped<RenewalJob>();
 
 builder.Services.AddScoped<IReminderService, ReminderService>();
 builder.Services.AddScoped<ReminderJob>();
-builder.Services.AddScoped<EmailService>();
+
+if (builder.Configuration["Email:Host"] != null)
+    builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+else
+    builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddScoped<TokenCleanupJob>();
 

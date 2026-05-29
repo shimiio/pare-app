@@ -1,42 +1,45 @@
+using System.Net;
+using System.Net.Mail;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Task = System.Threading.Tasks.Task;
-using brevo_csharp.Api;
-using BrevoConfiguration = brevo_csharp.Client.Configuration;
-using brevo_csharp.Model;
 using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Services;
 
-public class EmailService(IConfiguration config, ILogger<EmailService> logger) : IEmailService
+public class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> logger) : IEmailService
 {
     public async Task SendReminderAsync(string toEmail, string toName, IEnumerable<Domain.Entities.Subscription> subscriptions)
     {
-        var apiKey = config["Brevo:ApiKey"] ?? throw new InvalidOperationException("Brevo:ApiKey not configured");
+        var host = config["Email:Host"] ?? "localhost";
+        var port = int.Parse(config["Email:Port"] ?? "1025");
 
-        BrevoConfiguration.Default.ApiKey["api-key"] = apiKey;
-
-        var apiInstance = new TransactionalEmailsApi();
+        using var client = new SmtpClient(host, port)
+        {
+            EnableSsl = false,
+            Credentials = CredentialCache.DefaultNetworkCredentials
+        };
 
         var nextBillingDate = subscriptions.First().NextBillingDate;
 
         var rows = string.Join("", subscriptions.Select(s =>
             $"<p>- <strong>{s.Name} — {s.Price} {s.Currency}</strong></p>"));
 
-        var email = new SendSmtpEmail(
-            sender: new SendSmtpEmailSender(name: "Pare", email: "shimiio.dev@gmail.com"),
-            to: [new SendSmtpEmailTo(email: toEmail, name: toName)],
-            subject: $"Upcoming charges on {nextBillingDate}",
-            htmlContent: $"""
+        var message = new MailMessage
+        {
+            From = new MailAddress("noreply@pare.dev", "Pare"),
+            Subject = $"Upcoming charges on {nextBillingDate}",
+            IsBodyHtml = true,
+            Body = $"""
                 <h2>Subscription Reminder</h2>
                 <p>Hi {toName},</p>
                 <p>Your subscriptions billing on <strong>{nextBillingDate}</strong>:</p>
                 {rows}
                 <p>— Pare App</p>
                 """
-        );
+        };
+        message.To.Add(new MailAddress(toEmail, toName));
 
-        await apiInstance.SendTransacEmailAsync(email);
+        await client.SendMailAsync(message);
 
         logger.LogInformation(
             "Reminder sent to {Email}",
