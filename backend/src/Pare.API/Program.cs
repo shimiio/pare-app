@@ -17,6 +17,7 @@ using Pare.Infrastructure.Auth;
 using Pare.API.Middleware;
 using Pare.Application.Behaviours;
 using Pare.Infrastructure.Services;
+using Pare.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -67,6 +68,7 @@ builder.Services.AddHangfire(config =>
 builder.Services.AddHangfireServer();
 builder.Services.AddScoped<RenewalJob>();
 
+builder.Services.AddScoped<IReminderService, ReminderService>();
 builder.Services.AddScoped<ReminderJob>();
 builder.Services.AddScoped<EmailService>();
 
