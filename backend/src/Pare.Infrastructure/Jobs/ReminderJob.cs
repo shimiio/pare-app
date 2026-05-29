@@ -1,24 +1,18 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Pare.Domain.Emums;
-using Pare.Infrastructure.Data;
 using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Jobs;
 
-public class ReminderJob(AppDbContext db, IEmailService emailService, ILogger<ReminderJob> logger)
+public class ReminderJob(IEmailService emailService, ISubscriptionRepository subscriptionRepository, ILogger<ReminderJob> logger)
 {
     public async Task ExecuteAsync()
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var reminderDate = today.AddDays(3);
 
-        var subscriptions = await db.Subscriptions
-            .Include(s => s.User)
-            .Where(s => s.Status == Status.Active && s.NextBillingDate == reminderDate)
-            .ToListAsync();
+        var subscriptions = await subscriptionRepository.GetActiveWithBillingDateAsync(reminderDate);
 
-        if (subscriptions.Count == 0)
+        if (!subscriptions.Any())
         {
             logger.LogInformation("ReminderJob: no reminders to send today");
             return;
@@ -36,6 +30,6 @@ public class ReminderJob(AppDbContext db, IEmailService emailService, ILogger<Re
             );
         }
 
-        logger.LogInformation("ReminderJob: sent {Count} reminders", subscriptions.Count);
+        logger.LogInformation("ReminderJob: sent {Count} reminders", subscriptions.Count());
     }
 }

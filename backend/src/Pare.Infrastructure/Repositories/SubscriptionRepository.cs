@@ -66,4 +66,12 @@ public class SubscriptionRepository(AppDbContext db) : ISubscriptionRepository
 
         return rowsDeleted > 0;
     }
+
+    public async Task<IEnumerable<Subscription>> GetActiveWithBillingDateAsync(DateOnly reminderDate)
+    {
+        return await _db.Subscriptions
+            .Include(s => s.User)
+            .Where(s => s.Status == Domain.Emums.Status.Active && s.NextBillingDate == reminderDate)
+            .ToListAsync();
+    }
 }
