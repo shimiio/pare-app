@@ -33,3 +33,7 @@ jobs:
       # Build the project
       - name: Build
         run: dotnet build backend/ --no-restore --configuration Release
+
+        # Run unit tests
+      - name: Run unit tests
+        run: dotnet test backend/tests/Pare.UnitTests --no-restore --verbosity normal
