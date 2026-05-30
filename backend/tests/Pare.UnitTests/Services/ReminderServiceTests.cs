@@ -33,10 +33,7 @@ public class ReminderServiceTests
             e => e.SendReminderAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<decimal>(),
-                It.IsAny<string>(),
-                It.IsAny<DateOnly>()),
+                It.IsAny<IEnumerable<Subscription>>()),
             Times.Never);
     }
 
@@ -65,10 +62,7 @@ public class ReminderServiceTests
             e => e.SendReminderAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<decimal>(),
-                It.IsAny<string>(),
-                It.IsAny<DateOnly>()),
+                It.IsAny<IEnumerable<Subscription>>()),
             Times.Once);
     }
 }
