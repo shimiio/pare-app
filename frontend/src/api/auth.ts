@@ -5,3 +5,7 @@ export const register = (name: string, email: string, password: string) =>
 
 export const login = (email: string, password: string) =>
   apiClient.post("/auth/login", { email, password });
+
+export const logout = () => apiClient.post("/auth/logout");
+
+export const refresh = () => apiClient.post("/auth/refresh");

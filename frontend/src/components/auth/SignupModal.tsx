@@ -14,7 +14,7 @@ export default function SignupModal({ onClose }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+  const setToken = useAuthStore((state) => state.setToken);
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -24,8 +24,7 @@ export default function SignupModal({ onClose }: Props) {
 
   const handleSignup = async () => {
     const response = await register(name, email, password);
-    localStorage.setItem("jwtToken", response.data.jwtToken);
-    initializeAuth(response.data.jwtToken);
+    setToken(response.data.jwtToken);
     navigate("/dashboard");
   };
 

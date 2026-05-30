@@ -13,7 +13,7 @@ export default function LoginModal({ onClose }: Props) {
   const [isClosing, setIsClosing] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+  const setToken = useAuthStore((state) => state.setToken);
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -23,8 +23,7 @@ export default function LoginModal({ onClose }: Props) {
 
   const handleLogin = async () => {
     const response = await login(email, password);
-    localStorage.setItem("jwtToken", response.data.jwtToken);
-    initializeAuth(response.data.jwtToken);
+    setToken(response.data.jwtToken);
     navigate("/dashboard");
   };
 

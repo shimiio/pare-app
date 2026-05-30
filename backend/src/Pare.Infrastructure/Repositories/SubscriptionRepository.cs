@@ -5,14 +5,9 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Repositories;
 
-public class SubscriptionRepository : ISubscriptionRepository
+public class SubscriptionRepository(AppDbContext db) : ISubscriptionRepository
 {
-    private readonly AppDbContext _db;
-
-    public SubscriptionRepository(AppDbContext db)
-    {
-        _db = db;
-    }
+    private readonly AppDbContext _db = db;
 
     // GET all
     public async Task<IEnumerable<Subscription>> GetAllAsync(int userId)
@@ -70,5 +65,13 @@ public class SubscriptionRepository : ISubscriptionRepository
             .ExecuteDeleteAsync();
 
         return rowsDeleted > 0;
+    }
+
+    public async Task<IEnumerable<Subscription>> GetActiveWithBillingDateAsync(DateOnly reminderDate)
+    {
+        return await _db.Subscriptions
+            .Include(s => s.User)
+            .Where(s => s.Status == Domain.Emums.Status.Active && s.NextBillingDate == reminderDate)
+            .ToListAsync();
     }
 }

@@ -5,14 +5,9 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(AppDbContext db) : IUserRepository
 {
-    private readonly AppDbContext _db;
-
-    public UserRepository(AppDbContext db)
-    {
-        _db = db;
-    }
+    private readonly AppDbContext _db = db;
 
     // GET by email
     public async Task<User?> GetByEmailAsync(string email)
@@ -24,6 +19,12 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetByIdAsync(int id)
     {
         return await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    // GET by refresh token
+    public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+    {
+        return await _db.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
     }
 
     // POST create new user

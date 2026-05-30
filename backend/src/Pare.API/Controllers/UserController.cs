@@ -1,22 +1,23 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Pare.Application.Interfaces;
-using Pare.Application.DTOs;
+using MediatR;
+using Pare.Application.User.DTOs;
+using Pare.Application.User.Queries.GetUserById;
+using Pare.Application.User.Commands.UpdateUserName;
+using Pare.Application.User.Commands.ChangeUserEmail;
+using Pare.Application.User.Commands.ChangeUserPassword;
+using Pare.Application.User.Commands.UpdateUserCurrency;
+using Pare.Application.User.Commands.DeleteUser;
 
 namespace Pare.API.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class UserController : ControllerBase
+public class UserController(IMediator mediator) : ControllerBase
 {
-    private readonly IUserService _service;
-
-    public UserController(IUserService service)
-    {
-        _service = service;
-    }
+    private readonly IMediator _mediator = mediator;
 
     private int GetUserId() => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
@@ -25,7 +26,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetCurrentUserAsync()
     {
         var userId = GetUserId();
-        var user = await _service.GetByIdAsync(userId);
+        var user = await _mediator.Send(new GetUserByIdQuery(userId));
         return Ok(user);
     }
 
@@ -34,7 +35,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> UpdateNameAsync([FromBody] UpdateNameDto update)
     {
         var userId = GetUserId();
-        var updated = await _service.UpdateNameAsync(userId, update);
+        var updated = await _mediator.Send(new UpdateUserNameCommand(userId, update));
         return Ok(updated);
     }
 
@@ -43,7 +44,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> ChangeEmailAsync([FromBody] ChangeEmailDto change)
     {
         var userId = GetUserId();
-        var changed = await _service.ChangeEmailAsync(userId, change);
+        var changed = await _mediator.Send(new ChangeUserEmailCommand(userId, change));
         return Ok(changed);
     }
 
@@ -52,7 +53,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto change)
     {
         var userId = GetUserId();
-        var changed = await _service.ChangePasswordAsync(userId, change);
+        var changed = await _mediator.Send(new ChangeUserPasswordCommand(userId, change));
         return Ok(changed);
     }
 
@@ -61,7 +62,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> UpdateCurrencyAsync([FromBody] UpdateCurrencyDto update)
     {
         var userId = GetUserId();
-        var updated = await _service.UpdateCurrencyAsync(userId, update);
+        var updated = await _mediator.Send(new UpdateUserCurrencyCommand(userId, update));
         return Ok(updated);
     }
 
@@ -70,7 +71,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> DeleteByIdAsync()
     {
         var userId = GetUserId();
-        var deleted = await _service.DeleteByIdAsync(userId);
+        var deleted = await _mediator.Send(new DeleteUserCommand(userId));
         if (!deleted) return BadRequest("Failed to delete user");
 
         return NoContent();

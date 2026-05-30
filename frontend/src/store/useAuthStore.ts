@@ -4,7 +4,9 @@ interface AuthState {
   isAuthenticated: boolean;
   token: string | null;
   isLoading: boolean;
-  initializeAuth: (token: string | null) => void;
+  setToken: (token: string) => void;
+  clearAuth: () => void;
+  setLoading: (loading: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -12,7 +14,15 @@ export const useAuthStore = create<AuthState>((set) => ({
   token: null,
   isLoading: true,
 
-  initializeAuth: (token) => {
-    set({ isAuthenticated: !!token, token, isLoading: false });
+  setToken: (token) => {
+    set({ isAuthenticated: true, token, isLoading: false });
+  },
+
+  clearAuth: () => {
+    set({ isAuthenticated: false, token: null, isLoading: false });
+  },
+
+  setLoading: (loading) => {
+    set({ isLoading: loading });
   },
 }));

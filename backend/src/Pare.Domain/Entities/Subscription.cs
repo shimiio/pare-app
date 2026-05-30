@@ -4,6 +4,17 @@ namespace Pare.Domain.Entities;
 
 public class Subscription
 {
+    public DateOnly CalculateNextBillingDate()
+    {
+        return BillingCycle switch
+        {
+            BillingCycle.Monthly => NextBillingDate.AddMonths(1),
+            BillingCycle.Yearly => NextBillingDate.AddYears(1),
+            BillingCycle.Weekly => NextBillingDate.AddDays(7),
+            _ => NextBillingDate
+        };
+    }
+
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public decimal Price { get; set; }

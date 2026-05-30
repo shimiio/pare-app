@@ -1,6 +1,7 @@
 # backend
 bin/
 obj/
+logs/
 
 # frontend
 node_modules/
