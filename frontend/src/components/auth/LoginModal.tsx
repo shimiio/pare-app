@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Modal from "../ui/Modal";
 import AuthInput from "../ui/AuthInput";
 import { login } from "../../api/auth";
@@ -13,6 +15,7 @@ export default function LoginModal({ onClose }: Props) {
   const [isClosing, setIsClosing] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<string[]>([]);
   const setToken = useAuthStore((state) => state.setToken);
   const navigate = useNavigate();
 
@@ -21,10 +24,31 @@ export default function LoginModal({ onClose }: Props) {
     setTimeout(() => onClose(), 200);
   };
 
+  // mutation
+  const mutation = useMutation({
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      login(email, password),
+    onSuccess: (response) => {
+      setToken(response.data.jwtToken);
+      navigate("/dashboard");
+      onClose();
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        const data = error.response?.data?.errors as
+          | Record<string, string[]>
+          | undefined;
+        if (data) {
+          const messages = Object.values(data).flat();
+          setErrors(messages);
+        }
+      }
+    },
+  });
+
+  // handle
   const handleLogin = async () => {
-    const response = await login(email, password);
-    setToken(response.data.jwtToken);
-    navigate("/dashboard");
+    mutation.mutate({ email, password });
   };
 
   return (
@@ -32,6 +56,14 @@ export default function LoginModal({ onClose }: Props) {
       <h2 className="font-medium 2xl:text-3xl 2xl:mb-12">Log In</h2>
 
       <div className="flex flex-col 2xl:gap-5 2xl:mb-15">
+        {errors.length > 0 && (
+          <div className="text-red-400 text-sm space-y-1">
+            {errors.map((err, i) => (
+              <div key={i}>• {err}</div>
+            ))}
+          </div>
+        )}
+        
         <AuthInput
           name="email"
           value={email}

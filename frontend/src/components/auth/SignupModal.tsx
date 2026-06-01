@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Modal from "../ui/Modal";
 import AuthInput from "../ui/AuthInput";
 import { register } from "../../api/auth";
@@ -14,6 +16,7 @@ export default function SignupModal({ onClose }: Props) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<string[]>([]);
   const setToken = useAuthStore((state) => state.setToken);
   const navigate = useNavigate();
 
@@ -22,17 +25,52 @@ export default function SignupModal({ onClose }: Props) {
     setTimeout(() => onClose(), 200);
   };
 
+  // mutation
+  const mutation = useMutation({
+    mutationFn: ({
+      name,
+      email,
+      password,
+    }: {
+      name: string;
+      email: string;
+      password: string;
+    }) => register(name, email, password),
+    onSuccess: (response) => {
+      setToken(response.data.jwtToken);
+      navigate("/dashboard");
+      onClose();
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        const data = error.response?.data?.errors as
+          | Record<string, string[]>
+          | undefined;
+        if (data) {
+          const messages = Object.values(data).flat();
+          setErrors(messages);
+        }
+      }
+    },
+  });
+
+  // handle
   const handleSignup = async () => {
-    const response = await register(name, email, password);
-    setToken(response.data.jwtToken);
-    navigate("/dashboard");
+    mutation.mutate({ name, email, password });
   };
 
   return (
     <Modal onClose={handleClose} isClosing={isClosing} className="2xl:w-110">
       <h2 className="font-medium 2xl:text-3xl 2xl:mb-12">Sign Up</h2>
-
       <div className="flex flex-col 2xl:gap-5 2xl:mb-15">
+        {errors.length > 0 && (
+          <div className="text-red-400 text-sm space-y-1">
+            {errors.map((err, i) => (
+              <div key={i}>• {err}</div>
+            ))}
+          </div>
+        )}
+
         <AuthInput
           name="name"
           value={name}
@@ -47,15 +85,19 @@ export default function SignupModal({ onClose }: Props) {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <AuthInput
-          name="password"
-          type="password"
-          value={password}
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="flex flex-col">
+          <AuthInput
+            name="password"
+            type="password"
+            value={password}
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <span className="text-white/40 text-xs pl-3 pt-2">
+            Min 8 characters, 1 uppercase, 1 number
+          </span>
+        </div>
       </div>
-
       <button
         className="cursor-pointer bg-white/5 duration-200 transition ease-in-out hover:bg-white/15 rounded-xl 2xl:p-2.5 2xl:mx-10 2xl:text-xl"
         onClick={handleSignup}
