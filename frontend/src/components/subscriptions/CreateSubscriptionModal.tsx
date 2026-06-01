@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import axios from "axios";
 import Modal from "../ui/Modal";
 import { type BillingCycleValue, type WriteSubscription } from "../../types";
 import { createSubscription } from "../../api/subscriptions";
@@ -20,6 +21,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
   const [currency, setCurrency] = useState("EUR"); // default value
   const [cycle, setCycle] = useState<BillingCycleValue>(0);
   const [serviceUrl, setServiceUrl] = useState<string>("");
+  const [errors, setErrors] = useState<string[]>([]);
 
   const isoCurrent: string = new Date().toISOString().split("T")[0];
   const [startDate, setStartDate] = useState(isoCurrent);
@@ -53,6 +55,17 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
       onClose();
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        const data = error.response?.data?.errors as
+          | Record<string, string[]>
+          | undefined;
+        if (data) {
+          const messages = Object.values(data).flat();
+          setErrors(messages);
+        }
+      }
     },
   });
 
@@ -161,11 +174,22 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
         ></input>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+        {/* Error Messages */}
+        {errors.length > 0 ? (
+          <div className="text-red-400 text-sm space-y-1">
+            {errors.map((err, i) => (
+              <div key={i}>• {err}</div>
+            ))}
+          </div>
+        ) : (
+          <div></div>
+        )}
+
         {/* Create Button */}
         <button
           onClick={handleCreate}
-          className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-2xl hover:bg-white/10 duration-200 rounded-xl"
+          className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-2xl hover:bg-white/10 duration-200 rounded-xl h-fit"
         >
           Create
         </button>

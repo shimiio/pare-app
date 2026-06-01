@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import axios from "axios";
 import Modal from "../ui/Modal";
 import {
   type BillingCycleValue,
@@ -40,6 +41,7 @@ export default function EditSubscriptionModal({
   const [serviceUrl, setServiceUrl] = useState<string | undefined>(
     subscription?.serviceUrl,
   );
+  const [errors, setErrors] = useState<string[]>([]);
 
   const handleClose = () => {
     setIsClosing(true);
@@ -72,6 +74,17 @@ export default function EditSubscriptionModal({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["subscriptions"] });
       onClose();
+    },
+    onError: (error: unknown) => {
+      if (axios.isAxiosError(error)) {
+        const data = error.response?.data?.errors as
+          | Record<string, string[]>
+          | undefined;
+        if (data) {
+          const messages = Object.values(data).flat();
+          setErrors(messages);
+        }
+      }
     },
   });
 
@@ -213,7 +226,7 @@ export default function EditSubscriptionModal({
         {/* Delete Subscription Button */}
         <button
           onClick={handleDelete}
-          className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-xl text-red-300 hover:bg-red-200/10 rounded-xl duration-200"
+          className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-xl text-red-400 hover:bg-red-400/10 rounded-xl duration-200"
         >
           Delete Subscription
         </button>
@@ -226,6 +239,15 @@ export default function EditSubscriptionModal({
           Edit
         </button>
       </div>
+
+      {/* Error Messages */}
+      {errors.length > 0 && (
+        <div className="text-red-400 text-sm space-y-1 mt-3">
+          {errors.map((err, i) => (
+            <div key={i}>• {err}</div>
+          ))}
+        </div>
+      )}
     </Modal>
   );
 }
