@@ -63,6 +63,7 @@ export default function SignupModal({ onClose }: Props) {
     <Modal onClose={handleClose} isClosing={isClosing} className="2xl:w-110">
       <h2 className="font-medium 2xl:text-3xl 2xl:mb-12">Sign Up</h2>
       <div className="flex flex-col 2xl:gap-5 2xl:mb-15">
+        {/* Error Messages */}
         {errors.length > 0 && (
           <div className="text-red-400 text-sm space-y-1">
             {errors.map((err, i) => (
@@ -93,7 +94,7 @@ export default function SignupModal({ onClose }: Props) {
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <span className="text-white/40 text-xs pl-3 pt-2">
+          <span className="text-white/40 text-xs pl-3 mt-2">
             Min 8 characters, 1 uppercase, 1 number
           </span>
         </div>

@@ -56,6 +56,7 @@ export default function LoginModal({ onClose }: Props) {
       <h2 className="font-medium 2xl:text-3xl 2xl:mb-12">Log In</h2>
 
       <div className="flex flex-col 2xl:gap-5 2xl:mb-15">
+        {/* Error Messages */}
         {errors.length > 0 && (
           <div className="text-red-400 text-sm space-y-1">
             {errors.map((err, i) => (
@@ -63,7 +64,7 @@ export default function LoginModal({ onClose }: Props) {
             ))}
           </div>
         )}
-        
+
         <AuthInput
           name="email"
           value={email}
