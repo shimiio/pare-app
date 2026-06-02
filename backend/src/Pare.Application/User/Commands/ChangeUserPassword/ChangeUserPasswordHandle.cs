@@ -20,7 +20,7 @@ public class ChangeUserPasswordHandle(IUserRepository repo, IPasswordHasher hash
 
         // Verify password
         bool verify = _hasher.Verify(command.Change.CurrentPassword, existing.PasswordHash);
-        if (!verify) throw new UnauthorizedException("Invalid password");
+        if (!verify) throw new UnauthorizedException("Invalid current password");
 
         // Hash the new password
         string hash = _hasher.Hash(command.Change.NewPassword);
