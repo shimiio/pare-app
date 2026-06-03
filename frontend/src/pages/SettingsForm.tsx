@@ -12,6 +12,7 @@ import {
 } from "../api/user";
 import { logout } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
+import { extractErrors } from "../utils/errorUtils";
 
 export default function SettingsForm({ user }: { user: User }) {
   const [name, setName] = useState<string>(user.name);
@@ -43,11 +44,7 @@ export default function SettingsForm({ user }: { user: User }) {
       handleSuccess();
     },
     onError: (error: unknown) => {
-      if (axios.isAxiosError(error) && error.response?.data?.errors) {
-        setNameError(
-          Object.values(error.response.data.errors).flat() as string[],
-        );
-      }
+      setNameError(extractErrors(error));
     },
   });
 
@@ -58,11 +55,7 @@ export default function SettingsForm({ user }: { user: User }) {
       handleSuccess();
     },
     onError: (error: unknown) => {
-      if (axios.isAxiosError(error) && error.response?.data?.errors) {
-        setEmailError(
-          Object.values(error.response.data.errors).flat() as string[],
-        );
-      }
+      setEmailError(extractErrors(error));
     },
   });
 
