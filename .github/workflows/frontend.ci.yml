@@ -43,3 +43,8 @@ jobs:
         run: pnpm build
         env:
           VITE_CURRENCY_RATES_API_KEY: ${{ secrets.VITE_CURRENCY_RATES_API_KEY }}
+
+      # Run tests
+      - name: Run tests
+        working-directory: frontend
+        run: pnpm test:run
