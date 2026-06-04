@@ -50,6 +50,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
   const isoNextBilling = calculateNextBilling(startDate, cycle);
   const convertedNextBilling: string = formatNextBilling(isoNextBilling);
 
+  // delay for serviceUrl input
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedServiceUrl(serviceUrl);
@@ -154,7 +155,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           </div>
         </div>
 
-        <div className="flex items-start justify-between mb-5 mx-2">
+        <div className="flex items-start justify-between mb-5">
           {/* Billing Cycle */}
           <div className="flex flex-col">
             <label className="text-white/30 text-sm">Billing Cycle</label>
@@ -171,7 +172,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
             </select>
           </div>
 
-          <div className="flex flex-col w-30 gap-2">
+          <div className="flex flex-col w-33 gap-2">
             {/* Start Date */}
             <div className="flex flex-col">
               <label className="text-white/30 text-sm">Start Date</label>
@@ -182,8 +183,9 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                 onChange={(e) => setStartDate(e.target.value)}
               />
             </div>
+
             {/* Next Billing Date */}
-            <div className="flex flex-col w-30">
+            <div className="flex flex-col w-33">
               <label className="text-white/30 text-sm">Next Billing Date</label>
               <input
                 type="text"
