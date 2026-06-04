@@ -83,21 +83,23 @@ export default function Subscriptions() {
               {activeOpen &&
                 groupedEntries.map(([date, subs]) => (
                   <div key={date}>
-                    <div className="2xl:text-xl border-b border-white/40 2xl:pb-2.5 2xl:px-2">
+                    <div className="2xl:text-xl border-b border-white/40 2xl:pb-2.5 2xl:px-2 mb-3">
                       {readableDate(date)}
                     </div>
-                    {subs.map((sub) => (
-                      <div key={sub.id} className="flex flex-col">
-                        <SubscriptionCard
-                          subscription={sub}
-                          onClick={() => {
-                            setModal("edit");
-                            setSelectedSubscription(sub);
-                          }}
-                          showDaysLabel
-                        />
-                      </div>
-                    ))}
+                    <div className="space-y-2">
+                      {subs.map((sub) => (
+                        <div key={sub.id} className="flex flex-col">
+                          <SubscriptionCard
+                            subscription={sub}
+                            onClick={() => {
+                              setModal("edit");
+                              setSelectedSubscription(sub);
+                            }}
+                            showDaysLabel
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ))}
             </div>
