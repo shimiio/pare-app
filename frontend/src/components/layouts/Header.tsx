@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { User } from "lucide-react";
 import LoginModal from "../auth/LoginModal";
 import SignupModal from "../auth/SignupModal";
 import { useAuthStore } from "../../store/useAuthStore";
-import { useUser } from "../../hooks/useUser";
 
 const routeTitles: Record<string, string> = {
   "/": "Pare",
@@ -14,9 +12,14 @@ const routeTitles: Record<string, string> = {
   "/settings": "Settings",
 };
 
+const today = new Date().toLocaleDateString("en-US", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+});
+
 export default function Header() {
   const [modal, setModal] = useState<"login" | "signup" | null>(null);
-  const { data } = useUser();
   const location = useLocation();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -29,9 +32,8 @@ export default function Header() {
           {currentTitle}
         </div>
         {isAuthenticated ? (
-          <div className="flex flex-row font-medium items-center gap-3 2xl:text-2xl">
-            {data?.name}
-            <User />
+          <div className="flex items-center text-white/60 flex-row gap-3 2xl:text-xl">
+            Today is {today}
           </div>
         ) : (
           <div className="flex 2xl:gap-6">

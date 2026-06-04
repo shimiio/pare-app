@@ -20,7 +20,7 @@ export default function SubscriptionCard({
   return (
     <button
       onClick={onClick}
-      className="flex flex-row justify-between rounded-xl 2xl:p-6 2xl:px-15 2x:mx-5 bg-white/5 hover:bg-white/10 duration-200 cursor-pointer"
+      className="flex flex-row justify-between rounded-xl 2xl:p-6 2xl:px-15 2x:mx-5 bg-white/5 hover:bg-white/10 duration-200 mx-3 cursor-pointer"
     >
       <div className="flex flex-row gap-7 items-center">
         {subscription.serviceUrl.length > 3 ? (

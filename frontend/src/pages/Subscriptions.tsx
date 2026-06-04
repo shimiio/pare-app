@@ -81,8 +81,11 @@ export default function Subscriptions() {
               {activeOpen &&
                 groupedEntries.map(([date, subs]) => (
                   <div key={date}>
-                    <div className="2xl:text-xl border-b border-white/40 2xl:pb-2.5 2xl:px-2 mb-3">
-                      {readableDate(date)}
+                    <div className="flex justify-between 2xl:text-xl border-b border-white/40 2xl:pb-2.5 2xl:px-2 mb-3">
+                      <span>{readableDate(date)}</span>
+                      <span className="flex items-end text-white/40 text-sm tracking-wider">
+                        NEXT PAYMENT
+                      </span>
                     </div>
                     <div className="space-y-2">
                       {subs.map((sub) => (
