@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
+import { Asterisk } from "lucide-react";
 import axios from "axios";
 import Modal from "../ui/Modal";
 import { type BillingCycleValue, type WriteSubscription } from "../../types";
@@ -9,6 +10,7 @@ import {
   formatNextBilling,
   sanitizePriceInput,
 } from "../../utils/subscriptionUtils";
+import { getDomain } from "../../utils/formatUtils";
 
 type Props = {
   onClose: () => void;
@@ -21,6 +23,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
   const [currency, setCurrency] = useState("EUR"); // default value
   const [cycle, setCycle] = useState<BillingCycleValue>(0);
   const [serviceUrl, setServiceUrl] = useState<string>("");
+  const [debouncedServiceUrl, setDebouncedServiceUrl] = useState<string>("");
   const [errors, setErrors] = useState<string[]>([]);
 
   const isoCurrent: string = new Date().toISOString().split("T")[0];
@@ -46,6 +49,16 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
   // calculate and format next billing date
   const isoNextBilling = calculateNextBilling(startDate, cycle);
   const convertedNextBilling: string = formatNextBilling(isoNextBilling);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedServiceUrl(serviceUrl);
+    }, 1000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [serviceUrl, setDebouncedServiceUrl]);
 
   // mutation
   const queryClient = useQueryClient();
@@ -88,20 +101,33 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
   };
 
   return (
-    <Modal onClose={handleClose} isClosing={isClosing} className="w-130">
+    <Modal onClose={handleClose} isClosing={isClosing} className="w-118">
       <form onSubmit={handleCreate} className="flex flex-col w-full">
         <div className="flex flex-row justify-between mb-10 items-end">
           {/* Subscription title */}
-          <input
-            className="2xl:w-60 2xl:text-3xl focus:outline-none"
-            name="subscription title"
-            value={title}
-            placeholder="Subscription title"
-            onChange={(e) => setTitle(e.target.value)}
-            autoComplete="off"
-          />
+          <div className="flex flex-row gap-3">
+            <div className="flex items-center">
+              {serviceUrl.length > 3 ? (
+                <img
+                  src={`https://www.google.com/s2/favicons?domain=${getDomain(debouncedServiceUrl)}&sz=64`}
+                  width={32}
+                />
+              ) : (
+                <Asterisk className="w-8 h-8" />
+              )}
+            </div>
 
-          <div className="flex flex-row items-end">
+            <input
+              className="2xl:w-50 2xl:text-2xl focus:outline-none border-b border-white/10 pb-1"
+              name="subscription title"
+              value={title}
+              placeholder="Subscription title"
+              onChange={(e) => setTitle(e.target.value)}
+              autoComplete="off"
+            />
+          </div>
+
+          <div className="flex flex-row items-center border-b border-white/10 pb-1">
             {/* Price */}
             <input
               className="2xl:w-20 2xl:text-2xl focus:outline-none"
@@ -128,7 +154,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           </div>
         </div>
 
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-5 mx-2">
           {/* Billing Cycle */}
           <div className="flex flex-col">
             <label className="text-white/30 text-sm">Billing Cycle</label>
@@ -145,7 +171,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
             </select>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col w-30 gap-2">
             {/* Start Date */}
             <div className="flex flex-col">
               <label className="text-white/30 text-sm">Start Date</label>
@@ -157,16 +183,21 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
               />
             </div>
             {/* Next Billing Date */}
-            <div>
+            <div className="flex flex-col w-30">
               <label className="text-white/30 text-sm">Next Billing Date</label>
-              <div>{convertedNextBilling}</div>
+              <input
+                type="text"
+                value={convertedNextBilling}
+                readOnly
+                className="bg-transparent text-neutral-400 cursor-not-allowed border-none focus:outline-none"
+              />
             </div>
           </div>
         </div>
 
         {/* Service URL */}
         <div className="flex flex-col mb-5">
-          <label className="text-white/30">Service URL</label>
+          <label className="text-white/30 text-sm">Service URL</label>
           <input
             className="focus:outline-none"
             type="text"
@@ -191,7 +222,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           {/* Create Button */}
           <button
             type="submit"
-            className="cursor-pointer 2xl:p-2 2xl:px-4 2xl:text-2xl hover:bg-white/10 duration-200 rounded-xl h-fit"
+            className="cursor-pointer 2xl:p-2 2xl:px-5 2xl:text-2xl hover:bg-white/5 active:bg-white/10 duration-200 rounded-xl h-fit"
           >
             Create
           </button>
