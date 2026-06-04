@@ -56,7 +56,6 @@ export default function LoginModal({ onClose }: Props) {
 
   const handleLogin = async (e: React.SubmitEvent) => {
     e.preventDefault();
-    setErrors([]);
     mutation.mutate({ email, password });
   };
 
@@ -92,7 +91,7 @@ export default function LoginModal({ onClose }: Props) {
 
         <button
           type="submit"
-          className="cursor-pointer bg-white/5 duration-200 transition ease-in-out hover:bg-white/15 rounded-xl 2xl:p-2.5 2xl:mx-10 2xl:text-xl"
+          className="cursor-pointer bg-white/5 duration-200 transition ease-in-out hover:bg-white/15 active:bg-white/10 rounded-xl 2xl:p-2.5 2xl:mx-10 2xl:text-xl"
         >
           Log In
         </button>

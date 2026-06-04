@@ -112,7 +112,7 @@ export default function SignupModal({ onClose }: Props) {
         </div>
         <button
           type="submit"
-          className="cursor-pointer bg-white/5 duration-200 transition ease-in-out hover:bg-white/15 rounded-xl 2xl:p-2.5 2xl:mx-10 2xl:text-xl"
+          className="cursor-pointer bg-white/5 duration-200 transition ease-in-out hover:bg-white/15 active:bg-white/10 rounded-xl 2xl:p-2.5 2xl:mx-10 2xl:text-xl"
         >
           Sign Up
         </button>

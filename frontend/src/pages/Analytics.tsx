@@ -54,8 +54,6 @@ export default function Analytics() {
 
   return (
     <>
-      <h1 className="2xl:text-3xl 2xl:mb-2.5 font-medium">Analytics</h1>
-
       {!active?.length ? (
         <button
           onClick={() => setModal("create")}

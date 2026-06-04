@@ -99,8 +99,6 @@ export default function Dashboard() {
 
   return (
     <>
-      <h1 className="font-medium 2xl:text-3xl 2xl:mb-2.5">Dashboard</h1>
-
       {!active?.length ? (
         <button
           onClick={() => setModal("create")}

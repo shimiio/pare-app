@@ -15,7 +15,7 @@ export default function Modal({
 }: ModalProps) {
   return (
     <div
-      className={`flex fixed inset-0 items-center justify-center bg-black/50 ${isClosing ? "animate-fadeOut" : "animate-fadeIn"}`}
+      className={`flex fixed inset-0 items-center justify-center bg-black/50 z-20 ${isClosing ? "animate-fadeOut" : "animate-fadeIn"}`}
       onClick={onClose}
     >
       <div

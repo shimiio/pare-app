@@ -49,8 +49,6 @@ export default function Subscriptions() {
 
   return (
     <>
-      <h1 className="font-medium 2xl:text-3xl 2xl:mb-2.5">Subscriptions</h1>
-
       <button
         onClick={() => setModal("create")}
         className="flex cursor-pointer items-center duration-200 opacity-60 hover:opacity-100 rounded-xl 2xl:p-3 2xl:ml-3 2xl:gap-1 2xl:mb-10"

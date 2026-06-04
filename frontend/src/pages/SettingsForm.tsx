@@ -170,8 +170,6 @@ export default function SettingsForm({ user }: { user: User }) {
 
   return (
     <>
-      <h1 className="2xl:text-3xl 2xl:mb-10 font-medium">Settings</h1>
-
       <div className="mx-2 2xl:space-y-13">
         {/* Account */}
         <div>
