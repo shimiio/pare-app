@@ -20,7 +20,9 @@ public class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWrite
 
         RuleFor(x => x.NextBillingDate)
             .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
-            .WithMessage("Next billing date cannot be in the past");
+            .WithMessage("Next billing date cannot be in the past")
+            .GreaterThanOrEqualTo(x => x.StartDate)
+            .WithMessage("Next billing date cannot be earlier than the start date");
 
         RuleFor(x => x.StartDate)
             .NotEmpty().WithMessage("Start date is required");

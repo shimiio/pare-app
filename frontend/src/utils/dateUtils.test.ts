@@ -26,17 +26,29 @@ describe("getDaysUtil", () => {
 
 describe("getLabelColor", () => {
   it("should return red color for 3 days or less", () => {
-    expect(getLabelColor(0)).toBe("bg-red-500/20 text-red-400");
-    expect(getLabelColor(3)).toBe("bg-red-500/20 text-red-400");
+    expect(getLabelColor(0)).toBe(
+      "bg-red-500/10 border-red-500/20 text-red-400",
+    );
+    expect(getLabelColor(3)).toBe(
+      "bg-red-500/10 border-red-500/20 text-red-400",
+    );
   });
 
   it("should return yellow color for 4-7 days", () => {
-    expect(getLabelColor(4)).toBe("bg-yellow-500/20 text-yellow-400");
-    expect(getLabelColor(7)).toBe("bg-yellow-500/20 text-yellow-400");
+    expect(getLabelColor(4)).toBe(
+      "bg-yellow-500/10 border-yellow-500/20 text-yellow-400",
+    );
+    expect(getLabelColor(7)).toBe(
+      "bg-yellow-500/10 border-yellow-500/20 text-yellow-400",
+    );
   });
 
   it("should return green color for 8+ days", () => {
-    expect(getLabelColor(8)).toBe("bg-green-500/20 text-green-400");
-    expect(getLabelColor(10)).toBe("bg-green-500/20 text-green-400");
+    expect(getLabelColor(8)).toBe(
+      "bg-green-500/10 border-green-500/20 text-green-400",
+    );
+    expect(getLabelColor(10)).toBe(
+      "bg-green-500/10 border-green-500/20 text-green-400",
+    );
   });
 });

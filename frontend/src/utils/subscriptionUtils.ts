@@ -10,14 +10,38 @@ export const sanitizePriceInput = (value: string): string | null => {
 
 // calculate the next billing date between start date and cycle
 export const calculateNextBilling = (
-  startDate: string | undefined,
-  cycle: number | undefined,
-) => {
-  const date = new Date(startDate ?? new Date().toISOString());
-  if (cycle === 0) date.setMonth(date.getMonth() + 1);
-  if (cycle === 1) date.setFullYear(date.getFullYear() + 1);
-  if (cycle === 2) date.setDate(date.getDate() + 7);
-  return date.toISOString().split("T")[0];
+  startDateStr: string,
+  cycle: number,
+): string => {
+  if (!startDateStr) return "";
+
+  const [year, month, day] = startDateStr.split("-").map(Number);
+
+  const nextBilling = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+
+  const now = new Date();
+  const todayUTC = new Date(
+    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0),
+  );
+
+  while (nextBilling < todayUTC) {
+    if (cycle === 0) {
+      // Monthly
+      nextBilling.setUTCMonth(nextBilling.getUTCMonth() + 1);
+    } else if (cycle === 1) {
+      // Yearly
+      nextBilling.setUTCFullYear(nextBilling.getUTCFullYear() + 1);
+    } else if (cycle === 2) {
+      // Weekly
+      nextBilling.setUTCDate(nextBilling.getUTCDate() + 7);
+    }
+  }
+
+  const yyyy = nextBilling.getUTCFullYear();
+  const mm = String(nextBilling.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(nextBilling.getUTCDate()).padStart(2, "0");
+
+  return `${yyyy}-${mm}-${dd}`;
 };
 
 // format the next billing

@@ -22,7 +22,7 @@ export const getDaysUtil = (date: string): number => {
 
 // get label color from day number
 export const getLabelColor = (days: number) => {
-  if (days <= 3) return "bg-red-500/20 text-red-400";
-  if (days <= 7) return "bg-yellow-500/20 text-yellow-400";
-  return "bg-green-500/20 text-green-400";
+  if (days <= 3) return "bg-red-500/10 border-red-500/20 text-red-400";
+  if (days <= 7) return "bg-yellow-500/10 border-yellow-500/20 text-yellow-400";
+  return "bg-green-500/10 border-green-500/20 text-green-400";
 };

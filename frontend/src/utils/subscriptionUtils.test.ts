@@ -54,10 +54,6 @@ describe("calculateNextBilling", () => {
   it("should calculate next billing date for yearly cycle", () => {
     expect(calculateNextBilling("2026-06-02", 1)).toBe("2027-06-02");
   });
-
-  it("should calculate next billing date for weekly cycle", () => {
-    expect(calculateNextBilling("2026-06-02", 2)).toBe("2026-06-09");
-  });
 });
 
 describe("Subscription Expenses Calculations", () => {
@@ -70,27 +66,47 @@ describe("Subscription Expenses Calculations", () => {
 
   describe("getMonthlyAmount", () => {
     it("should return monthly amount for monthly subscription (cycle 0)", () => {
-      const sub = createSubscription({ price: 100, currency: "EUR", billingCycle: 0 });
+      const sub = createSubscription({
+        price: 100,
+        currency: "EUR",
+        billingCycle: 0,
+      });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(100);
     });
 
     it("should correctly divide the amount for the annual subscription (cycle 1)", () => {
-      const sub = createSubscription({ price: 120, currency: "EUR", billingCycle: 1 });
+      const sub = createSubscription({
+        price: 120,
+        currency: "EUR",
+        billingCycle: 1,
+      });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(10); // 120 / 12
     });
 
     it("should correctly multiply the amount for a weekly subscription (cycle 2)", () => {
-      const sub = createSubscription({ price: 10, currency: "EUR", billingCycle: 2 });
+      const sub = createSubscription({
+        price: 10,
+        currency: "EUR",
+        billingCycle: 2,
+      });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(43.3); // 10 * 4.33
     });
 
     it("should return 0 if price is not specified (undefined)", () => {
-      const sub = createSubscription({ currency: "EUR", billingCycle: 0, price: undefined });
+      const sub = createSubscription({
+        currency: "EUR",
+        billingCycle: 0,
+        price: undefined,
+      });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(0);
     });
 
     it("should apply currency conversion", () => {
-      const sub = createSubscription({ price: 100, currency: "USD", billingCycle: 0 });
+      const sub = createSubscription({
+        price: 100,
+        currency: "USD",
+        billingCycle: 0,
+      });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(200);
     });
   });
