@@ -1,11 +1,7 @@
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import LoginModal from "../auth/LoginModal";
-import SignupModal from "../auth/SignupModal";
-import { useAuthStore } from "../../store/useAuthStore";
+import { Calendar } from "lucide-react";
 
 const routeTitles: Record<string, string> = {
-  "/": "Pare",
   "/dashboard": "Dashboard",
   "/subscriptions": "Subscriptions",
   "/analytics": "Analytics",
@@ -19,44 +15,21 @@ const today = new Date().toLocaleDateString("en-US", {
 });
 
 export default function Header() {
-  const [modal, setModal] = useState<"login" | "signup" | null>(null);
   const location = useLocation();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-
-  const currentTitle = routeTitles[location.pathname] || "Pare";
+  const currentTitle = routeTitles[location.pathname];
 
   return (
-    <>
-      <header className="flex flex-row justify-between transform-gpu border-b border-white/5 bg-black/5 2xl:p-8 2xl:px-40 backdrop-blur-md sticky top-0 z-10">
-        <div className="flex text-3xl items-center font-medium">
-          {currentTitle}
-        </div>
-        {isAuthenticated ? (
-          <div className="flex items-center text-white/60 flex-row gap-3 2xl:text-xl">
-            Today is {today}
-          </div>
-        ) : (
-          <div className="flex 2xl:gap-6">
-            <button
-              className="cursor-pointer 2xl:text-xl duration-200 transition ease-in-out hover:text-white/75"
-              onClick={() => setModal("login")}
-            >
-              Log In
-            </button>
-
-            <button
-              className="cursor-pointer text-black bg-white rounded-2xl font-medium 2xl:p-2.5 2xl:px-4 2xl:text-xl transition duration-200 ease-in-out hover:bg-white/80"
-              onClick={() => setModal("signup")}
-            >
-              Sign Up
-            </button>
-          </div>
-        )}
-      </header>
-      <div>
-        {modal == "login" && <LoginModal onClose={() => setModal(null)} />}
-        {modal == "signup" && <SignupModal onClose={() => setModal(null)} />}
+    <header className="flex flex-row justify-between transform-gpu border-b border-white/5 bg-[#121212]/10 2xl:p-7 2xl:px-40 backdrop-blur-md sticky top-0 z-10">
+      <div className="flex font-semibold text-neutral-200 uppercase tracking-wider items-center">
+        {currentTitle}
       </div>
-    </>
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-[#121212]/5 border border-white/10 rounded-lg transition-colors">
+        <Calendar size={14} className="text-neutral-400" strokeWidth={1.5} />
+        <p className="text-sm font-medium text-neutral-200">
+          <span className="text-neutral-400 mr-1">Today is</span>
+          {today}
+        </p>
+      </div>
+    </header>
   );
 }

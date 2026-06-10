@@ -36,14 +36,14 @@ export default function App() {
     <>
       <div className="fixed inset-0 -z-10">
         <Silk
-          speed={1}
+          speed={1.5}
           scale={0.7}
-          color="#1f1d1f"
-          noiseIntensity={1.5}
+          color="#212121"
+          noiseIntensity={1.7}
           rotation={0}
         />
       </div>
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
     </>
   );
 }
