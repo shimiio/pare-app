@@ -113,7 +113,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
     <Modal
       onClose={handleClose}
       isClosing={isClosing}
-      className="max-w-md w-full"
+      className="max-w-sm 2xl:max-w-md w-full"
     >
       <form
         onSubmit={handleCreate}
@@ -163,7 +163,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                   placeholder="e.g. Netflix"
                   onChange={(e) => setTitle(e.target.value)}
                   autoComplete="off"
-                  className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 pl-9 pr-4 text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
+                  className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 pl-9 pr-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
                 />
               </div>
             </div>
@@ -179,7 +179,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                 placeholder="https://example.com"
                 onChange={(e) => setServiceUrl(e.target.value)}
                 autoComplete="off"
-                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
+                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
               />
             </div>
           </div>
@@ -199,7 +199,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                 onChange={handlePriceChange}
                 onBlur={handlePriceBlur}
                 autoComplete="off"
-                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
+                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
               />
             </div>
             <div className="space-y-1.5 mt-3">
@@ -209,7 +209,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-3 text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
+                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-3 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
               >
                 <option value="EUR">EUR (€)</option>
                 <option value="USD">USD ($)</option>
@@ -229,7 +229,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                 onChange={(e) =>
                   setCycle(Number(e.target.value) as BillingCycleValue)
                 }
-                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-3 text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
+                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-3 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
               >
                 <option value={0}>Monthly</option>
                 <option value={1}>Yearly</option>
@@ -245,7 +245,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:invert hover:[&::-webkit-calendar-picker-indicator]:opacity-80"
+                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:invert hover:[&::-webkit-calendar-picker-indicator]:opacity-80"
               />
             </div>
           </div>
@@ -254,7 +254,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
             <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest">
               Next Billing Date
             </span>
-            <span className="text-sm font-medium text-neutral-300">
+            <span className="text-xs 2xl:text-sm font-medium text-neutral-300">
               {convertedNextBilling}
             </span>
           </div>
@@ -273,7 +273,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           <button
             type="submit"
             disabled={!isValidDateString}
-            className="flex justify-center items-center cursor-pointer w-full bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 hover:bg-violet-400/5 text-white py-3 rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/10 transition-all active:scale-98 disabled:hover:bg-violet-400/0 disabled:opacity-70 disabled:cursor-not-allowed disabled:shadow-none disabled:scale-100"
+            className="flex justify-center items-center cursor-pointer w-full bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 hover:bg-violet-400/5 text-white py-3 rounded-xl text-xs 2xl:text-sm font-semibold shadow-lg shadow-indigo-600/10 transition-all active:scale-98 disabled:hover:bg-violet-400/0 disabled:opacity-70 disabled:cursor-not-allowed disabled:shadow-none disabled:scale-100"
           >
             Create Subscription
           </button>

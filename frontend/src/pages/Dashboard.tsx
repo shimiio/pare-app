@@ -102,15 +102,15 @@ export default function Dashboard() {
       {!active?.length ? (
         <NoActiveSubscriptions onClick={() => setModal("create")} />
       ) : (
-        <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="max-w-3xl 2xl:max-w-4xl mx-auto px-4 py-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             {/* Per Month */}
             <div className="bg-[#121212]/40 border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <div>
-                <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium">
+                <p className="text-[11px] 2xl:text-xs text-neutral-500 uppercase tracking-wider font-medium">
                   Per Month
                 </p>
-                <p className="text-2xl font-semibold text-neutral-100 mt-1">
+                <p className="text-xl 2xl:text-2xl font-semibold text-neutral-100 mt-1">
                   {formatCurrency(
                     getMonthlyExpenses(active ?? [], toDefaultCurrency),
                     currency,
@@ -129,10 +129,10 @@ export default function Dashboard() {
             {/* Yearly */}
             <div className="bg-[#121212]/40 border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <div>
-                <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium">
+                <p className="text-[11px] 2xl:text-xs text-neutral-500 uppercase tracking-wider font-medium">
                   Per Year
                 </p>
-                <p className="text-2xl font-semibold text-neutral-100 mt-1">
+                <p className="text-xl 2xl:text-2xl font-semibold text-neutral-100 mt-1">
                   {formatCurrency(
                     getYearlyExpenses(active ?? [], toDefaultCurrency),
                     currency,
@@ -140,8 +140,8 @@ export default function Dashboard() {
                 </p>
               </div>
 
-              <div className="text-xs text-neutral-400 mt-3 flex flex-col gap-0.5">
-                <p className="text-neutral-500 text-[10px] uppercase tracking-wider">
+              <div className="text-[11px] 2xl:text-xs text-neutral-400 mt-3 flex flex-col gap-0.5">
+                <p className="text-neutral-500 text-[9px] 2xl:text-[10px] uppercase tracking-wider">
                   Most Expensive
                 </p>
                 <p className="font-medium text-neutral-300">
@@ -153,11 +153,11 @@ export default function Dashboard() {
             {/* Next Payment */}
             <div className="bg-[#121212]/40 border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <div>
-                <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium">
+                <p className="text-[11px] 2xl:text-xs text-neutral-500 uppercase tracking-wider font-medium">
                   Next Payment
                 </p>
                 <p
-                  className={`text-2xl font-semibold mt-1 ${nextPaymentColor}`}
+                  className={`text-xl 2xl:text-2xl font-semibold mt-1 ${nextPaymentColor}`}
                 >
                   {nextBillingDay === 0 ? (
                     <span>Today</span>
@@ -167,7 +167,7 @@ export default function Dashboard() {
                 </p>
               </div>
               <div className="text-xs text-neutral-400 mt-3 flex flex-col gap-0.5">
-                <p className="text-neutral-500 text-[10px] uppercase tracking-wider">
+                <p className="text-neutral-500 text-[9px] 2xl:text-[10px] uppercase tracking-wider">
                   Upcoming
                 </p>
                 <p className="font-medium text-neutral-300">
@@ -216,7 +216,7 @@ export default function Dashboard() {
                     {formatCurrency(
                       getMonthlyExpenses(active ?? [], toDefaultCurrency) / 30,
                       currency,
-                    )}
+                    )}{" "}
                     <span className="text-xs font-normal text-neutral-500">
                       / day
                     </span>

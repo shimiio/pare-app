@@ -128,7 +128,7 @@ export default function Analytics() {
                 <h3 className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-3 px-1">
                   Financial Summary
                 </h3>
-                <div className="bg-[#121212]/40 border border-white/5 rounded-xl p-4 flex flex-col gap-3.5 divide-y divide-white/5">
+                <div className="bg-[#121212]/40 border border-white/5 rounded-xl p-4 flex flex-col gap-6 divide-y divide-white/5">
                   <div className="flex justify-between items-center pt-3">
                     <span className="text-xs text-neutral-400">
                       Active Subscriptions
@@ -137,7 +137,7 @@ export default function Analytics() {
                       {active.length} tracked
                     </span>
                   </div>
-                  <div className="flex justify-between items-center pt-3">
+                  <div className="flex justify-between items-center">
                     <span className="text-xs text-neutral-400">
                       Total Per Month
                     </span>
@@ -145,7 +145,7 @@ export default function Analytics() {
                       {formatCurrency(totalMonthly, currency)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center pt-3">
+                  <div className="flex justify-between items-center">
                     <span className="text-xs text-neutral-400">
                       Total Per Year
                     </span>
@@ -153,7 +153,7 @@ export default function Analytics() {
                       {formatCurrency(totalYearly, currency)}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center pt-3">
+                  <div className="flex justify-between items-center">
                     <span className="text-xs text-neutral-400">
                       Average Service Cost
                     </span>
@@ -183,6 +183,7 @@ export default function Analytics() {
                           <img
                             src={`https://www.google.com/s2/favicons?domain=${getDomain(mostExpensive.serviceUrl)}&sz=64`}
                             width={24}
+                            className="rounded-sm"
                           />
                         ) : (
                           <Star className="w-6 h-6 text-indigo-400" />
@@ -202,13 +203,13 @@ export default function Analytics() {
                         </div>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="text-sm font-semibold text-neutral-100">
+                        <span className="text-xs 2xl:text-sm font-semibold text-neutral-100">
                           {formatCurrency(
                             getMonthlyAmount(mostExpensive, toDefaultCurrency),
                             currency,
                           )}
                         </span>
-                        <span className="text-[11px] text-white/40">
+                        <span className="text-[10px] 2xl:text-[11px] text-white/40">
                           {formatCurrency(
                             calculateDailyCost(
                               getMonthlyAmount(
@@ -232,6 +233,7 @@ export default function Analytics() {
                           <img
                             src={`https://www.google.com/s2/favicons?domain=${getDomain(cheapest.serviceUrl)}&sz=64`}
                             width={24}
+                            className="rounded-sm"
                           />
                         ) : (
                           <Star className="w-6 h-6 text-indigo-400" />
@@ -251,13 +253,13 @@ export default function Analytics() {
                         </div>
                       </div>
                       <div className="flex flex-col items-end">
-                        <span className="text-sm font-semibold text-neutral-100">
+                        <span className="text-xs 2xl:text-sm font-semibold text-neutral-100">
                           {formatCurrency(
                             getMonthlyAmount(cheapest, toDefaultCurrency),
                             currency,
                           )}
                         </span>
-                        <span className="text-[11px] text-white/40">
+                        <span className="text-[10px] 2xl:text-[11px] text-white/40">
                           {formatCurrency(
                             calculateDailyCost(
                               getMonthlyAmount(cheapest, toDefaultCurrency),

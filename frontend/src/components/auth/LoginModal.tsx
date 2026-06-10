@@ -85,8 +85,8 @@ export default function LoginModal({ onClose }: Props) {
         {/* FORM CONTENT */}
         <div className="p-6 space-y-4">
           {/* Email */}
-          <div className="flex flex-col space-y-1.5">
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-1">
+          <div className="flex flex-col">
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-0.5 2xl:mb-1">
               Email address
             </label>
             <input
@@ -95,13 +95,13 @@ export default function LoginModal({ onClose }: Props) {
               placeholder="email@gmail.com"
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="off"
-              className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
+              className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
             />
           </div>
 
           {/* Password */}
-          <div className="flex flex-col space-y-1.5">
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+          <div className="flex flex-col">
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-0.5 2xl:mb-1">
               Password
             </label>
             <input
@@ -111,7 +111,7 @@ export default function LoginModal({ onClose }: Props) {
               placeholder="••••••••"
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="off"
-              className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all [&::-ms-reveal]:invert [&::-ms-reveal]:opacity-60 [&::-webkit-credentials-store-indicator]:invert"
+              className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all [&::-ms-reveal]:invert [&::-ms-reveal]:opacity-60 [&::-webkit-credentials-store-indicator]:invert"
             />
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function LoginModal({ onClose }: Props) {
           <button
             type="submit"
             disabled={mutation.isLoading}
-            className="flex justify-center items-center cursor-pointer w-full bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 hover:bg-violet-400/5 text-white py-3 rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/10 transition-all active:scale-98"
+            className="flex justify-center items-center cursor-pointer w-full bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 hover:bg-violet-400/5 text-white py-3 rounded-xl text-xs 2xl:text-sm font-semibold shadow-md shadow-indigo-600/10 transition-all active:scale-98"
           >
             {mutation.isLoading ? "Logging in..." : "Log In"}
           </button>

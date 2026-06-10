@@ -9,7 +9,7 @@ export default function MainWindow() {
 
   return (
     <div className="flex flex-col items-center mx-auto justify-between h-full">
-      <div className="flex flex-col items-center mt-37">
+      <div className="flex flex-col items-center mt-27 2xl:mt-37">
         <div className="flex flex-row items-center gap-1 mb-13">
           <span className="rounded-xl flex items-center justify-center text-indigo-400">
             <Logo />
@@ -26,7 +26,7 @@ export default function MainWindow() {
           A subscription manager that shows exactly what you're paying for.
         </p>
 
-        <div className="flex gap-3 mb-16">
+        <div className="flex gap-3 mb-14 2xl:mb-16">
           <button
             className="px-4 py-2 border backdrop-blur-xs border-white/10 bg-[#121212]/40 hover:bg-white/5 duration-150 rounded-lg shadow-md shadow-white/5 cursor-pointer"
             onClick={() => setModal("login")}
@@ -75,7 +75,7 @@ export default function MainWindow() {
         </div>
       </div>
 
-      <div className="text-sm text-center mb-8">
+      <div className="text-xs 2xl:text-sm text-center mb-8">
         <span className="text-white/40">Built by Pavlo · </span>
         <a
           href="https://github.com/shimiio"

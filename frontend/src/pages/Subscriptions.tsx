@@ -66,24 +66,26 @@ export default function Subscriptions() {
       {subscriptions?.length === 0 ? (
         <NoActiveSubscriptions onClick={() => setModal("create")} />
       ) : (
-        <div className="2xl:space-y-13 mt-8">
+        <div className="space-y-10 2xl:space-y-13 max-w-5xl 2xl:max-w-6xl mx-auto px-4 py-10">
           {/* Active */}
           {active && active.length > 0 ? (
-            <div className="2xl:mx-2">
-              <div className="flex flex-row justify-between 2xl:mb-6">
+            <>
+              <div className="flex flex-row justify-between mb-6">
                 <button
                   onClick={() => setActiveOpen(!activeOpen)}
-                  className="flex flex-row cursor-pointer items-center 2xl:text-xl font-medium"
+                  className="flex flex-row cursor-pointer items-center text-lg 2xl:text-xl font-medium"
                 >
                   {activeOpen ? (
-                    <ChevronRight className="rotate-90 opacity-60 duration-200" />
+                    <ChevronRight className="h-5 w-5 2xl:h-6 2xl:w-6 rotate-90 opacity-60 duration-200" />
                   ) : (
-                    <ChevronRight className="opacity-60 duration-200" />
+                    <ChevronRight className="h-5 w-5 2xl:h-6 2xl:w-6 opacity-60 duration-200" />
                   )}
                   <div>
                     <span>Active</span>
-                    <span className="text-sm ml-1.5">{active.length}</span>
-                    <span className="text-sm text-white/40 ml-1.5">
+                    <span className="text-xs 2xl:text-sm ml-1.5">
+                      {active.length}
+                    </span>
+                    <span className="text-xs 2xl:text-sm text-white/40 ml-1.5">
                       ·{" "}
                       {formatCurrency(
                         getMonthlyExpenses(active ?? [], toDefaultCurrency),
@@ -103,15 +105,17 @@ export default function Subscriptions() {
                 </button>
               </div>
 
-              <div className="2xl:space-y-9 2xl:mx-13">
+              <div className="space-y-8 2xl:space-y-9 mx-13">
                 {activeOpen &&
                   groupedEntries.map(([date, subs], index) => (
                     <div key={date}>
-                      <div className="flex justify-between 2xl:pb-2.5 2xl:px-2">
-                        <span>{readableDate(date)}</span>
+                      <div className="flex justify-between pb-1.5 px-2">
+                        <span className="text-sm 2xl:text-base">
+                          {readableDate(date)}
+                        </span>
                         {index === 0 && (
-                          <span className="flex items-end text-white/40 text-xs tracking-wider">
-                            NEXT PAYMENT
+                          <span className="flex items-end text-white/40 uppercase text-[10px] 2xl:text-xs tracking-wider">
+                            Next Payment
                           </span>
                         )}
                       </div>
@@ -132,7 +136,7 @@ export default function Subscriptions() {
                     </div>
                   ))}
               </div>
-            </div>
+            </>
           ) : (
             <div className="w-full bg-[#121212]/30 border border-white/5 border-dashed rounded-xl p-6 flex flex-col items-center justify-center text-center">
               <p className="text-sm font-medium text-neutral-400">
@@ -144,7 +148,7 @@ export default function Subscriptions() {
               </p>
               <button
                 onClick={() => setModal("create")}
-                className="font-bold bg-clip-text text-transparent bg-linear-to-r from-fuchsia-400 via-violet-400 to-indigo-400 mt-3 text-sm opacity-90 cursor-pointer"
+                className="font-bold bg-clip-text text-transparent bg-linear-to-r from-fuchsia-400 via-violet-400 to-indigo-400 mt-3 text-xs 2xl:text-sm opacity-90 cursor-pointer"
               >
                 + Track new service
               </button>
@@ -153,23 +157,25 @@ export default function Subscriptions() {
 
           {/* Paused */}
           {paused && paused.length > 0 && (
-            <div className="2xl:mx-2">
+            <>
               <button
                 onClick={() => setPausedOpen(!pausedOpen)}
-                className="flex flex-row cursor-pointer items-center 2xl:text-xl 2xl:mb-9 font-medium"
+                className="flex flex-row cursor-pointer items-center text-xl mb-9 font-medium"
               >
                 {pausedOpen ? (
-                  <ChevronRight className="rotate-90 opacity-60 duration-200" />
+                  <ChevronRight className="h-5 w-5 2xl:h-6 2xl:w-6 rotate-90 opacity-60 duration-200" />
                 ) : (
-                  <ChevronRight className="opacity-60 duration-200" />
+                  <ChevronRight className="h-5 w-5 2xl:h-6 2xl:w-6 opacity-60 duration-200" />
                 )}
-                <div>
+                <div className="text-lg 2xl:text-xl">
                   <span>Paused</span>
-                  <span className="text-sm ml-1.5">{paused.length}</span>
+                  <span className="text-xs 2xl:text-sm ml-1.5">
+                    {paused.length}
+                  </span>
                 </div>
               </button>
 
-              <div className="2xl:mx-13">
+              <div className="mx-13">
                 {pausedOpen && (
                   <div className="bg-[#121212]/40 border border-white/5 rounded-xl flex flex-col divide-y divide-white/5">
                     {paused.map((sub) => (
@@ -186,28 +192,30 @@ export default function Subscriptions() {
                   </div>
                 )}
               </div>
-            </div>
+            </>
           )}
 
           {/* Cancelled */}
           {cancelled && cancelled.length > 0 && (
-            <div className="2xl:mx-2">
+            <>
               <button
                 onClick={() => setCancelledOpen(!cancelledOpen)}
-                className="flex flex-row cursor-pointer items-center 2xl:text-xl 2xl:mb-9 font-medium"
+                className="flex flex-row cursor-pointer items-center text-xl mb-9 font-medium"
               >
                 {cancelledOpen ? (
-                  <ChevronRight className="rotate-90 opacity-60 duration-200" />
+                  <ChevronRight className="h-5 w-5 2xl:h-6 2xl:w-6 rotate-90 opacity-60 duration-200" />
                 ) : (
-                  <ChevronRight className="opacity-60 duration-200" />
+                  <ChevronRight className="h-5 w-5 2xl:h-6 2xl:w-6 opacity-60 duration-200" />
                 )}
-                <div>
+                <div className="text-lg 2xl:text-xl">
                   <span>Cancelled</span>
-                  <span className="text-sm ml-1.5">{cancelled.length}</span>
+                  <span className="text-xs 2xl:text-sm ml-1.5">
+                    {cancelled.length}
+                  </span>
                 </div>
               </button>
 
-              <div className="2xl:mx-13">
+              <div className="mx-13">
                 {cancelledOpen && (
                   <div className="bg-[#121212]/40 border border-white/5 rounded-xl flex flex-col divide-y divide-white/5">
                     {cancelled.map((sub) => (
@@ -224,7 +232,7 @@ export default function Subscriptions() {
                   </div>
                 )}
               </div>
-            </div>
+            </>
           )}
         </div>
       )}

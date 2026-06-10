@@ -44,41 +44,51 @@ export default function SubscriptionCard({
   return (
     <button
       onClick={onClick}
-      className="flex flex-row justify-between 2xl:p-3 2xl:px-6 2x:mx-5 hover:bg-white/2 duration-200 cursor-pointer"
+      className="flex flex-row justify-between p-3 px-6 2x:mx-5 hover:bg-white/2 duration-200 cursor-pointer"
     >
       <div className="flex flex-row gap-3.5 items-center">
         {subscription.serviceUrl.length > 3 ? (
           <img
             src={`https://www.google.com/s2/favicons?domain=${getDomain(subscription.serviceUrl)}&sz=64`}
             width={24}
+            className="rounded-sm"
           />
         ) : (
           <Star className="w-6 h-6 text-indigo-400" />
         )}
+
         <div className="flex flex-col items-start">
-          <span className="text-white">{subscription.name}</span>
-          <span className="flex text-xs items-start text-white/40">
+          <span className="text-white text-sm 2xl:text-base">
+            {subscription.name}
+          </span>
+          <span className="flex text-[10px] 2xl:text-xs items-start text-white/40">
             {getBillingCycleName(subscription)}
           </span>
         </div>
       </div>
-      <div className="flex flex-row gap-4 items-center">
+
+      <div className="flex flex-row gap-3 2xl:gap-4 items-center">
         {showDaysLabel && (
           <span
             className={`flex text-xs rounded-2xl border px-2 py-0.5 font-medium gap-1 ${labelColor}`}
           >
             {days === 0 ? (
-              <span className="font-medium">today</span>
+              <span className="font-medium text-[11px] 2xl:text-xs">
+                today
+              </span>
             ) : (
-              <span className="font-medium">{days} days</span>
+              <span className="font-medium text-[11px] 2xl:text-xs">
+                {days} days
+              </span>
             )}
           </span>
         )}
+
         <div className="flex flex-col items-end">
-          <span className="flex items-center font-medium text-sm">
+          <span className="flex items-center font-medium text-xs 2xl:text-sm">
             {formatCurrency(subscription.price, subscription.currency)}
           </span>
-          <span className="flex items-start text-white/40 text-xs">
+          <span className="flex items-start text-white/40 text-[10px]  2xl:text-xs">
             {formatCurrency(
               calculateDailyCost(subscription),
               subscription.currency,
