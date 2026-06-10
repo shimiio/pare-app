@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
 import axios from "axios";
 import Modal from "../ui/Modal";
-import AuthInput from "../ui/AuthInput";
 import { register } from "../../api/auth";
 import { useAuthStore } from "../../store/useAuthStore";
 
@@ -70,52 +70,101 @@ export default function SignupModal({ onClose }: Props) {
   };
 
   return (
-    <Modal onClose={handleClose} isClosing={isClosing} className="2xl:w-110">
-      <form onSubmit={handleSignup} className="flex flex-col w-full">
-        <h2 className="font-medium 2xl:text-3xl 2xl:mb-12">Sign Up</h2>
-        <div className="flex flex-col 2xl:gap-5 2xl:mb-15">
-          {/* Error Messages */}
+    <Modal
+      onClose={handleClose}
+      isClosing={isClosing}
+      className="max-w-sm w-full"
+    >
+      <form
+        onSubmit={handleSignup}
+        className="flex flex-col w-full text-left select-none"
+      >
+        {/* HEADER */}
+        <div className="p-4 pt-5 px-6 flex justify-between items-center border-b border-white/5">
+          <h3 className="text-sm font-semibold text-neutral-400 uppercase tracking-widest px-1">
+            Sign Up
+          </h3>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="text-neutral-500 hover:text-white transition-colors cursor-pointer"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* FORM CONTENT */}
+        <div className="p-6 space-y-4">
+          {/* Name */}
+          <div className="flex flex-col space-y-1.5">
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-1">
+              Name
+            </label>
+            <input
+              name="name"
+              value={name}
+              placeholder="Name"
+              onChange={(e) => setName(e.target.value)}
+              autoComplete="off"
+              className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
+            />
+          </div>
+
+          {/* Email */}
+          <div className="flex flex-col space-y-1.5">
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-1">
+              Email address
+            </label>
+            <input
+              name="email"
+              value={email}
+              placeholder="email@gmail.com"
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="off"
+              className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
+            />
+          </div>
+
+          {/* Password */}
+          <div className="flex flex-col space-y-1.5">
+            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              Password
+            </label>
+            <div>
+              <input
+                type="password"
+                name="password"
+                value={password}
+                placeholder="••••••••"
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="off"
+                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all [&::-ms-reveal]:invert [&::-ms-reveal]:opacity-60 [&::-webkit-credentials-store-indicator]:invert"
+              />
+              <span className="text-white/40 text-xs pl-3 mt-2">
+                Min 8 characters, 1 uppercase, 1 number
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* FOOTER & ACTIONS */}
+        <div className="p-5 border-t border-white/5 bg-[#0a0a0a]/70">
           {errors.length > 0 && (
-            <div className="text-red-400 text-sm space-y-1">
+            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs space-y-1">
               {errors.map((err, i) => (
                 <div key={i}>• {err}</div>
               ))}
             </div>
           )}
 
-          <AuthInput
-            name="name"
-            value={name}
-            placeholder="Name"
-            onChange={(e) => setName(e.target.value)}
-          />
-
-          <AuthInput
-            name="email"
-            value={email}
-            placeholder="Email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <div className="flex flex-col">
-            <AuthInput
-              name="password"
-              type="password"
-              value={password}
-              placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <span className="text-white/40 text-xs pl-3 mt-2">
-              Min 8 characters, 1 uppercase, 1 number
-            </span>
-          </div>
+          <button
+            type="submit"
+            disabled={mutation.isLoading}
+            className="flex justify-center items-center cursor-pointer w-full bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 hover:bg-violet-400/5 text-white py-3 rounded-xl text-sm font-semibold shadow-md shadow-indigo-600/10 transition-all active:scale-98"
+          >
+            {mutation.isLoading ? "Logging in..." : "Sign Up"}
+          </button>
         </div>
-        <button
-          type="submit"
-          className="cursor-pointer bg-white/5 duration-200 transition ease-in-out hover:bg-white/15 active:bg-white/10 rounded-xl 2xl:p-2.5 2xl:mx-10 2xl:text-xl"
-        >
-          Sign Up
-        </button>
       </form>
     </Modal>
   );
