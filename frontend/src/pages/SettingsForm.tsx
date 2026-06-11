@@ -55,7 +55,24 @@ export default function SettingsForm({ user }: { user: User }) {
       handleSuccess();
     },
     onError: (error: unknown) => {
-      setEmailError(extractErrors(error));
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const responseData = error.response.data;
+
+        // 1. Checking domain error (string from your UnauthorizedException)
+        if (responseData.error && typeof responseData.error === "string") {
+          setEmailError([responseData.error]);
+        }
+        // 2. Checking validation errors (object with arrays)
+        else if (
+          responseData.errors &&
+          typeof responseData.errors === "object"
+        ) {
+          // Object.values gets the arrays ["Too short"], and flat() merges them into one
+          setEmailError(Object.values(responseData.errors).flat() as string[]);
+        } else {
+          setEmailError(["An unexpected error occurred. Please try again."]);
+        }
+      }
     },
   });
 
@@ -412,7 +429,7 @@ export default function SettingsForm({ user }: { user: User }) {
       </div>
 
       {/* Danger Zone */}
-      <div className="max-w-2xl mb-12">
+      <div className="max-w-2xl">
         <h3 className="text-lg font-medium text-red-500 mb-4">Danger Zone</h3>
 
         <div className="border border-red-900/30 bg-red-950/5 rounded-xl p-4 flex items-center justify-between">
