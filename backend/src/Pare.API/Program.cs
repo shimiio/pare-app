@@ -1,5 +1,6 @@
 using Serilog;
 using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using Pare.API.Middleware;
 using Pare.Infrastructure.Jobs;
 using Pare.Application;
@@ -24,7 +25,7 @@ builder.Services.AddWebComponents(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || builder.Configuration["Swagger:Enabled"] == "true")
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -40,6 +41,21 @@ if (app.Environment.IsDevelopment())
     app.UseHangfireDashboard("/hangfire", new DashboardOptions
     {
         Authorization = []
+    });
+}
+else
+{
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions
+    {
+        Authorization = [
+            new HangfireCustomBasicAuthenticationFilter
+            {
+                User = builder.Configuration["Hangfire:Login"]
+                    ?? throw new InvalidOperationException("Hangfire:Login not configured"),
+                Pass = builder.Configuration["Hangfire:Password"]
+                    ?? throw new InvalidOperationException("Hangfire:Password not configured")
+            }
+        ]
     });
 }
 
