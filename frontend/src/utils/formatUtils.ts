@@ -17,8 +17,12 @@ export const formatCurrency = (
 // convert service URL to the domain
 export const getDomain = (url: string) => {
   try {
+    if (!url || url.length <= 3) return "";
+
     const withProtocol = url.startsWith("http") ? url : `https://${url}`;
-    return new URL(withProtocol).hostname.replace("www", "");
+    const hostname = new URL(withProtocol).hostname;
+
+    return hostname.replace(/^www\./, "");
   } catch {
     return url;
   }

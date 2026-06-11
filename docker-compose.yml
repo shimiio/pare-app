@@ -30,5 +30,16 @@ services:
       db:
         condition: service_healthy
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+        VITE_CURRENCY_RATES_API_KEY: ${VITE_CURRENCY_RATES_API_KEY}
+    container_name: pare-frontend
+    depends_on:
+      - api
+
 volumes:
   postgres_data:

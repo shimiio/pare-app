@@ -17,6 +17,10 @@ public class ChangeUserEmailHandle(IUserRepository repo)
         // Get user data
         var existing = await _repo.GetByIdAsync(command.Id) ?? throw new NotFoundException("User not found");
 
+        // Check if email already exists
+        var emailExists = await _repo.GetByEmailAsync(command.Change.Email);
+        if (emailExists != null) throw new ConflictException("Email already exists");
+
         // Update email
         existing.Email = command.Change.Email;
         await _repo.UpdateAsync(existing);

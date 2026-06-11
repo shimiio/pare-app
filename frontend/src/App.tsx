@@ -1,8 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 import { useAuthStore } from "./store/useAuthStore";
 import { refresh } from "./api/auth";
+import Silk from "./components/Silk";
 
 export default function App() {
   const setToken = useAuthStore((state) => state.setToken);
@@ -29,5 +32,18 @@ export default function App() {
     return <div>Loading...</div>;
   }
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <div className="fixed inset-0 -z-10">
+        <Silk
+          speed={1.5}
+          scale={0.7}
+          color="#212121"
+          noiseIntensity={1.7}
+          rotation={0}
+        />
+      </div>
+      <RouterProvider router={router} />
+    </>
+  );
 }

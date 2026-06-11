@@ -4,9 +4,20 @@ services:
       ASPNETCORE_ENVIRONMENT: Production
       Email__Provider: brevo
       Brevo__ApiKey: ${BREVO_API_KEY}
-      Email__Sender: ${BREVO_EMAIL_SENDER}
+      Brevo__EmailSender: ${BREVO_EMAIL_SENDER}
+      Hangfire__Login: ${HANGFIRE_LOGIN}
+      Hangfire__Password: ${HANGFIRE_PASSWORD}
+      Swagger__Enabled: "true"
     ports:
       - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      args:
+        VITE_API_BASE_URL: /api
+    ports:
+      - "3000:80"
     restart: unless-stopped
 
   db:

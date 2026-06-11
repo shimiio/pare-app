@@ -49,10 +49,13 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
 
     // Check if the error is a 401 and we haven't already tried to refresh
+    // Do not attempt refresh for login/register requests.
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes("/auth/refresh")
+      !originalRequest.url?.includes("/auth/refresh") &&
+      !originalRequest.url?.includes("/auth/login") &&
+      !originalRequest.url?.includes("/auth/register")
     ) {
       // If we're already refreshing, queue the request
       if (isRefreshing) {

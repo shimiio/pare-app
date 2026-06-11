@@ -15,10 +15,11 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
         var emailSender = config["Brevo:EmailSender"]
             ?? throw new InvalidOperationException("Brevo:EmailSender not configured");
 
-        BrevoConfiguration.Default.ApiKey["api-key"] = config["Brevo:ApiKey"]
+        var brevoConfig = new BrevoConfiguration();
+        brevoConfig.ApiKey["api-key"] = config["Brevo:ApiKey"]
             ?? throw new InvalidOperationException("Brevo:ApiKey not configured");
 
-        var apiInstance = new TransactionalEmailsApi();
+        var apiInstance = new TransactionalEmailsApi(brevoConfig);
 
         var nextBillingDate = subscriptions.First().NextBillingDate;
 
