@@ -40,7 +40,7 @@ public static class DependencyInjection
         // Email Service
         var emailProvider = configuration["Email:Provider"] ?? "smtp";
 
-        if (emailProvider == "brevo")
+        if (emailProvider == "Resend")
             services.AddScoped<IEmailService, EmailService>();
         else
             services.AddScoped<IEmailService, SmtpEmailService>();
