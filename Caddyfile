@@ -1,0 +1,13 @@
+{$APP_DOMAIN} {
+    handle /api/* {
+        reverse_proxy api:8080
+    }
+
+    handle /hangfire* {
+        reverse_proxy api:8080
+    }
+
+    handle {
+        reverse_proxy frontend:80
+    }
+}

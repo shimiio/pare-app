@@ -1,24 +1,52 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   api:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
-      Email__Provider: brevo
-      Brevo__ApiKey: ${BREVO_API_KEY}
-      Brevo__EmailSender: ${BREVO_EMAIL_SENDER}
+      Email__Provider: Resend
+      Resend__ApiKey: ${RESEND_API_KEY}
+      Resend__EmailSender: ${RESEND_EMAIL_SENDER}
       Hangfire__Login: ${HANGFIRE_LOGIN}
       Hangfire__Password: ${HANGFIRE_PASSWORD}
-      Swagger__Enabled: "true"
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 600M
+    logging: *default-logging
     restart: unless-stopped
 
   frontend:
-    build:
-      args:
-        VITE_API_BASE_URL: /api
     ports:
-      - "3000:80"
+      - "127.0.0.1:3000:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 50M
+    logging: *default-logging
     restart: unless-stopped
 
   db:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 400M
+    logging: *default-logging
     restart: unless-stopped
+
+  caddy:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 200M
+    logging: *default-logging
