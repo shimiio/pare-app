@@ -25,17 +25,18 @@ builder.Services.AddWebComponents(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment() || builder.Configuration["Swagger:Enabled"] == "true")
+// Swagger
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseCors("AllowedOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Hangfire dashboard
 if (app.Environment.IsDevelopment())
 {
     app.UseHangfireDashboard("/hangfire", new DashboardOptions

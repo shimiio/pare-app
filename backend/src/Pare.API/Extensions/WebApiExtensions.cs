@@ -6,22 +6,6 @@ public static class WebApiExtensions
 {
     public static IServiceCollection AddWebComponents(this IServiceCollection services, IConfiguration configuration)
     {
-        // CORS
-        var allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-            ?? throw new InvalidOperationException("Cors:AllowedOrigins not configured");
-
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowedOrigins", policy =>
-            {
-                policy
-                    .WithOrigins(allowedOrigins)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
-            });
-        });
-
         // Routing
         services.AddRouting(options => { options.LowercaseUrls = true; });
         services.AddControllers();
