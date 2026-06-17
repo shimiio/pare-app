@@ -1,10 +1,14 @@
 {$APP_DOMAIN} {
     handle /api/* {
-        reverse_proxy api:8080
+        reverse_proxy api:8080 {
+            header_up X-Forwarded-For {remote_host}
+        }
     }
 
     handle /hangfire* {
-        reverse_proxy api:8080
+        reverse_proxy api:8080 {
+            header_up X-Forwarded-For {remote_host}
+        }
     }
 
     handle {

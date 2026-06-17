@@ -1,3 +1,6 @@
+using System.Net;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
@@ -32,7 +35,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Get Header from Caddy 
+var forwardedOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor
+};
+
+forwardedOptions.KnownIPNetworks.Clear();
+forwardedOptions.KnownProxies.Clear();
+forwardedOptions.KnownIPNetworks.Add(new System.Net.IPNetwork(IPAddress.Parse("172.16.0.0"), 12));
+
+// Middleware
+app.UseForwardedHeaders(forwardedOptions);
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -46,6 +62,44 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+    app.Use(async (context, next) =>
+    {
+        // Rate limiting for Hangfire dashboard
+        if (context.Request.Path.StartsWithSegments("/hangfire"))
+        {
+            var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+            var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
+            var key = $"hangfire_ratelimit_{ip}";
+            var attemptsKey = $"{key}_attempts";
+            var expiryKey = $"{key}_expiry";
+
+            if (!cache.TryGetValue(expiryKey, out DateTimeOffset expiry))
+            {
+                expiry = DateTimeOffset.UtcNow.AddMinutes(5);
+                cache.Set(expiryKey, expiry, expiry);
+            }
+
+            var attempts = cache.GetOrCreate(attemptsKey, entry =>
+            {
+                entry.AbsoluteExpiration = expiry;
+                return 0;
+            });
+
+            if (attempts >= 10)
+            {
+                context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                await context.Response.WriteAsync("Too many requests");
+                return;
+            }
+
+            cache.Set(attemptsKey, attempts + 1, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpiration = expiry
+            });
+        }
+
+        await next();
+    });
     app.UseHangfireDashboard("/hangfire", new DashboardOptions
     {
         Authorization = [
