@@ -64,6 +64,7 @@ public class AuthController(IMediator mediator) : ControllerBase
 
     // POST refresh
     [HttpPost("refresh")]
+    [EnableRateLimiting("refresh")]
     public async Task<IActionResult> RefreshAsync()
     {
         var refreshToken = Request.Cookies["refreshToken"];

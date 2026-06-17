@@ -11,7 +11,7 @@ public static class WebApiExtensions
         services.AddRouting(options => { options.LowercaseUrls = true; });
         services.AddControllers();
         services.AddEndpointsApiExplorer();
-        
+
         services.AddMemoryCache();
 
         // Swagger
@@ -68,6 +68,18 @@ public static class WebApiExtensions
                     {
                         Window = TimeSpan.FromMinutes(5),
                         PermitLimit = 10,
+                        QueueLimit = 0
+                    }
+                )
+            );
+            
+            options.AddPolicy("refresh", httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        Window = TimeSpan.FromMinutes(1),
+                        PermitLimit = 20,
                         QueueLimit = 0
                     }
                 )
