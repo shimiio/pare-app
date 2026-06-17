@@ -23,6 +23,7 @@ services:
       ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
       MediatR__LicenseKey: ${MEDIATR_LICENSE_KEY}
       Jwt__SecretKey: ${JWT_SECRET_KEY}
+      ExchangeRate__ApiKey: ${EXCHANGE_RATE_API_KEY}
     depends_on:
       db:
         condition: service_healthy
@@ -31,8 +32,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        VITE_CURRENCY_RATES_API_KEY: ${VITE_CURRENCY_RATES_API_KEY}
     container_name: pare-frontend
     depends_on:
       - api

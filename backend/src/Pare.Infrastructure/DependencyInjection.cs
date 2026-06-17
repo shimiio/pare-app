@@ -36,6 +36,8 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddHttpClient();
+        services.AddScoped<ICurrencyRateService, CurrencyRateService>();
 
         // Email Service
         var emailProvider = configuration["Email:Provider"] ?? "smtp";

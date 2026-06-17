@@ -11,10 +11,6 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile --ignore-scripts
 # Copy
 COPY . .
 
-# ENV
-ARG VITE_CURRENCY_RATES_API_KEY
-ENV VITE_CURRENCY_RATES_API_KEY=$VITE_CURRENCY_RATES_API_KEY
-
 # Build
 RUN pnpm build
 
