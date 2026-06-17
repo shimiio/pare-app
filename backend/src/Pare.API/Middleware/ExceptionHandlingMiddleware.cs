@@ -39,5 +39,10 @@ public class ExceptionHandlingMiddleware(RequestDelegate next)
             context.Response.StatusCode = 401;
             await context.Response.WriteAsJsonAsync(new { error = ex.Message });
         }
+        catch (UnprocessableEntityException ex)
+        {
+            context.Response.StatusCode = 422;
+            await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+        }
     }
 }

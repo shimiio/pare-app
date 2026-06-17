@@ -2,6 +2,7 @@ using MediatR;
 using Pare.Domain.Entities;
 using Pare.Application.Subscriptions.DTOs;
 using Pare.Application.Interfaces;
+using Pare.Application.Exceptions;
 
 namespace Pare.Application.Subscriptions.Commands.CreateSubscription;
 
@@ -14,6 +15,10 @@ public class CreateSubscriptionHandler(ISubscriptionRepository repo)
         CreateSubscriptionCommand command,
         CancellationToken ct)
     {
+        var count = await _repo.CountByUserIdAsync(command.UserId);
+        if (count >= 50)
+            throw new UnprocessableEntityException("Subscription limit reached");
+
         var subscription = new Subscription
         {
             UserId = command.UserId,
