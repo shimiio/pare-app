@@ -23,6 +23,7 @@ builder.Host.UseSerilog((ctx, config) =>
 
 // Dependency Injections
 builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddWebComponents(builder.Configuration);
 

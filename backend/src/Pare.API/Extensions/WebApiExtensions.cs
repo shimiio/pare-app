@@ -49,6 +49,19 @@ public static class WebApiExtensions
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
+            options.OnRejected = async (context, ct) =>
+            {
+                var ip = context.HttpContext.Connection.RemoteIpAddress?.ToString();
+                var path = context.HttpContext.Request.Path;
+                var logger = context.HttpContext.RequestServices
+                    .GetRequiredService<ILogger<Program>>();
+
+                logger.LogWarning("Rate limit exceeded | IP: {Ip} | Path: {Path}", ip, path);
+
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                await context.HttpContext.Response.WriteAsync("Too many requests", ct);
+            };
+
             options.AddPolicy("global", httpContext =>
                 RateLimitPartition.GetFixedWindowLimiter(
                     partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
@@ -72,7 +85,7 @@ public static class WebApiExtensions
                     }
                 )
             );
-            
+
             options.AddPolicy("refresh", httpContext =>
                 RateLimitPartition.GetFixedWindowLimiter(
                     partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
