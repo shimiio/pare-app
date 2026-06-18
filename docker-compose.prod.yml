@@ -13,8 +13,6 @@ services:
       Resend__EmailSender: ${RESEND_EMAIL_SENDER}
       Hangfire__Login: ${HANGFIRE_LOGIN}
       Hangfire__Password: ${HANGFIRE_PASSWORD}
-    ports:
-      - "127.0.0.1:8080:8080"
     deploy:
       resources:
         limits:
@@ -24,8 +22,6 @@ services:
     restart: unless-stopped
 
   frontend:
-    ports:
-      - "127.0.0.1:3000:80"
     deploy:
       resources:
         limits:

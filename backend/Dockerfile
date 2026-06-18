@@ -8,16 +8,16 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copy projects to restore dependencies
-COPY backend/src/Pare.API/Pare.API.csproj ./Pare.API/
-COPY backend/src/Pare.Application/Pare.Application.csproj ./Pare.Application/
-COPY backend/src/Pare.Domain/Pare.Domain.csproj ./Pare.Domain/
-COPY backend/src/Pare.Infrastructure/Pare.Infrastructure.csproj ./Pare.Infrastructure/
+COPY src/Pare.API/Pare.API.csproj ./Pare.API/
+COPY src/Pare.Application/Pare.Application.csproj ./Pare.Application/
+COPY src/Pare.Domain/Pare.Domain.csproj ./Pare.Domain/
+COPY src/Pare.Infrastructure/Pare.Infrastructure.csproj ./Pare.Infrastructure/
 
 # Restore dependencies
 RUN dotnet restore Pare.API/Pare.API.csproj
 
 # Copy the rest of the source code
-COPY backend/src/ ./
+COPY src/ ./
 
 # Build and publish the project (using publish instead of build)
 RUN dotnet publish /src/Pare.API/Pare.API.csproj \

@@ -1,24 +1,28 @@
-# Assemble
-FROM node:22-alpine AS build
+﻿FROM node:24-alpine AS builder
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME/bin:$PATH"
+
+RUN corepack enable && corepack prepare pnpm@10.33.2 --activate
+
 WORKDIR /app
 
-# At first, only package.json for dependency caching
 COPY package.json pnpm-lock.yaml ./
 
-ENV CI=true
-RUN npm install -g pnpm && pnpm install --frozen-lockfile --ignore-scripts
+ENV NODE_ENV=development
 
-# Copy
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --no-frozen-lockfile
+
 COPY . .
 
-# Build
-RUN pnpm build
+ENV NODE_ENV=production
+RUN pnpm run build
 
-# Distribute stats
-FROM nginx:alpine AS final
-COPY --from=build /app/dist /usr/share/nginx/html
+# ---
 
-# Configuration for React Router
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+FROM nginx:alpine AS runner
+
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
