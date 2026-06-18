@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using MediatR;
+using Pare.Application.Common;
 using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
 using Pare.Application.User.DTOs;
@@ -26,8 +27,9 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
         // Hash the password
         string hash = _hasher.Hash(request.Password);
 
-        // Generate refresh token
-        var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        // Generate and hash refresh token
+        var plainToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        var hashedToken = TokenHasher.Hash(plainToken);
 
         // Create refresh token expiry
         var refreshTokenExpiry = DateTime.UtcNow.AddDays(30);
@@ -39,7 +41,7 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
             Email = request.Email,
             PasswordHash = hash,
             Currency = "EUR",
-            RefreshToken = refreshToken,
+            RefreshToken = hashedToken,
             RefreshTokenExpiry = refreshTokenExpiry
         };
 
@@ -51,7 +53,7 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
         var jwtToken = new AuthResponseDto
         {
             JwtToken = token,
-            RefreshToken = refreshToken
+            RefreshToken = plainToken
         };
 
         return jwtToken;

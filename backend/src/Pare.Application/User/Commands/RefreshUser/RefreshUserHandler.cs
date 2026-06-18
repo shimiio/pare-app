@@ -1,4 +1,6 @@
+using System.Security.Cryptography;
 using MediatR;
+using Pare.Application.Common;
 using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
 using Pare.Application.User.DTOs;
@@ -16,30 +18,29 @@ public class RefreshUserHandler(IUserRepository repo, IJwtTokenService jwtServic
         var request = command.RefreshToken;
 
         // Get user data by refresh token
-        var user = await _repo.GetByRefreshTokenAsync(request.RefreshToken)
+        var user = await _repo.GetByHashedRefreshTokenAsync(TokenHasher.Hash(request.RefreshToken))
             ?? throw new UnauthorizedException("Unauthorized");
 
         // Validate DateTime of refresh token
-        if (user.RefreshToken != request.RefreshToken || user.RefreshTokenExpiry < DateTime.UtcNow)
+        if (user.RefreshTokenExpiry < DateTime.UtcNow)
             throw new UnauthorizedException("Unauthorized");
 
-        // Create refresh token expiry
-        var refreshTokenExpiry = DateTime.UtcNow.AddDays(30);
+        // Generate new refresh token
+        var plainToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        var hashedToken = TokenHasher.Hash(plainToken);
 
-        // Update user refresh token expiry
-        user.RefreshTokenExpiry = refreshTokenExpiry;
+        // Update user
+        user.RefreshToken = hashedToken;
+        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(30);
 
-        // Update refresh token expiry
         await _repo.UpdateAsync(user);
 
         // Generate JWT token
         var token = _jwtService.GenerateToken(user.Id, user.Email);
-        var jwtToken = new AuthResponseDto
+        return new AuthResponseDto
         {
             JwtToken = token,
-            RefreshToken = user.RefreshToken
+            RefreshToken = plainToken
         };
-
-        return jwtToken;
     }
 }
