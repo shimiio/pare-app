@@ -14,11 +14,24 @@ services:
       timeout: 5s
       retries: 5
 
+  migrator:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pare-migrator
+    command: [ "--migrate-only" ]
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      MediatR__LicenseKey: ${MEDIATR_LICENSE_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
   api:
     build:
       context: ./backend
       dockerfile: Dockerfile
-      network: host
     container_name: pare-api
     environment:
       ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
@@ -28,6 +41,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      migrator:
+        condition: service_completed_successfully
 
   frontend:
     build:

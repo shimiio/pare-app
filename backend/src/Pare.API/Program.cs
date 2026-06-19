@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
@@ -9,6 +10,7 @@ using Pare.Infrastructure.Jobs;
 using Pare.Application;
 using Pare.Infrastructure;
 using Pare.API.Extensions;
+using Pare.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +30,17 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddWebComponents(builder.Configuration);
 
 var app = builder.Build();
+
+// Migrate-only mode for Docker migrator service
+if (args.Contains("--migrate-only"))
+{
+    Log.Information("Running in migrate-only mode...");
+    using var scope = app.Services.CreateAsyncScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await db.Database.MigrateAsync();
+    Log.Information("Migrations applied successfully.");
+    return;
+}
 
 // Swagger
 if (app.Environment.IsDevelopment())
