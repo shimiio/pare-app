@@ -1,4 +1,14 @@
 {$APP_DOMAIN} {
+    header {
+        Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        -Server
+        -Via
+    }
+    
     handle /api/* {
         reverse_proxy api:8080 {
             header_up X-Forwarded-For {remote_host}
@@ -13,14 +23,5 @@
 
     handle {
         reverse_proxy frontend:80
-    }
-
-    header {
-        Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';"
-        X-Content-Type-Options "nosniff"
-        X-Frame-Options "DENY"
-        Referrer-Policy "strict-origin-when-cross-origin"
-        Strict-Transport-Security "max-age=31536000; includeSubDomains"
-        -Server
     }
 }
