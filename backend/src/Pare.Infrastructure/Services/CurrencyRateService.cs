@@ -30,7 +30,7 @@ public sealed class CurrencyRateService(IConfiguration config, ILogger<CurrencyR
             if (response?.ConversionRates is null)
                 throw new InvalidOperationException("Failed to deserialize exchange rate response");
 
-            cache.Set(cacheKey, response.ConversionRates, TimeSpan.FromHours(24));
+            cache.Set(cacheKey, response.ConversionRates, TimeSpan.FromHours(12));
 
             return response.ConversionRates;
         }
