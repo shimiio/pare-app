@@ -35,6 +35,23 @@ export default function App() {
   return (
     <>
       <div className="fixed inset-0 -z-10">
+        <svg className="absolute w-0 h-0" width="0" height="0">
+          <defs>
+            <linearGradient
+              id="my-lucide-gradient"
+              x1="0"
+              y1="0"
+              x2="24"
+              y2="24"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" stopColor="#ec4899" />{/* Tailwind pink-500 */}
+              <stop offset="50%" stopColor="#8b5cf6" />{/* Tailwind violet-500 */}
+              <stop offset="100%" stopColor="#3b82f6" />{/* Tailwind blue-500 */}
+            </linearGradient>
+          </defs>
+        </svg>
+
         <Silk
           speed={1.5}
           scale={0.7}

@@ -74,4 +74,10 @@ public class SubscriptionRepository(AppDbContext db) : ISubscriptionRepository
             .Where(s => s.Status == Domain.Emums.Status.Active && s.NextBillingDate == reminderDate)
             .ToListAsync();
     }
+
+    public async Task<int> CountByUserIdAsync(int userId)
+    {
+        return await _db.Subscriptions
+            .CountAsync(s => s.UserId == userId);
+    }
 }

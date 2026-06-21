@@ -1,4 +1,5 @@
 using MediatR;
+using Pare.Application.Common;
 using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
 
@@ -14,7 +15,7 @@ public class LogoutUserHandler(IUserRepository repo)
         var request = command.RefreshToken;
 
         // Get user data by refresh token
-        var user = await _repo.GetByRefreshTokenAsync(request.RefreshToken)
+        var user = await _repo.GetByHashedRefreshTokenAsync(TokenHasher.Hash(request.RefreshToken))
             ?? throw new UnauthorizedException("Unauthorized");
 
         // Update refresh token

@@ -24,13 +24,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
 
       # Install pnpm
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: latest
+          version: 10.33.2
 
       # Install Dependencies
       - name: Install dependencies
@@ -41,8 +41,6 @@ jobs:
       - name: Build
         working-directory: frontend
         run: pnpm build
-        env:
-          VITE_CURRENCY_RATES_API_KEY: ${{ secrets.VITE_CURRENCY_RATES_API_KEY }}
 
       # Run tests
       - name: Run tests

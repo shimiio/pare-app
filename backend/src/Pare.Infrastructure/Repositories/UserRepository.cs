@@ -21,10 +21,10 @@ public class UserRepository(AppDbContext db) : IUserRepository
         return await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
     }
 
-    // GET by refresh token
-    public async Task<User?> GetByRefreshTokenAsync(string refreshToken)
+    // GET by hashed refresh token
+    public async Task<User?> GetByHashedRefreshTokenAsync(string hashedRefreshToken)
     {
-        return await _db.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+        return await _db.Users.FirstOrDefaultAsync(u => u.RefreshToken == hashedRefreshToken);
     }
 
     // POST create new user

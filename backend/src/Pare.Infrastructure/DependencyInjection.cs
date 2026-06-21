@@ -36,11 +36,13 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddHttpClient();
+        services.AddScoped<ICurrencyRateService, CurrencyRateService>();
 
         // Email Service
         var emailProvider = configuration["Email:Provider"] ?? "smtp";
 
-        if (emailProvider == "brevo")
+        if (emailProvider == "Resend")
             services.AddScoped<IEmailService, EmailService>();
         else
             services.AddScoped<IEmailService, SmtpEmailService>();

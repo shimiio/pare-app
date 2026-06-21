@@ -15,4 +15,6 @@ public interface ISubscriptionRepository
     // DELETE
     Task<bool> DeleteByIdAsync(int id, int userId);
     Task<IEnumerable<Subscription>> GetActiveWithBillingDateAsync(DateOnly date);
+    // Get subscriptions count by user Id
+    Task<int> CountByUserIdAsync(int userId);
 }

@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using System.Threading.RateLimiting;
 
 namespace Pare.API.Extensions;
 
@@ -6,26 +7,12 @@ public static class WebApiExtensions
 {
     public static IServiceCollection AddWebComponents(this IServiceCollection services, IConfiguration configuration)
     {
-        // CORS
-        var allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
-            ?? throw new InvalidOperationException("Cors:AllowedOrigins not configured");
-
-        services.AddCors(options =>
-        {
-            options.AddPolicy("AllowedOrigins", policy =>
-            {
-                policy
-                    .WithOrigins(allowedOrigins)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
-            });
-        });
-
         // Routing
         services.AddRouting(options => { options.LowercaseUrls = true; });
         services.AddControllers();
         services.AddEndpointsApiExplorer();
+
+        services.AddMemoryCache();
 
         // Swagger
         services.AddSwaggerGen(opt =>
@@ -56,6 +43,60 @@ public static class WebApiExtensions
                     Array.Empty<string>()
                 }
             });
+        });
+
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+            options.OnRejected = async (context, ct) =>
+            {
+                var ip = context.HttpContext.Connection.RemoteIpAddress?.ToString();
+                var path = context.HttpContext.Request.Path;
+                var logger = context.HttpContext.RequestServices
+                    .GetRequiredService<ILogger<Program>>();
+
+                logger.LogWarning("Rate limit exceeded | IP: {Ip} | Path: {Path}", ip, path);
+
+                context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                await context.HttpContext.Response.WriteAsync("Too many requests", ct);
+            };
+
+            options.AddPolicy("global", httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        Window = TimeSpan.FromMinutes(1),
+                        PermitLimit = 100,
+                        QueueLimit = 0
+                    }
+                )
+            );
+
+            options.AddPolicy("auth", httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        Window = TimeSpan.FromMinutes(5),
+                        PermitLimit = 10,
+                        QueueLimit = 0
+                    }
+                )
+            );
+
+            options.AddPolicy("refresh", httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    factory: _ => new FixedWindowRateLimiterOptions
+                    {
+                        Window = TimeSpan.FromMinutes(1),
+                        PermitLimit = 20,
+                        QueueLimit = 0
+                    }
+                )
+            );
         });
 
         return services;

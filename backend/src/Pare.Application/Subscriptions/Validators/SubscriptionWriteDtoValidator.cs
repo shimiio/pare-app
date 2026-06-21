@@ -12,7 +12,8 @@ public class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWrite
             .MaximumLength(100).WithMessage("Name cannot exceet 100 characters");
 
         RuleFor(x => x.Price)
-            .GreaterThan(0).WithMessage("Price must be greater then 0");
+            .GreaterThan(0).WithMessage("Price must be greater then 0")
+            .LessThanOrEqualTo(1000000).WithMessage("Price is unrealistically high");
 
         RuleFor(x => x.Currency)
             .NotEmpty().WithMessage("Currency is required")

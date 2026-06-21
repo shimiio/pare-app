@@ -5,8 +5,8 @@ namespace Pare.Infrastructure.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public DbSet<Subscription> Subscriptions { get; set; }
-    public DbSet<User> Users { get; set; }
+    public required DbSet<Subscription> Subscriptions { get; set; }
+    public required DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 using MediatR;
 using Pare.Application.Subscriptions.DTOs;
 using Pare.Application.Subscriptions.Queries.GetAllSubscriptions;
@@ -14,6 +15,7 @@ namespace Pare.API.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
+[EnableRateLimiting("global")]
 public class SubscriptionsController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
