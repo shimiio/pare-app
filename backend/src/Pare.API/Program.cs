@@ -79,11 +79,12 @@ else
 {
     app.Use(async (context, next) =>
     {
-        Log.Information("Hangfire request - Connection IP: {ConnectionIP}",
-            context.Connection.RemoteIpAddress);
+
         // Rate limiting for Hangfire dashboard
         if (context.Request.Path.StartsWithSegments("/hangfire"))
         {
+            Log.Information("Hangfire request - Connection IP: {ConnectionIP}", context.Connection.RemoteIpAddress);
+
             var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
             var key = $"hangfire_ratelimit_{ip}";
