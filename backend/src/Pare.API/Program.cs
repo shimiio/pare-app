@@ -55,12 +55,13 @@ var forwardedOptions = new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor
 };
 
+app.UseForwardedHeaders(forwardedOptions);
+
 forwardedOptions.KnownIPNetworks.Clear();
 forwardedOptions.KnownProxies.Clear();
 forwardedOptions.KnownIPNetworks.Add(new System.Net.IPNetwork(IPAddress.Parse("172.16.0.0"), 12));
 
 // Middleware
-app.UseForwardedHeaders(forwardedOptions);
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRateLimiter();
 app.UseAuthentication();
@@ -78,6 +79,8 @@ else
 {
     app.Use(async (context, next) =>
     {
+        Log.Information("Hangfire request - Connection IP: {ConnectionIP}",
+            context.Connection.RemoteIpAddress);
         // Rate limiting for Hangfire dashboard
         if (context.Request.Path.StartsWithSegments("/hangfire"))
         {
@@ -124,16 +127,17 @@ else
                 Pass = builder.Configuration["Hangfire:Password"]
                     ?? throw new InvalidOperationException("Hangfire:Password not configured")
             }
-        ]
+        ],
+        StatsPollingInterval = 60000
     });
 }
 
 // Recurring jobs
 using (var scope = app.Services.CreateScope())
 {
-    RecurringJob.AddOrUpdate<RenewalJob>("renewal-job", job => job.ExecuteAsync(), Cron.Daily);
-    RecurringJob.AddOrUpdate<ReminderJob>("reminder-job", job => job.ExecuteAsync(), Cron.Daily);
-    RecurringJob.AddOrUpdate<TokenCleanupJob>("token-cleanup-job", job => job.ExecuteAsync(), Cron.Daily);
+    RecurringJob.AddOrUpdate<RenewalJob>("renewal-job", job => job.ExecuteAsync(), "5 22 * * *"); // 22 05 UTC = 00 05 Austria time
+    RecurringJob.AddOrUpdate<ReminderJob>("reminder-job", job => job.ExecuteAsync(), "0 10 * * *"); // 10 00 UTC = 12 00 Austria time
+    RecurringJob.AddOrUpdate<TokenCleanupJob>("token-cleanup-job", job => job.ExecuteAsync(), "5 22 * * *");
 }
 
 app.MapControllers();
