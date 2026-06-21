@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import AppLayout from "../components/layouts/AppLayout";
 import Dashboard from "../pages/Dashboard";
 import Subscriptions from "../pages/Subscriptions";
@@ -8,6 +8,7 @@ import PublicLayout from "../components/layouts/PublicLayout";
 import MainWindow from "../pages/MainWindow";
 import PublicRoute from "./PublicRoute";
 import ProtectedRoute from "./ProtectedRoute";
+import NotFound from "../pages/NotFound";
 
 export const router = createBrowserRouter([
   // PUBLIC ROUTES
@@ -17,10 +18,7 @@ export const router = createBrowserRouter([
       {
         path: "/",
         element: <PublicLayout />,
-        children: [
-          { index: true, element: <MainWindow /> },
-          { path: "*", element: <Navigate to="/" /> },
-        ],
+        children: [{ index: true, element: <MainWindow /> }],
       },
     ],
   },
@@ -40,4 +38,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
+  // 404 route
+  { path: "*", element: <NotFound /> },
 ]);

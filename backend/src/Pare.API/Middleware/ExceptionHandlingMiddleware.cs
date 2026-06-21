@@ -12,6 +12,13 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         try
         {
             await _next(context);
+
+            // catch 404
+            if (context.Response.StatusCode == 404 && !context.Response.HasStarted)
+            {
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsJsonAsync(new { error = "Endpoint not found" });
+            }
         }
         catch (ValidationException ex)
         {
