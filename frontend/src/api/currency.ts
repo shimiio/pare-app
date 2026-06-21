@@ -1,9 +1,9 @@
-export const fetchCurrencyRates = async (
+import { apiClient } from "./client";
+
+export const getCurrencyRates = async (
   currency: string,
 ): Promise<Record<string, number>> => {
-  const response = await fetch(
-    `api/currency/${currency}`,
-  );
-  const data = await response.json();
-  return data;
+  // Axios сам сделает JSON.parse, поэтому берем сразу response.data
+  const response = await apiClient.get(`/currency/${currency}`);
+  return response.data;
 };
