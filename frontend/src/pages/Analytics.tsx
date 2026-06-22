@@ -26,6 +26,7 @@ export default function Analytics() {
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>ERROR</div>;
+  
 
   // get active subscriptions
   const subscriptions: Subscription[] | undefined = data;

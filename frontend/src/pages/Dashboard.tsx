@@ -33,6 +33,7 @@ export default function Dashboard() {
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>ERROR</div>;
+  if (!data) return null;
 
   // get active subscriptions
   const subscriptions: Subscription[] | undefined = data;
