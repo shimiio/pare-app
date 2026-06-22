@@ -210,8 +210,11 @@ export default function EditSubscriptionModal({
 
             {/* Service URL */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
-                Service URL
+              <label className="flex justify-between text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+                <p>Service URL</p>
+                <p className="flex items-end text-[9px] text-neutral-600">
+                  Used to fetch the service icon
+                </p>
               </label>
               <input
                 type="text"

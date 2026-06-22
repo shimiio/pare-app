@@ -1,6 +1,6 @@
 {$APP_DOMAIN} {
     header {
-        Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:;"
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-ZswfTY7H35rbv8WC7NXBoiC7WNu86vSzCDChNWwZZDM=' 'sha256-ToofGf2BXRDHNF7a2CHmKNhiRx3S29xnXxJbpkbzh8Y='; style-src 'self' 'unsafe-inline'; img-src 'self' https:;"
         X-Content-Type-Options "nosniff"
         X-Frame-Options "DENY"
         Referrer-Policy "strict-origin-when-cross-origin"

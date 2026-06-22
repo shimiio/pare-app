@@ -6,7 +6,7 @@ export default function Settings() {
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>ERROR</div>;
-  if (!data) return <div>No user data</div>;
+  if (!data) return null;
 
   return <SettingsForm user={data} />;
 }

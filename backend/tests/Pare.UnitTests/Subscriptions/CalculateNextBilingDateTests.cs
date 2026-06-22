@@ -4,7 +4,7 @@ using Pare.Domain.Entities;
 
 namespace Pare.UnitTests.Subscriptions;
 
-public class CalculateNextBiliingDateTests
+public class CalculateNextBilingDateTests
 {
     [Fact]
     public void CalculateNextBillingDate_WhenMonthly_ShouldAddOneMonth()

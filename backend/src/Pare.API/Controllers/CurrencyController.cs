@@ -6,6 +6,7 @@ using Pare.Application.Currency.Queries.GetCurrencyRates;
 
 namespace Pare.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 [EnableRateLimiting("global")]

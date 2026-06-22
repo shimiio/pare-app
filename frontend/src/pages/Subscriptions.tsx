@@ -26,6 +26,7 @@ export default function Subscriptions() {
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>ERROR</div>;
+  if (!data) return null;
 
   const subscriptions: Subscription[] | undefined = data;
   const active = subscriptions?.filter((sub) => sub.status === 0);

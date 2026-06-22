@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Bell, Euro, ChartNoAxesColumn } from "lucide-react";
+import { Bell, Euro, ChartNoAxesColumn, Lock } from "lucide-react";
 import Logo from "#components/ui/Logo";
 import LoginModal from "#components/auth/LoginModal";
 import SignupModal from "#components/auth/SignupModal";
@@ -26,7 +26,7 @@ export default function MainWindow() {
           A subscription manager that shows exactly what you're paying for.
         </p>
 
-        <div className="flex gap-3 mb-14 2xl:mb-16">
+        <div className="flex gap-3 mb-4 2xl:mb-5">
           <button
             className="px-4 py-2 border backdrop-blur-xs border-white/10 bg-[#121212]/40 hover:bg-white/5 duration-150 rounded-lg shadow-md shadow-white/5 cursor-pointer"
             onClick={() => setModal("login")}
@@ -40,6 +40,27 @@ export default function MainWindow() {
           >
             Sign Up
           </button>
+        </div>
+
+        <div className="flex flex-col text-center text-xs text-neutral-500 mb-12 2xl:mb-15">
+          <div className="flex">
+            <Lock className="h-4" />
+            <p>
+              Your data is encrypted and secure. We never sell or share your
+              information.
+            </p>
+          </div>
+
+          <p>
+            Open source — verify yourself.{" "}
+            <a
+              href="https://github.com/shimiio/pare-app"
+              target="_blank"
+              className="text-white/60 hover:text-white duration-150"
+            >
+              GitHub ↗
+            </a>
+          </p>
         </div>
 
         <div className="flex flex-row gap-4">
