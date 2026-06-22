@@ -13,10 +13,13 @@ public class DeleteUserHandler(IUserRepository repo)
         DeleteUserCommand command,
         CancellationToken ct)
     {
-        // Get user data
-        var existing = await _repo.GetByIdAsync(command.Id) ?? throw new NotFoundException("User not found");
+        var isDeleted = await _repo.DeleteByIdAsync(command.Id);
 
-        // Delete user
-        return await _repo.DeleteByIdAsync(command.Id);
+        if (!isDeleted)
+        {
+            throw new NotFoundException("User not found");
+        }
+
+        return true;
     }
 }
