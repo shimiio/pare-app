@@ -26,7 +26,9 @@ public class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWrite
             .WithMessage("Next billing date cannot be earlier than the start date");
 
         RuleFor(x => x.StartDate)
-            .NotEmpty().WithMessage("Start date is required");
+            .NotEmpty().WithMessage("Start date is required")
+            .LessThanOrEqualTo(x => DateOnly.FromDateTime(DateTime.UtcNow))
+            .WithMessage("Start date cannot be in the future");
 
         RuleFor(x => x.ServiceUrl)
             .MaximumLength(200).WithMessage("Service URL cannot exceed 200 characters");
