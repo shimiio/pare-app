@@ -26,7 +26,7 @@ export default function Analytics() {
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>ERROR</div>;
-  
+  if (!data) return null;
 
   // get active subscriptions
   const subscriptions: Subscription[] | undefined = data;
@@ -291,8 +291,8 @@ export default function Analytics() {
 
                 <div className="bg-[#121212]/40 border border-white/5 rounded-xl p-6 flex flex-col items-center justify-between min-h-95 h-full">
                   {/* Recharts Pie Chart */}
-                  <div className="w-full max-w-60 aspect-square relative my-2">
-                    <ResponsiveContainer width="100%" height="100%">
+                  <div className="w-full max-w-60 relative my-2">
+                    <ResponsiveContainer width="100%" aspect={1}>
                       <PieChart>
                         <Pie
                           data={pieData}
