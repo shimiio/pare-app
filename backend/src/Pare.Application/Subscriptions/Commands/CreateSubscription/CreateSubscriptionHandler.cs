@@ -19,14 +19,6 @@ public class CreateSubscriptionHandler(ISubscriptionRepository repo)
         if (count >= 50)
             throw new UnprocessableEntityException("Subscription limit reached");
 
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var nextBilling = command.CreateDto.NextBillingDate;
-
-        if (command.CreateDto.StartDate == today && nextBilling == today)
-        {
-            nextBilling = command.CreateDto.StartDate.AddMonths(1);
-        }
-
         var subscription = new Subscription
         {
             UserId = command.UserId,
@@ -35,7 +27,7 @@ public class CreateSubscriptionHandler(ISubscriptionRepository repo)
             Currency = command.CreateDto.Currency,
             BillingCycle = command.CreateDto.BillingCycle,
             Status = command.CreateDto.Status,
-            NextBillingDate = nextBilling,
+            NextBillingDate = command.CreateDto.NextBillingDate,
             StartDate = command.CreateDto.StartDate,
             ServiceUrl = command.CreateDto.ServiceUrl,
         };

@@ -16,7 +16,6 @@ export const calculateNextBilling = (
   if (!startDateStr) return "";
 
   const [year, month, day] = startDateStr.split("-").map(Number);
-
   const nextBilling = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
 
   const now = new Date();
@@ -24,7 +23,7 @@ export const calculateNextBilling = (
     Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0),
   );
 
-  while (nextBilling < todayUTC) {
+  while (nextBilling <= todayUTC) {
     if (cycle === 0) {
       // Monthly
       nextBilling.setUTCMonth(nextBilling.getUTCMonth() + 1);

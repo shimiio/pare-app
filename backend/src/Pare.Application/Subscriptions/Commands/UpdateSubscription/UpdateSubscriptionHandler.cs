@@ -15,14 +15,6 @@ public class UpdateSubscriptionHandler(ISubscriptionRepository repo)
         UpdateSubscriptionCommand command,
         CancellationToken ct)
     {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        var nextBilling = command.UpdateDto.NextBillingDate;
-
-        if (command.UpdateDto.StartDate == today && nextBilling == today)
-        {
-            nextBilling = command.UpdateDto.StartDate.AddMonths(1);
-        }
-
         var subscription = new Subscription
         {
             Name = command.UpdateDto.Name,
@@ -30,7 +22,7 @@ public class UpdateSubscriptionHandler(ISubscriptionRepository repo)
             Currency = command.UpdateDto.Currency,
             BillingCycle = command.UpdateDto.BillingCycle,
             Status = command.UpdateDto.Status,
-            NextBillingDate = nextBilling,
+            NextBillingDate = command.UpdateDto.NextBillingDate,
             StartDate = command.UpdateDto.StartDate,
             ServiceUrl = command.UpdateDto.ServiceUrl,
         };
