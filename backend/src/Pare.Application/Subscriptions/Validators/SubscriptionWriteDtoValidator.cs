@@ -9,10 +9,10 @@ public class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWrite
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required")
-            .MaximumLength(100).WithMessage("Name cannot exceet 100 characters");
+            .MaximumLength(100).WithMessage("Name cannot exceed 100 characters");
 
         RuleFor(x => x.Price)
-            .GreaterThan(0).WithMessage("Price must be greater then 0")
+            .GreaterThan(0).WithMessage("Price must be greater than 0")
             .LessThanOrEqualTo(1000000).WithMessage("Price is unrealistically high");
 
         RuleFor(x => x.Currency)
@@ -20,7 +20,7 @@ public class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWrite
             .Length(3).WithMessage("Currency must be a 3-letter code (e.g. EUR)");
 
         RuleFor(x => x.NextBillingDate)
-            .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow))
+            .GreaterThanOrEqualTo(x => DateOnly.FromDateTime(DateTime.UtcNow))
             .WithMessage("Next billing date cannot be in the past")
             .GreaterThanOrEqualTo(x => x.StartDate)
             .WithMessage("Next billing date cannot be earlier than the start date");
