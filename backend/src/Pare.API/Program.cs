@@ -1,6 +1,5 @@
 using System.Net;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Hangfire;
@@ -55,83 +54,44 @@ var forwardedOptions = new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor
 };
 
-app.UseForwardedHeaders(forwardedOptions);
-
 forwardedOptions.KnownIPNetworks.Clear();
 forwardedOptions.KnownProxies.Clear();
 forwardedOptions.KnownIPNetworks.Add(new System.Net.IPNetwork(IPAddress.Parse("172.16.0.0"), 12));
 
+app.UseForwardedHeaders(forwardedOptions);
+
 // Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseRouting();
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
 // Hangfire dashboard
+var dashboardOptions = new DashboardOptions
+{
+    StatsPollingInterval = 60000
+};
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseHangfireDashboard("/hangfire", new DashboardOptions
-    {
-        Authorization = []
-    });
+    dashboardOptions.Authorization = [];
 }
 else
 {
-    app.Use(async (context, next) =>
-    {
-
-        // Rate limiting for Hangfire dashboard
-        if (context.Request.Path.StartsWithSegments("/hangfire"))
+    dashboardOptions.Authorization = [
+        new HangfireCustomBasicAuthenticationFilter
         {
-            Log.Information("Hangfire request - Connection IP: {ConnectionIP}", context.Connection.RemoteIpAddress);
-
-            var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-            var cache = context.RequestServices.GetRequiredService<IMemoryCache>();
-            var key = $"hangfire_ratelimit_{ip}";
-            var attemptsKey = $"{key}_attempts";
-            var expiryKey = $"{key}_expiry";
-
-            if (!cache.TryGetValue(expiryKey, out DateTimeOffset expiry))
-            {
-                expiry = DateTimeOffset.UtcNow.AddMinutes(5);
-                cache.Set(expiryKey, expiry, expiry);
-            }
-
-            var attempts = cache.GetOrCreate(attemptsKey, entry =>
-            {
-                entry.AbsoluteExpiration = expiry;
-                return 0;
-            });
-
-            if (attempts >= 10)
-            {
-                context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-                await context.Response.WriteAsync("Too many requests");
-                return;
-            }
-
-            cache.Set(attemptsKey, attempts + 1, new MemoryCacheEntryOptions
-            {
-                AbsoluteExpiration = expiry
-            });
+            User = builder.Configuration["Hangfire:Login"]
+                ?? throw new InvalidOperationException("Hangfire:Login not configured"),
+            Pass = builder.Configuration["Hangfire:Password"]
+                ?? throw new InvalidOperationException("Hangfire:Password not configured")
         }
-
-        await next();
-    });
-    app.UseHangfireDashboard("/hangfire", new DashboardOptions
-    {
-        Authorization = [
-            new HangfireCustomBasicAuthenticationFilter
-            {
-                User = builder.Configuration["Hangfire:Login"]
-                    ?? throw new InvalidOperationException("Hangfire:Login not configured"),
-                Pass = builder.Configuration["Hangfire:Password"]
-                    ?? throw new InvalidOperationException("Hangfire:Password not configured")
-            }
-        ],
-        StatsPollingInterval = 60000
-    });
+    ];
 }
+
+app.MapHangfireDashboard("/hangfire", dashboardOptions)
+   .RequireRateLimiting("hangfire");
 
 // Recurring jobs
 using (var scope = app.Services.CreateScope())
