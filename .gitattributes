@@ -1,0 +1,5 @@
+pnpm-lock.yml linguist-generated
+frontend/src/components/Silk.jsx linguist-generated
+frontend/src/styles/index.css linguist-generated
+
+backend/src/Pare.Infrastructure/Migrations/*.cs linguist-generated
