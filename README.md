@@ -9,8 +9,8 @@ A subscription manager I built to track what I'm actually spending on recurring 
 ## What it does
 
 <p>
-  <img src="assets/dashboard.png" width="49%" />
-  <img src="assets/subscriptions.png" width="49%" />
+    <img src="https://github.com/user-attachments/assets/0931b7e1-d1ab-4850-a62d-c6c3ae50c1bb" width="49%" />
+    <img src="https://github.com/user-attachments/assets/4b791461-794b-4050-a0fd-240122e87da3" width="49%" />
 </p>
 
 - Track subscriptions across different billing cycles (monthly, yearly, weekly)
@@ -103,6 +103,7 @@ Frontend: Vitest — utility functions for date calculations, currency formattin
 Before going live I ran a structured pen test covering the full OWASP Top 10 (2025) — automated scanning with OWASP ZAP + manual testing from a Kali Linux machine. 13 findings total, 10 fixed before deployment.
 
 Key things that got caught and fixed:
+
 - Refresh tokens stored as plain text → SHA-256 hashed
 - No rate limiting on auth endpoints → brute-forced a weak test password with `rockyou.txt` in under a minute
 - Exchange rate API key in the Vite bundle → moved server-side with 24h cache
