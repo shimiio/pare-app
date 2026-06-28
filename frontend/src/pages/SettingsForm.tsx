@@ -409,7 +409,11 @@ export default function SettingsForm({ user }: { user: User }) {
               >
                 <option value="EUR">€ EUR</option>
                 <option value="USD">$ USD</option>
+                <option value="GBP">£ GBP</option>
                 <option value="UAH">₴ UAH</option>
+                <option value="CZK">Kč CZK</option>
+                <option value="PLN">zł PLN</option>
+                <option value="JPY">¥ JPY</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500 text-xs">
                 ▼

@@ -256,7 +256,11 @@ export default function EditSubscriptionModal({
               >
                 <option value="EUR">EUR (€)</option>
                 <option value="USD">USD ($)</option>
+                <option value="GBP">GBP (£)</option>
                 <option value="UAH">UAH (₴)</option>
+                <option value="CZK">CZK (Kč)</option>
+                <option value="PLN">PLN (zł)</option>
+                <option value="JPY">JPY (¥)</option>
               </select>
             </div>
           </div>
