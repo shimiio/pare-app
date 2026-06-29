@@ -17,7 +17,7 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
 
         var client = ResendClient.Create(apiKey);
 
-        var nextBillingDate = subscriptions.First().NextBillingDate;
+        var nextBillingDate = subscriptions.First().NextBillingDate.ToString("dd/MM/yyyy");
 
         var rows = string.Join("", subscriptions.Select(s =>
             $"<p>- <strong>{s.Name} - {s.Price} {s.Currency}</strong></p>"));

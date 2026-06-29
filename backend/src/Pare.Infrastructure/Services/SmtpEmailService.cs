@@ -19,10 +19,10 @@ public class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> l
             Credentials = CredentialCache.DefaultNetworkCredentials
         };
 
-        var nextBillingDate = subscriptions.First().NextBillingDate;
+        var nextBillingDate = subscriptions.First().NextBillingDate.ToString("dd/MM/yyyy");
 
         var rows = string.Join("", subscriptions.Select(s =>
-            $"<p>- <strong>{s.Name} — {s.Price} {s.Currency}</strong></p>"));
+            $"<p>- <strong>{s.Name} - {s.Price} {s.Currency}</strong></p>"));
 
         var message = new MailMessage
         {
