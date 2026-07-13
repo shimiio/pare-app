@@ -40,4 +40,9 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
 
         logger.LogInformation("Reminder sent to {Email}", toEmail);
     }
+
+    public async Task SendVerificationCodeAsync(string toEmail, string toName, string code)
+    {
+
+    }
 }

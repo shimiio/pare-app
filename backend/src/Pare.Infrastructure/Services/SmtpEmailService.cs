@@ -45,4 +45,36 @@ public class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> l
             "Reminder sent to {Email}",
             toEmail);
     }
+
+    public async Task SendVerificationCodeAsync(string toEmail, string toName, string code)
+    {
+        var host = config["Email:Host"] ?? "localhost";
+        var port = int.Parse(config["Email:Port"] ?? "1025");
+
+        using var client = new SmtpClient(host, port)
+        {
+            EnableSsl = false,
+            Credentials = CredentialCache.DefaultNetworkCredentials
+        };
+
+        var message = new MailMessage
+        {
+            From = new MailAddress("noreply@pare.dev", "Pare"),
+            Subject = "Your verification code",
+            IsBodyHtml = true,
+            Body = $"""
+            <h2>Email Verification</h2>
+            <p>Hi {toName},</p>
+            <p>Your verification code is:</p>
+            <h1>{code}</h1>
+            <p>This code expires in 10 minutes. If you didn't request this, just ignore this email.</p>
+            <p>— Pare App</p>
+            """
+        };
+        message.To.Add(new MailAddress(toEmail, toName));
+
+        await client.SendMailAsync(message);
+
+        logger.LogInformation("Verification code sent to {Email}", toEmail);
+    }
 }
