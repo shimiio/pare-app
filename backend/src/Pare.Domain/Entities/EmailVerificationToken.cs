@@ -7,7 +7,7 @@ public class EmailVerificationToken
     public string CodeHash { get; set; } = null!;
     public DateTime ExpiresAtUtc { get; set; }
     public DateTime? UsedAtUtc { get; set; }
-    public DateTime CreateAtUtc { get; set; } = DateTime.UtcNow;
+    public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
     public User User { get; set; } = null!;
 }
