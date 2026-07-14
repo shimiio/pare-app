@@ -8,7 +8,7 @@ namespace Pare.Infrastructure.Services;
 
 public class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> logger) : IEmailService
 {
-    public async Task SendReminderAsync(string toEmail, string toName, IEnumerable<Domain.Entities.Subscription> subscriptions)
+    public async Task SendReminderAsync(string toEmail, string toName, IEnumerable<Domain.Entities.Subscription> subscriptions, string unsubscribeToken)
     {
         var host = config["Email:Host"] ?? "localhost";
         var port = int.Parse(config["Email:Port"] ?? "1025");
@@ -24,6 +24,9 @@ public class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> l
         var rows = string.Join("", subscriptions.Select(s =>
             $"<p>- <strong>{s.Name} - {s.Price} {s.Currency}</strong></p>"));
 
+        var baseUrl = config["App:BaseUrl"] ?? "http://localhost:5000";
+        var unsubscribeUrl = $"{baseUrl}/unsubscribe?token={unsubscribeToken}";
+
         var message = new MailMessage
         {
             From = new MailAddress("noreply@pare.dev", "Pare"),
@@ -35,6 +38,9 @@ public class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> l
                 <p>Your subscriptions billing on <strong>{nextBillingDate}</strong>:</p>
                 {rows}
                 <p>— Pare App</p>
+                <p style="font-size:12px;color:#999;">
+                    <a href="{unsubscribeUrl}">Unsubscribe from these emails</a>
+                </p>
                 """
         };
         message.To.Add(new MailAddress(toEmail, toName));

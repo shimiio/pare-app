@@ -4,6 +4,6 @@ namespace Pare.Application.Interfaces;
 
 public interface IEmailService
 {
-    Task SendReminderAsync(string toEmail, string toName, IEnumerable<Subscription> subscriptions);
+    Task SendReminderAsync(string toEmail, string toName, IEnumerable<Subscription> subscriptions, string unsubscribeToken);
     Task SendVerificationCodeAsync(string toEmail, string toName, string code);
 }

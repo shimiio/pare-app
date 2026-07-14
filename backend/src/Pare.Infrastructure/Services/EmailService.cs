@@ -7,7 +7,7 @@ namespace Pare.Infrastructure.Services;
 
 public class EmailService(IConfiguration config, ILogger<EmailService> logger) : IEmailService
 {
-    public async Task SendReminderAsync(string toEmail, string toName, IEnumerable<Domain.Entities.Subscription> subscriptions)
+    public async Task SendReminderAsync(string toEmail, string toName, IEnumerable<Domain.Entities.Subscription> subscriptions, string unsubscribeToken)
     {
         var apiKey = config["Resend:ApiKey"]
             ?? throw new InvalidOperationException("Resend:ApiKey not configured");
