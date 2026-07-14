@@ -9,13 +9,14 @@ namespace Pare.UnitTests.Services;
 public class ReminderServiceTests
 {
     private readonly Mock<ISubscriptionRepository> _repoMock = new();
+    private readonly Mock<IUnsubscribeTokenRepository> _unsubscribeRepoMock = new();
     private readonly Mock<IEmailService> _emailMock = new();
     private readonly Mock<ILogger<ReminderService>> _loggerMock = new();
     private readonly ReminderService _service;
 
     public ReminderServiceTests()
     {
-        _service = new ReminderService(_emailMock.Object, _repoMock.Object, _loggerMock.Object);
+        _service = new ReminderService(_emailMock.Object, _repoMock.Object, _unsubscribeRepoMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -23,7 +24,7 @@ public class ReminderServiceTests
     {
         // Arrange — tells the repository to return the empty list
         _repoMock.Setup(r => r.GetActiveWithBillingDateAsync(It.IsAny<DateOnly>()))
-            .ReturnsAsync([]);
+            .ReturnsAsync(Enumerable.Empty<Subscription>());
 
         // Act — tells the service to execute
         await _service.ExecuteAsync();
@@ -33,8 +34,11 @@ public class ReminderServiceTests
             e => e.SendReminderAsync(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
-                It.IsAny<IEnumerable<Subscription>>()),
+                It.IsAny<IEnumerable<Subscription>>(),
+                It.IsAny<string>()),
             Times.Never);
+
+        _unsubscribeRepoMock.Verify(r => r.GetByUserIdAsync(It.IsAny<int>()), Times.Never);
     }
 
     [Fact]
@@ -52,7 +56,10 @@ public class ReminderServiceTests
         };
 
         _repoMock.Setup(r => r.GetActiveWithBillingDateAsync(It.IsAny<DateOnly>()))
-            .ReturnsAsync([subscription]);
+            .ReturnsAsync(new[] { subscription });
+
+        _unsubscribeRepoMock.Setup(r => r.GetByUserIdAsync(user.Id))
+            .ReturnsAsync(new UnsubscribeToken { UserId = user.Id, Token = "token" });
 
         // Act
         await _service.ExecuteAsync();
@@ -60,9 +67,10 @@ public class ReminderServiceTests
         // Assert
         _emailMock.Verify(
             e => e.SendReminderAsync(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<IEnumerable<Subscription>>()),
+                toEmail: user.Email,
+                toName: user.Name,
+                subscriptions: It.Is<IEnumerable<Subscription>>(list => list.Single() == subscription),
+                unsubscribeToken: "token"),
             Times.Once);
     }
 }
