@@ -8,7 +8,7 @@ namespace Pare.API.Controllers;
 [Route("api/[controller]")]
 public class UnsubscribeController(IMediator mediator) : ControllerBase
 {
-    [HttpGet]
+    [HttpPost]
     public async Task<IActionResult> Unsubscribe([FromQuery] string token)
     {
         await mediator.Send(new UnsubscribeCommand(token));

@@ -1,5 +1,4 @@
 using MediatR;
-using Pare.Application.Common;
 using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
 
