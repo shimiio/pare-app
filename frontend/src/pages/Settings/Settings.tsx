@@ -1,4 +1,4 @@
-import { useUser } from "../hooks/useUser";
+import { useUser } from "../../hooks/useUser";
 import SettingsForm from "./SettingsForm";
 
 export default function Settings() {
