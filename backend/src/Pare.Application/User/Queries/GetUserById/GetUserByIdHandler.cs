@@ -19,7 +19,8 @@ public class GetUserByIdHandler(IUserRepository repo)
         {
             Name = user.Name,
             Email = user.Email,
-            Currency = user.Currency
+            Currency = user.Currency,
+            IsEmailVerified = user.IsEmailVerified
         };
     }
 }

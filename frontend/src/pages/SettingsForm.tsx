@@ -13,6 +13,7 @@ import {
 import { logout } from "../api/auth";
 import { useAuthStore } from "../store/useAuthStore";
 import { extractErrors } from "../utils/errorUtils";
+import { sendVerificationEmail, verifyEmail } from "../api/emailVerification";
 
 export default function SettingsForm({ user }: { user: User }) {
   const [name, setName] = useState<string>(user.name);
@@ -20,6 +21,8 @@ export default function SettingsForm({ user }: { user: User }) {
   const [currentPassword, setCurrentPassword] = useState<string>("");
   const [newPassword, setNewPassword] = useState<string>("");
   const [currency, setCurrency] = useState<string>(user.currency);
+  const [verificationCode, setVerificationCode] = useState<string>("");
+  const [isCodeSent, setIsCodeSent] = useState(false);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isPasswordEditing, setIsPasswordEditing] = useState(false);
@@ -27,6 +30,8 @@ export default function SettingsForm({ user }: { user: User }) {
   const [nameError, setNameError] = useState<string[]>([]);
   const [emailError, setEmailError] = useState<string[]>([]);
   const [passwordErrors, setPasswordErrors] = useState<string[]>([]);
+  const [sendError, setSendError] = useState("");
+  const [verifyError, setVerifyError] = useState("");
 
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const navigate = useNavigate();
@@ -141,6 +146,42 @@ export default function SettingsForm({ user }: { user: User }) {
     },
   });
 
+  const sendCodeMutation = useMutation({
+    mutationFn: sendVerificationEmail,
+    onSuccess: () => {
+      setIsCodeSent(true);
+      setSendError("");
+      setVerifyError("");
+    },
+    onError: (error: unknown) => {
+      let backendError = axios.isAxiosError(error)
+        ? error.response?.data?.error
+        : undefined;
+
+      if (backendError && backendError.includes("Too many request")) {
+        backendError = "Please wait a minute before requesting a new code.";
+      }
+
+      setSendError(backendError || "Failed to send code. Please try again.");
+    },
+  });
+
+  const verifyCodeMutation = useMutation({
+    mutationFn: verifyEmail,
+    onSuccess: () => {
+      setIsCodeSent(false);
+      setVerificationCode("");
+      setVerifyError("");
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+    onError: (error: unknown) => {
+      const backendError = axios.isAxiosError(error)
+        ? error.response?.data?.error
+        : undefined;
+      setVerifyError(backendError || "Invalid verification code");
+    },
+  });
+
   // Save Handlers
   const handleSaveAccount = async () => {
     // 1. Local validation (to avoid sending obvious garbage to the backend)
@@ -226,6 +267,11 @@ export default function SettingsForm({ user }: { user: User }) {
           <div className="p-4 border-b border-white/5">
             <label className="block text-xs text-neutral-500 uppercase tracking-wider mb-1">
               Email Address
+              {!user.isEmailVerified && (
+                <span className="text-[10px] ml-1 bg-amber-950/30 text-amber-500 px-1.5 py-0.5 rounded border border-amber-900/30 lowercase tracking-normal">
+                  unverified
+                </span>
+              )}
             </label>
             <input
               className={`w-full bg-transparent text-sm font-medium text-neutral-200 focus:outline-none transition-colors ${
@@ -332,7 +378,7 @@ export default function SettingsForm({ user }: { user: User }) {
 
               <div className="flex flex-col gap-3 max-w-sm">
                 <input
-                  className="bg-[#161616] border border-white/10 rounded-lg px-3 py-2 text-sm text-neutral-200 focus:border-white/30 focus:outline-none placeholder-neutral-600 transition-colors"
+                  className="bg-[#161616] border border-white/10 rounded-lg px-3 py-2 text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 placeholder-neutral-600 transition-colors"
                   name="Current Password"
                   type="password"
                   value={currentPassword}
@@ -341,7 +387,7 @@ export default function SettingsForm({ user }: { user: User }) {
                   autoComplete="off"
                 />
                 <input
-                  className="bg-[#161616] border border-white/10 rounded-lg px-3 py-2 text-sm text-neutral-200 focus:border-white/30 focus:outline-none placeholder-neutral-600 transition-colors"
+                  className="bg-[#161616] border border-white/10 rounded-lg px-3 py-2 text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 placeholder-neutral-600 transition-colors"
                   name="New Password"
                   type="password"
                   value={newPassword}
@@ -397,7 +443,7 @@ export default function SettingsForm({ user }: { user: User }) {
 
             <div className="relative">
               <select
-                className="appearance-none bg-[#161616] border border-white/10 text-sm rounded-lg text-neutral-200 pl-3 pr-8 py-1.5 focus:outline-none focus:border-white/30 cursor-pointer transition-colors divide-y"
+                className="appearance-none bg-[#161616] border border-white/10 text-sm rounded-lg text-neutral-200 pl-3 pr-8 py-1.5 focus:outline-none focus:border-indigo-500/50 cursor-pointer transition-colors divide-y"
                 value={currency}
                 onChange={(e) => {
                   const newCurrency = e.target.value;
@@ -424,6 +470,93 @@ export default function SettingsForm({ user }: { user: User }) {
               You will receive a smart reminder 3 days before any subscription
               billing date.
             </p>
+            {!user.isEmailVerified && (
+              <div className="mt-3 bg-amber-950/10 border border-amber-500/20 rounded-lg p-3 transition-all">
+                {!isCodeSent ? (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="text-xs text-amber-200/80 leading-relaxed">
+                        <span className="font-medium text-amber-500">
+                          Action required:
+                        </span>{" "}
+                        Verify your email address to enable smart reminders.
+                      </p>
+                      <button
+                        onClick={() => sendCodeMutation.mutate()}
+                        disabled={sendCodeMutation.isLoading}
+                        className="shrink-0 px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg text-xs font-medium text-amber-500 transition-colors disabled:opacity-50 cursor-pointer"
+                      >
+                        Send Code
+                      </button>
+                    </div>
+
+                    {sendError && (
+                      <p className="text-red-400 text-xs mt-1">• {sendError}</p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <p className="text-xs text-amber-200/80">
+                      We sent a code to{" "}
+                      <span className="text-amber-500 font-medium">
+                        {email}
+                      </span>
+                      . Enter it below:
+                    </p>
+
+                    <div className="flex items-center gap-5 mt-1 ml-3">
+                      <input
+                        type="text"
+                        maxLength={6}
+                        placeholder="000000"
+                        value={verificationCode}
+                        onChange={(e) => {
+                          setVerificationCode(
+                            e.target.value.replace(/\D/g, ""),
+                          );
+                          // Clear the error
+                          if (verifyError) setVerifyError("");
+                        }}
+                        // If there is an error, we highlight the inputs in red
+                        className={`w-24 bg-[#161616] border ${
+                          verifyError
+                            ? "border-red-500 focus:border-red-400"
+                            : "border-amber-500/30 focus:border-amber-500"
+                        } rounded-md px-3 py-1.5 text-sm text-amber-100 placeholder-amber-900/50 focus:outline-none text-center tracking-widest transition-colors`}
+                      />
+
+                      <div>
+                        <button
+                          onClick={() =>
+                            verifyCodeMutation.mutate(verificationCode)
+                          }
+                          disabled={verificationCode.length !== 6}
+                          className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-md text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-500 cursor-pointer"
+                        >
+                          Verify
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setIsCodeSent(false);
+                            setVerificationCode("");
+                            setVerifyError("");
+                            setSendError("");
+                          }}
+                          className="px-2 py-1.5 text-xs text-neutral-500 hover:text-neutral-300 transition-colors cursor-pointer"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+
+                      {verifyError && (
+                        <p className="text-red-400 text-xs">{verifyError}</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

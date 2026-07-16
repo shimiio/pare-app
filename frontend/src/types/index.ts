@@ -41,4 +41,5 @@ export interface User {
   name: string;
   email: string;
   currency: string;
+  isEmailVerified: boolean;
 }
