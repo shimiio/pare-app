@@ -19,7 +19,8 @@ builder.Host.UseSerilog((ctx, config) =>
     config
         .ReadFrom.Configuration(ctx.Configuration)
         .WriteTo.Console()
-        .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day);
+        .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
+        .WriteTo.Seq(ctx.Configuration["Seq:ServerUrl"]!);
 });
 
 // Dependency Injections

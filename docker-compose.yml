@@ -28,6 +28,16 @@ services:
         condition: service_healthy
     restart: "no"
 
+  seq:
+    image: datalust/seq:latest
+    container_name: pare-seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_ADMIN_PASSWORD}
+    volumes:
+      - seq_data:/data
+    restart: unless-stopped
+
   api:
     build:
       context: ./backend
@@ -44,6 +54,8 @@ services:
         condition: service_healthy
       migrator:
         condition: service_completed_successfully
+      seq:
+        condition: service_started
 
   frontend:
     build:
@@ -74,3 +86,4 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+  seq_data:

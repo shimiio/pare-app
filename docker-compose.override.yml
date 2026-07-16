@@ -3,6 +3,11 @@ services:
     ports:
       - "5432:5432"
 
+  seq:
+    ports:
+      - "8080:80"
+      - "5341:5341"
+
   api:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
