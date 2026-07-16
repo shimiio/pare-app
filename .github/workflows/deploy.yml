@@ -10,14 +10,17 @@ jobs:
     environment: Production
 
     steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p 2222 ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
       - name: Deploy to VPS
-        uses: appleboy/ssh-action@v1.2.5
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          port: 2222
-          script: |
+        run: |
+          ssh -p 2222 -i ~/.ssh/deploy_key ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd /root/pare-app
             git pull origin main
             docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+          EOF
