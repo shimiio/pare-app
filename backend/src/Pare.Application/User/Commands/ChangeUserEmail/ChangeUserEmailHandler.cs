@@ -5,7 +5,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.ChangeUserEmail;
 
-public class ChangeUserEmailHandle(IUserRepository repo)
+public class ChangeUserEmailHandler(IUserRepository repo)
         : IRequestHandler<ChangeUserEmailCommand, ChangeEmailDto>
 {
     private readonly IUserRepository _repo = repo;

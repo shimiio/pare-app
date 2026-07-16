@@ -7,7 +7,7 @@ using Pare.Domain.Entities;
 
 namespace Pare.Application.EmailVerification.Commands.VerifyEmail;
 
-public class VerifyEmailHandle(IUserRepository userRepo, IEmailVerificationRepository emailRepo, IUnsubscribeTokenRepository unsubscribeRepo)
+public class VerifyEmailHandler(IUserRepository userRepo, IEmailVerificationRepository emailRepo, IUnsubscribeTokenRepository unsubscribeRepo)
     : IRequestHandler<VerifyEmailCommand>
 {
     private readonly IUserRepository _userRepo = userRepo;
