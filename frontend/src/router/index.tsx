@@ -3,12 +3,13 @@ import AppLayout from "../components/layouts/AppLayout";
 import Dashboard from "../pages/Dashboard";
 import Subscriptions from "../pages/Subscriptions";
 import Analytics from "../pages/Analytics";
-import Settings from "../pages/Settings";
+import Settings from "../pages/Settings/Settings";
 import PublicLayout from "../components/layouts/PublicLayout";
 import MainWindow from "../pages/MainWindow";
 import PublicRoute from "./PublicRoute";
 import ProtectedRoute from "./ProtectedRoute";
 import NotFound from "../pages/NotFound";
+import Unsubscribe from "../pages/Unsubscribe";
 
 export const router = createBrowserRouter([
   // PUBLIC ROUTES
@@ -41,4 +42,6 @@ export const router = createBrowserRouter([
 
   // 404 route
   { path: "*", element: <NotFound /> },
+  // unsubscribe route
+  { path: "unsubscribe", element: <Unsubscribe /> },
 ]);

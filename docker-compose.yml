@@ -28,6 +28,18 @@ services:
         condition: service_healthy
     restart: "no"
 
+  seq:
+    image: datalust/seq:latest
+    container_name: pare-seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_ADMIN_PASSWORD}
+    ports:
+      - "127.0.0.1:5341:80"
+    volumes:
+      - seq_data:/data
+    restart: unless-stopped
+
   api:
     build:
       context: ./backend
@@ -38,11 +50,16 @@ services:
       MediatR__LicenseKey: ${MEDIATR_LICENSE_KEY}
       Jwt__SecretKey: ${JWT_SECRET_KEY}
       ExchangeRate__ApiKey: ${EXCHANGE_RATE_API_KEY}
+      App__BaseUrl: ${APP_BASE_URL}
+    ports:
+      - "127.0.0.1:5000:8080"
     depends_on:
       db:
         condition: service_healthy
       migrator:
         condition: service_completed_successfully
+      seq:
+        condition: service_started
 
   frontend:
     build:
@@ -73,3 +90,4 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+  seq_data:

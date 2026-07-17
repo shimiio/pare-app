@@ -53,6 +53,16 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             context.Response.StatusCode = 409;
             await context.Response.WriteAsJsonAsync(new { error = ex.Message });
         }
+        catch (TooManyRequestsException ex)
+        {
+            context.Response.StatusCode = 429;
+            await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+        }
+        catch (BadRequestException ex)
+        {
+            context.Response.StatusCode = 400;
+            await context.Response.WriteAsJsonAsync(new { error = ex.Message });
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, "Unhandled exception | IP: {Ip} | Path: {Path}",

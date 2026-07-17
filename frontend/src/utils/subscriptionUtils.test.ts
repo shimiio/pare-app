@@ -47,12 +47,18 @@ describe("sanitizePriceInput", () => {
 });
 
 describe("calculateNextBilling", () => {
+  const referenceDate = new Date(Date.UTC(2026, 5, 15, 12, 0, 0));
+
   it("should calculate next billing date for monthly cycle", () => {
-    expect(calculateNextBilling("2026-06-02", 0)).toBe("2026-07-02");
+    expect(calculateNextBilling("2026-06-02", 0, referenceDate)).toBe(
+      "2026-07-02",
+    );
   });
 
   it("should calculate next billing date for yearly cycle", () => {
-    expect(calculateNextBilling("2026-06-02", 1)).toBe("2027-06-02");
+    expect(calculateNextBilling("2026-06-02", 1, referenceDate)).toBe(
+      "2027-06-02",
+    );
   });
 });
 

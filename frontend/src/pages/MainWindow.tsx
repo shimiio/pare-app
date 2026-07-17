@@ -63,10 +63,10 @@ export default function MainWindow() {
           </p>
         </div>
 
-        <div className="flex flex-row gap-4">
-          <div className="p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-55 shadow-lg shadow-white/5">
-            <Bell className="opacity-65 h-5 w-5" />
-            <h3 className="text-xs text-neutral-500 uppercase tracking-wider font-medium mt-5 mb-2">
+        <div className="flex flex-row gap-8 xl:gap-5">
+          <div className="p-4 xl:p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-48 xl:w-55 shadow-lg shadow-white/5">
+            <Bell className="opacity-65 xl:h-5 xl:w-5 h-4.5 w-4.5" />
+            <h3 className="text-xs text-neutral-500 uppercase tracking-wider font-medium mt-4 xl:mt-5 mb-2">
               Reminders
             </h3>
             <div className="text-sm">
@@ -75,16 +75,16 @@ export default function MainWindow() {
             </div>
           </div>
 
-          <div className="p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-55 shadow-lg shadow-white/5">
-            <Euro className="opacity-65 h-5 w-5" />
+          <div className="p-4 xl:p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-48 xl:w-55 shadow-lg shadow-white/5">
+            <Euro className="opacity-65 xl:h-5 xl:w-5 h-4.5 w-4.5" />
             <h3 className="text-xs text-neutral-500 uppercase tracking-wider font-medium mt-5 mb-2">
               Multi-currency
             </h3>
             <p className="text-sm">Track in any currency</p>
           </div>
 
-          <div className="p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-55 shadow-lg shadow-white/5">
-            <ChartNoAxesColumn className="opacity-65 h-5 w-5" />
+          <div className="p-4 xl:p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-48 xl:w-55 shadow-lg shadow-white/5">
+            <ChartNoAxesColumn className="opacity-65 xl:h-5 xl:w-5 h-4.5 w-4.5" />
             <h3 className="text-xs text-neutral-500 uppercase tracking-wider font-medium mt-5 mb-2">
               Analytics
             </h3>

@@ -12,15 +12,22 @@ export const sanitizePriceInput = (value: string): string | null => {
 export const calculateNextBilling = (
   startDateStr: string,
   cycle: number,
+  referenceDate: Date = new Date(),
 ): string => {
   if (!startDateStr) return "";
 
   const [year, month, day] = startDateStr.split("-").map(Number);
   const nextBilling = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
 
-  const now = new Date();
   const todayUTC = new Date(
-    Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0),
+    Date.UTC(
+      referenceDate.getUTCFullYear(),
+      referenceDate.getUTCMonth(),
+      referenceDate.getUTCDate(),
+      12,
+      0,
+      0,
+    ),
   );
 
   while (nextBilling <= todayUTC) {

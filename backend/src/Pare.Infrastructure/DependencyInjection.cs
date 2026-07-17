@@ -34,6 +34,8 @@ public static class DependencyInjection
         // Repositories & Services
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+        services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
+        services.AddScoped<IUnsubscribeTokenRepository, UnsubscribeTokenRepository>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddHttpClient();

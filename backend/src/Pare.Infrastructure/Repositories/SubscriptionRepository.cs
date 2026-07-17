@@ -71,7 +71,9 @@ public class SubscriptionRepository(AppDbContext db) : ISubscriptionRepository
     {
         return await _db.Subscriptions
             .Include(s => s.User)
-            .Where(s => s.Status == Domain.Emums.Status.Active && s.NextBillingDate == reminderDate)
+            .Where(s => s.Status == Domain.Emums.Status.Active
+                    && s.NextBillingDate == reminderDate
+                    && s.User.IsEmailVerified)
             .ToListAsync();
     }
 

@@ -212,15 +212,11 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-3 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
+                className="w-full bg-[#0e0e0e] border border-white/5 rounded-xl py-2.5 px-3 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
               >
                 <option value="EUR">EUR (€)</option>
                 <option value="USD">USD ($)</option>
-                <option value="GBP">GBP (£)</option>
                 <option value="UAH">UAH (₴)</option>
-                <option value="CZK">CZK (Kč)</option>
-                <option value="PLN">PLN (zł)</option>
-                <option value="JPY">JPY (¥)</option>
               </select>
             </div>
           </div>
@@ -236,7 +232,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                 onChange={(e) =>
                   setCycle(Number(e.target.value) as BillingCycleValue)
                 }
-                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-3 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
+                className="w-full bg-[#0e0e0e] border border-white/5 rounded-xl py-2.5 px-3 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
               >
                 <option value={0}>Monthly</option>
                 <option value={1}>Yearly</option>

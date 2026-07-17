@@ -5,7 +5,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.ChangeUserEmail;
 
-public class ChangeUserEmailHandle(IUserRepository repo)
+public class ChangeUserEmailHandler(IUserRepository repo)
         : IRequestHandler<ChangeUserEmailCommand, ChangeEmailDto>
 {
     private readonly IUserRepository _repo = repo;
@@ -23,6 +23,7 @@ public class ChangeUserEmailHandle(IUserRepository repo)
 
         // Update email
         existing.Email = command.Change.Email;
+        existing.IsEmailVerified = false;
         await _repo.UpdateAsync(existing);
 
         return command.Change;

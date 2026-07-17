@@ -19,7 +19,8 @@ builder.Host.UseSerilog((ctx, config) =>
     config
         .ReadFrom.Configuration(ctx.Configuration)
         .WriteTo.Console()
-        .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day);
+        .WriteTo.File("logs/app.log", rollingInterval: RollingInterval.Day)
+        .WriteTo.Seq(ctx.Configuration["Seq:ServerUrl"]!);
 });
 
 // Dependency Injections
@@ -42,11 +43,8 @@ if (args.Contains("--migrate-only"))
 }
 
 // Swagger
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // Get Header from Caddy 
 var forwardedOptions = new ForwardedHeadersOptions
@@ -90,8 +88,7 @@ else
     ];
 }
 
-app.MapHangfireDashboard("/hangfire", dashboardOptions)
-   .RequireRateLimiting("hangfire");
+app.MapHangfireDashboard("/hangfire", dashboardOptions);
 
 // Recurring jobs
 using (var scope = app.Services.CreateScope())
