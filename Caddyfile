@@ -15,16 +15,6 @@
         }
     }
 
-    handle /hangfire* {
-        reverse_proxy api:8080 {
-            header_up X-Forwarded-For {remote_host}
-        }
-    }
-
-    handle /swagger* {
-        reverse_proxy api:8080
-    }
-
     handle {
         reverse_proxy frontend:80
     }
