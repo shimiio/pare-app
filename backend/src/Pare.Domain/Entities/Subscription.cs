@@ -1,4 +1,4 @@
-using Pare.Domain.Emums;
+using Pare.Domain.Enums;
 
 namespace Pare.Domain.Entities;
 

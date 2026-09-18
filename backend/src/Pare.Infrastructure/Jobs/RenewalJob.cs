@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Pare.Domain.Emums;
+using Pare.Domain.Enums;
 using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Jobs;

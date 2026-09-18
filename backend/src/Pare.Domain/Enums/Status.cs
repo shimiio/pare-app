@@ -1,4 +1,4 @@
-namespace Pare.Domain.Emums;
+namespace Pare.Domain.Enums;
 
 public enum Status
 {

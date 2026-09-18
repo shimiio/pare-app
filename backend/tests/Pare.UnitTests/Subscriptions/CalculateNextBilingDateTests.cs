@@ -1,5 +1,5 @@
 using FluentAssertions;
-using Pare.Domain.Emums;
+using Pare.Domain.Enums;
 using Pare.Domain.Entities;
 
 namespace Pare.UnitTests.Subscriptions;

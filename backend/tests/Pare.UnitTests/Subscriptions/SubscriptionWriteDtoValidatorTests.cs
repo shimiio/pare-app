@@ -20,8 +20,8 @@ public class SubscriptionWriteDtoValidatorTests
             Name = "sub",
             Price = 9.99M,
             Currency = "EUR",
-            BillingCycle = Domain.Emums.BillingCycle.Monthly,
-            Status = Domain.Emums.Status.Active,
+            BillingCycle = Domain.Enums.BillingCycle.Monthly,
+            Status = Domain.Enums.Status.Active,
             NextBillingDate = nextBillingDate,
             StartDate = startDate,
             ServiceUrl = "sub.com"
