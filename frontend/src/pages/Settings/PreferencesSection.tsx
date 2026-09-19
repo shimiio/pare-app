@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { updateUserCurrency } from "../../api/user";
 import axios from "axios";
@@ -124,7 +124,7 @@ export default function PreferencesSection({ user }: { user: User }) {
                       </p>
                       <button
                         onClick={() => sendCodeMutation.mutate()}
-                        disabled={sendCodeMutation.isLoading}
+                        disabled={sendCodeMutation.isPending}
                         className="shrink-0 px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg text-xs font-medium text-amber-500 transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         Send Code

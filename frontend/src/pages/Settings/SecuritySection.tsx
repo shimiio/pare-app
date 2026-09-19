@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { changeUserPassword } from "../../api/user";
 import axios from "axios";
@@ -129,10 +129,10 @@ export default function SecuritySection() {
             <div className="flex gap-3 mt-2">
               <button
                 onClick={handleSavePassword}
-                disabled={passwordMutation.isLoading}
+                disabled={passwordMutation.isPending}
                 className="px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                {passwordMutation.isLoading ? "Saving..." : "Save Password"}
+                {passwordMutation.isPending ? "Saving..." : "Save Password"}
               </button>
               <button
                 onClick={() => {
@@ -141,7 +141,7 @@ export default function SecuritySection() {
                   setCurrentPassword("");
                   setNewPassword("");
                 }}
-                disabled={passwordMutation.isLoading}
+                disabled={passwordMutation.isPending}
                 className="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 Cancel
