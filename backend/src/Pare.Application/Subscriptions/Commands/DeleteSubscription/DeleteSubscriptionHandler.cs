@@ -13,7 +13,7 @@ public class DeleteSubscriptionHandler(ISubscriptionRepository repo)
         DeleteSubscriptionCommand command,
         CancellationToken ct)
     {
-        var deleted = await _repo.DeleteByIdAsync(command.Id, command.UserId);
+        var deleted = await _repo.DeleteByIdAsync(command.Id, command.UserId, ct);
         if (deleted is false) throw new NotFoundException("Subscription not found");
         return deleted;
     }

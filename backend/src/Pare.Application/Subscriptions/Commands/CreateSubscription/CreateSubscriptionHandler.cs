@@ -15,7 +15,7 @@ public class CreateSubscriptionHandler(ISubscriptionRepository repo)
         CreateSubscriptionCommand command,
         CancellationToken ct)
     {
-        var count = await _repo.CountByUserIdAsync(command.UserId);
+        var count = await _repo.CountByUserIdAsync(command.UserId, ct);
         if (count >= 50)
             throw new UnprocessableEntityException("Subscription limit reached");
 
@@ -32,7 +32,7 @@ public class CreateSubscriptionHandler(ISubscriptionRepository repo)
             ServiceUrl = command.CreateDto.ServiceUrl,
         };
 
-        var created = await _repo.CreateAsync(subscription);
+        var created = await _repo.CreateAsync(subscription, ct);
         return SubscriptionDto.FromEntity(created);
     }
 }

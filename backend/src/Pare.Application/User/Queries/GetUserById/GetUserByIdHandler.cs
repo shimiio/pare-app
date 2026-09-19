@@ -14,7 +14,7 @@ public class GetUserByIdHandler(IUserRepository repo)
         GetUserByIdQuery query,
         CancellationToken ct)
     {
-        var user = await _repo.GetByIdAsync(query.Id) ?? throw new NotFoundException("User not found");
+        var user = await _repo.GetByIdAsync(query.Id, ct) ?? throw new NotFoundException("User not found");
         return new UserDto
         {
             Name = user.Name,

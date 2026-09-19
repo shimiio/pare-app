@@ -2,5 +2,5 @@ namespace Pare.Application.Interfaces;
 
 public interface IReminderService
 {
-    Task ExecuteAsync();
+    Task ExecuteAsync(CancellationToken ct);
 }

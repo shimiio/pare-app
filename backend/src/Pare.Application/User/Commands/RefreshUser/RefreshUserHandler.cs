@@ -18,7 +18,7 @@ public class RefreshUserHandler(IUserRepository repo, IJwtTokenService jwtServic
         var request = command.RefreshToken;
 
         // Get user data by refresh token
-        var user = await _repo.GetByHashedRefreshTokenAsync(TokenHasher.Hash(request.RefreshToken))
+        var user = await _repo.GetByHashedRefreshTokenAsync(TokenHasher.Hash(request.RefreshToken), ct)
             ?? throw new UnauthorizedException("Unauthorized");
 
         // Validate DateTime of refresh token
@@ -33,7 +33,7 @@ public class RefreshUserHandler(IUserRepository repo, IJwtTokenService jwtServic
         user.RefreshToken = hashedToken;
         user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(30);
 
-        await _repo.UpdateAsync(user);
+        await _repo.UpdateAsync(user, ct);
 
         // Generate JWT token
         var token = _jwtService.GenerateToken(user.Id, user.Email);

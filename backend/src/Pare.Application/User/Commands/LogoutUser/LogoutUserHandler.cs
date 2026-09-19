@@ -15,14 +15,14 @@ public class LogoutUserHandler(IUserRepository repo)
         var request = command.RefreshToken;
 
         // Get user data by refresh token
-        var user = await _repo.GetByHashedRefreshTokenAsync(TokenHasher.Hash(request.RefreshToken))
+        var user = await _repo.GetByHashedRefreshTokenAsync(TokenHasher.Hash(request.RefreshToken), ct)
             ?? throw new UnauthorizedException("Unauthorized");
 
         // Update refresh token
         user.RefreshToken = null;
         user.RefreshTokenExpiry = null;
 
-        await _repo.UpdateAsync(user);
+        await _repo.UpdateAsync(user, ct);
 
         return Unit.Value;
     }

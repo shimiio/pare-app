@@ -20,6 +20,14 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
                 await context.Response.WriteAsJsonAsync(new { error = "Endpoint not found" });
             }
         }
+        catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+        {
+            // the client went away (closed the tab, navigated on): not a server fault
+            logger.LogInformation("Request cancelled by the client | Path: {Path}", context.Request.Path);
+
+            if (!context.Response.HasStarted)
+                context.Response.StatusCode = 499; // client closed request
+        }
         catch (ValidationException ex)
         {
             context.Response.StatusCode = 400;

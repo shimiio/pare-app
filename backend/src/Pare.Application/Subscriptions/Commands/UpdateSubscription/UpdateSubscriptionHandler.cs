@@ -27,7 +27,7 @@ public class UpdateSubscriptionHandler(ISubscriptionRepository repo)
             ServiceUrl = command.UpdateDto.ServiceUrl,
         };
 
-        var updated = await _repo.UpdateAsync(command.Id, command.UserId, subscription) ?? throw new NotFoundException("Subscription not found");
+        var updated = await _repo.UpdateAsync(command.Id, command.UserId, subscription, ct) ?? throw new NotFoundException("Subscription not found");
         return SubscriptionDto.FromEntity(updated);
     }
 }

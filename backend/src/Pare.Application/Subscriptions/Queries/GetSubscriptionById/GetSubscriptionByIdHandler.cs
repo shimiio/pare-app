@@ -14,7 +14,7 @@ public class GetSubscriptionByIdHandler(ISubscriptionRepository repo)
         GetSubscriptionByIdQuery query,
         CancellationToken ct)
     {
-        var subscription = await _repo.GetByIdAsync(query.Id, query.UserId) ?? throw new NotFoundException("Subscription not found");
+        var subscription = await _repo.GetByIdAsync(query.Id, query.UserId, ct) ?? throw new NotFoundException("Subscription not found");
         return SubscriptionDto.FromEntity(subscription);
     }
 }

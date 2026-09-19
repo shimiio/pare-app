@@ -23,11 +23,11 @@ public class ReminderServiceTests
     public async Task ExecuteAsync_WhenNoSubscriptions_ShouldNotSendEmail()
     {
         // Arrange — tells the repository to return the empty list
-        _repoMock.Setup(r => r.GetActiveWithBillingDateAsync(It.IsAny<DateOnly>()))
+        _repoMock.Setup(r => r.GetActiveWithBillingDateAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Enumerable.Empty<Subscription>());
 
         // Act — tells the service to execute
-        await _service.ExecuteAsync();
+        await _service.ExecuteAsync(CancellationToken.None);
 
         // Assert — tells us to check that the email was not sent
         _emailMock.Verify(
@@ -38,7 +38,7 @@ public class ReminderServiceTests
                 It.IsAny<string>()),
             Times.Never);
 
-        _unsubscribeRepoMock.Verify(r => r.GetByUserIdAsync(It.IsAny<int>()), Times.Never);
+        _unsubscribeRepoMock.Verify(r => r.GetByUserIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -55,14 +55,14 @@ public class ReminderServiceTests
             User = user
         };
 
-        _repoMock.Setup(r => r.GetActiveWithBillingDateAsync(It.IsAny<DateOnly>()))
+        _repoMock.Setup(r => r.GetActiveWithBillingDateAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new[] { subscription });
 
-        _unsubscribeRepoMock.Setup(r => r.GetByUserIdAsync(user.Id))
+        _unsubscribeRepoMock.Setup(r => r.GetByUserIdAsync(user.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new UnsubscribeToken { UserId = user.Id, Token = "token" });
 
         // Act
-        await _service.ExecuteAsync();
+        await _service.ExecuteAsync(CancellationToken.None);
 
         // Assert
         _emailMock.Verify(

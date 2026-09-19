@@ -22,7 +22,7 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
         var email = EmailNormalizer.Normalize(request.Email);
 
         // Check if email already exists (fast path; the unique index is the real guarantee)
-        var existing = await _repo.GetByEmailAsync(email);
+        var existing = await _repo.GetByEmailAsync(email, ct);
         if (existing != null) throw new ConflictException("Email already exists");
 
         // Hash the password
@@ -47,7 +47,7 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
         };
 
         // Create user
-        await _repo.CreateAsync(user);
+        await _repo.CreateAsync(user, ct);
 
         // Generate JWT token
         var token = _jwtService.GenerateToken(user.Id, user.Email);

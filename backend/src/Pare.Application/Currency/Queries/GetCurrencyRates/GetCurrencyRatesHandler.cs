@@ -10,6 +10,6 @@ public class GetCurrencyRatesQueryHandler(ICurrencyRateService currencyRateServi
         GetCurrencyRatesQuery request,
         CancellationToken cancellationToken)
     {
-        return await currencyRateService.GetRatesAsync(request.BaseCurrency);
+        return await currencyRateService.GetRatesAsync(request.BaseCurrency, cancellationToken);
     }
 }

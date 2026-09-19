@@ -13,7 +13,7 @@ public class DeleteUserHandler(IUserRepository repo)
         DeleteUserCommand command,
         CancellationToken ct)
     {
-        var isDeleted = await _repo.DeleteByIdAsync(command.Id);
+        var isDeleted = await _repo.DeleteByIdAsync(command.Id, ct);
 
         if (!isDeleted)
         {

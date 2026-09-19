@@ -21,12 +21,12 @@ public class VerifyEmailHandler(
 
     public async Task Handle(VerifyEmailCommand command, CancellationToken cancellationToken)
     {
-        var user = await _userRepo.GetByIdAsync(command.UserId) ?? throw new NotFoundException("User not found");
+        var user = await _userRepo.GetByIdAsync(command.UserId, cancellationToken) ?? throw new NotFoundException("User not found");
 
         if (user.IsEmailVerified) throw new ConflictException("Email already verified");
 
         // find valid token
-        var token = await _emailRepo.GetValidTokenByUserIdAsync(user.Id)
+        var token = await _emailRepo.GetValidTokenByUserIdAsync(user.Id, cancellationToken)
             ?? throw new NotFoundException("Valid token not found");
 
         // hash derived code
@@ -41,11 +41,11 @@ public class VerifyEmailHandler(
             token.UsedAtUtc = DateTime.UtcNow;
             user.IsEmailVerified = true;
 
-            await _userRepo.UpdateAsync(user);
-            await _emailRepo.UpdateUsedAtUtcAsync(user.Id, token);
+            await _userRepo.UpdateAsync(user, cancellationToken);
+            await _emailRepo.UpdateUsedAtUtcAsync(user.Id, token, cancellationToken);
 
             // create unsubscribe token
-            var existingToken = await _unsubscribeRepo.GetByUserIdAsync(user.Id);
+            var existingToken = await _unsubscribeRepo.GetByUserIdAsync(user.Id, cancellationToken);
             if (existingToken == null)
             {
                 var unsubscribeToken = new UnsubscribeToken
@@ -55,7 +55,7 @@ public class VerifyEmailHandler(
                     CreatedAtUtc = DateTime.UtcNow,
                 };
 
-                await _unsubscribeRepo.CreateAsync(unsubscribeToken);
+                await _unsubscribeRepo.CreateAsync(unsubscribeToken, cancellationToken);
             }
         }, cancellationToken);
     }

@@ -10,37 +10,37 @@ public class SubscriptionRepository(AppDbContext db) : ISubscriptionRepository
     private readonly AppDbContext _db = db;
 
     // GET all
-    public async Task<IEnumerable<Subscription>> GetAllAsync(int userId)
+    public async Task<IEnumerable<Subscription>> GetAllAsync(int userId, CancellationToken ct)
     {
         return await _db.Subscriptions
             .AsNoTracking()
             .Where(s => s.UserId == userId)
-            .ToListAsync();
+            .ToListAsync(ct);
     }
 
     // GET by id
-    public async Task<Subscription?> GetByIdAsync(int id, int userId)
+    public async Task<Subscription?> GetByIdAsync(int id, int userId, CancellationToken ct)
     {
         return await _db.Subscriptions
             .AsNoTracking()
             .Where(s => s.Id == id && s.UserId == userId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
     }
 
     // POST
-    public async Task<Subscription> CreateAsync(Subscription subscription)
+    public async Task<Subscription> CreateAsync(Subscription subscription, CancellationToken ct)
     {
         _db.Subscriptions.Add(subscription);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(ct);
 
         return subscription;
     }
 
     // PUT
-    public async Task<Subscription?> UpdateAsync(int id, int userId, Subscription subscription)
+    public async Task<Subscription?> UpdateAsync(int id, int userId, Subscription subscription, CancellationToken ct)
     {
         var updated = await _db.Subscriptions
-            .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId);
+            .FirstOrDefaultAsync(s => s.Id == id && s.UserId == userId, ct);
 
         if (updated is null) return null;
 
@@ -53,33 +53,33 @@ public class SubscriptionRepository(AppDbContext db) : ISubscriptionRepository
         updated.StartDate = subscription.StartDate;
         updated.ServiceUrl = subscription.ServiceUrl;
 
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(ct);
         return updated;
     }
 
     // DELETE
-    public async Task<bool> DeleteByIdAsync(int id, int userId)
+    public async Task<bool> DeleteByIdAsync(int id, int userId, CancellationToken ct)
     {
         int rowsDeleted = await _db.Subscriptions
             .Where(s => s.Id == id && s.UserId == userId)
-            .ExecuteDeleteAsync();
+            .ExecuteDeleteAsync(ct);
 
         return rowsDeleted > 0;
     }
 
-    public async Task<IEnumerable<Subscription>> GetActiveWithBillingDateAsync(DateOnly reminderDate)
+    public async Task<IEnumerable<Subscription>> GetActiveWithBillingDateAsync(DateOnly reminderDate, CancellationToken ct)
     {
         return await _db.Subscriptions
             .Include(s => s.User)
             .Where(s => s.Status == Domain.Enums.Status.Active
                     && s.NextBillingDate == reminderDate
                     && s.User.IsEmailVerified)
-            .ToListAsync();
+            .ToListAsync(ct);
     }
 
-    public async Task<int> CountByUserIdAsync(int userId)
+    public async Task<int> CountByUserIdAsync(int userId, CancellationToken ct)
     {
         return await _db.Subscriptions
-            .CountAsync(s => s.UserId == userId);
+            .CountAsync(s => s.UserId == userId, ct);
     }
 }

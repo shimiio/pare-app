@@ -2,5 +2,5 @@ namespace Pare.Application.Interfaces;
 
 public interface ICurrencyRateService
 {
-    Task<Dictionary<string, decimal>> GetRatesAsync(string baseCurrency);
+    Task<Dictionary<string, decimal>> GetRatesAsync(string baseCurrency, CancellationToken ct);
 }

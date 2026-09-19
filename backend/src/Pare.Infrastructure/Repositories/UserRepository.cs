@@ -13,59 +13,59 @@ public class UserRepository(AppDbContext db) : IUserRepository
     private const string EmailUniqueIndex = "IX_users_Email";
 
     // GET by email
-    public async Task<User?> GetByEmailAsync(string email)
+    public async Task<User?> GetByEmailAsync(string email, CancellationToken ct)
     {
-        return await _db.Users.FirstOrDefaultAsync(u => u.Email == email);
+        return await _db.Users.FirstOrDefaultAsync(u => u.Email == email, ct);
     }
 
     // GET by id
-    public async Task<User?> GetByIdAsync(int id)
+    public async Task<User?> GetByIdAsync(int id, CancellationToken ct)
     {
-        return await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+        return await _db.Users.FirstOrDefaultAsync(u => u.Id == id, ct);
     }
 
     // GET by hashed refresh token
-    public async Task<User?> GetByHashedRefreshTokenAsync(string hashedRefreshToken)
+    public async Task<User?> GetByHashedRefreshTokenAsync(string hashedRefreshToken, CancellationToken ct)
     {
-        return await _db.Users.FirstOrDefaultAsync(u => u.RefreshToken == hashedRefreshToken);
+        return await _db.Users.FirstOrDefaultAsync(u => u.RefreshToken == hashedRefreshToken, ct);
     }
 
     // POST create new user
-    public async Task<User> CreateAsync(User user)
+    public async Task<User> CreateAsync(User user, CancellationToken ct)
     {
         _db.Users.Add(user);
-        await SaveChangesAsync();
+        await SaveChangesAsync(ct);
 
         return user;
     }
 
     // PUT update user data (name, email, password, currency)
-    public async Task<User> UpdateAsync(User user)
+    public async Task<User> UpdateAsync(User user, CancellationToken ct)
     {
         _db.Users.Update(user);
-        await SaveChangesAsync();
+        await SaveChangesAsync(ct);
 
         return user;
     }
 
     // DELETE delete user by id
-    public async Task<bool> DeleteByIdAsync(int id)
+    public async Task<bool> DeleteByIdAsync(int id, CancellationToken ct)
     {
-        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == id, ct);
         if (user is null) return false;
 
         _db.Users.Remove(user);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(ct);
 
         return true;
     }
 
     // Translate the unique email index violation into a 409 (two requests raced past the email check)
-    private async Task SaveChangesAsync()
+    private async Task SaveChangesAsync(CancellationToken ct)
     {
         try
         {
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(ct);
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException
         {

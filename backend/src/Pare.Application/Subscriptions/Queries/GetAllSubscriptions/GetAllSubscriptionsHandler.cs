@@ -13,7 +13,7 @@ public class GetAllSubscriptionsHandler(ISubscriptionRepository repo)
         GetAllSubscriptionsQuery query,
         CancellationToken ct)
     {
-        var subscriptions = await _repo.GetAllAsync(query.UserId);
+        var subscriptions = await _repo.GetAllAsync(query.UserId, ct);
         return subscriptions.Select(SubscriptionDto.FromEntity);
     }
 }
