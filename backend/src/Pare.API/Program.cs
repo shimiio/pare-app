@@ -43,8 +43,11 @@ if (args.Contains("--migrate-only"))
 }
 
 // Swagger
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // Get Header from Caddy 
 var forwardedOptions = new ForwardedHeadersOptions
