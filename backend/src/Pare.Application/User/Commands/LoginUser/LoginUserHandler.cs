@@ -21,7 +21,7 @@ public class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwt
         var request = command.Request;
 
         // Get user data
-        var existing = await _repo.GetByEmailAsync(request.Email)
+        var existing = await _repo.GetByEmailAsync(EmailNormalizer.Normalize(request.Email))
             ?? throw new UnauthorizedException("Invalid email or password");
 
         // Verify password

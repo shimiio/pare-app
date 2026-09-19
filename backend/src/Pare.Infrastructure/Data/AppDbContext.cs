@@ -17,6 +17,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<EmailVerificationToken>().ToTable("email_verification");
         modelBuilder.Entity<UnsubscribeToken>().ToTable("unsubscribe_tokens");
 
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasIndex(u => u.Email).IsUnique();
+            entity.HasIndex(u => u.RefreshToken).IsUnique();
+        });
+
+        modelBuilder.Entity<Subscription>()
+            .Property(s => s.Price)
+            .HasPrecision(12, 2);
+
         modelBuilder.Entity<Subscription>()
             .HasOne(s => s.User)
             .WithMany(u => u.Subscriptions)

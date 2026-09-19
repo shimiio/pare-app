@@ -19,9 +19,10 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
         CancellationToken ct)
     {
         var request = command.Request;
+        var email = EmailNormalizer.Normalize(request.Email);
 
-        // Check if email already exists
-        var existing = await _repo.GetByEmailAsync(request.Email);
+        // Check if email already exists (fast path; the unique index is the real guarantee)
+        var existing = await _repo.GetByEmailAsync(email);
         if (existing != null) throw new ConflictException("Email already exists");
 
         // Hash the password
@@ -38,7 +39,7 @@ public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, I
         var user = new Domain.Entities.User
         {
             Name = request.Name,
-            Email = request.Email,
+            Email = email,
             PasswordHash = hash,
             Currency = "EUR",
             RefreshToken = hashedToken,
