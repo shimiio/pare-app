@@ -1,5 +1,9 @@
 import { Star } from "lucide-react";
-import type { Subscription } from "../../types";
+import {
+  BILLING_CYCLE_NAMES,
+  BillingCycle,
+  type Subscription,
+} from "../../types";
 import { formatCurrency, getDomain } from "../../utils/formatUtils";
 import { getDaysUtil, getLabelColor } from "../../utils/dateUtils";
 
@@ -8,8 +12,6 @@ interface SubscriptionCardProps {
   onClick: () => void;
   showDaysLabel?: boolean;
 }
-
-const BILLING_CYCLE_NAMES = ["Monthly", "Yearly", "Weekly"] as const;
 
 export default function SubscriptionCard({
   subscription,
@@ -24,9 +26,9 @@ export default function SubscriptionCard({
 
     let days = 30;
 
-    if (subscription.billingCycle === 1) {
+    if (subscription.billingCycle === BillingCycle.Yearly) {
       days = 365;
-    } else if (subscription.billingCycle === 2) {
+    } else if (subscription.billingCycle === BillingCycle.Weekly) {
       days = 7;
     }
 

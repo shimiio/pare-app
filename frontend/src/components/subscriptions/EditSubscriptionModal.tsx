@@ -4,6 +4,8 @@ import { X, Star, Trash2 } from "lucide-react";
 import axios from "axios";
 import Modal from "../ui/Modal";
 import {
+  BillingCycle,
+  Status,
   type BillingCycleValue,
   type StatusValue,
   type Subscription,
@@ -278,9 +280,9 @@ export default function EditSubscriptionModal({
                 }
                 className="w-full bg-[#0e0e0e] border border-white/5 rounded-xl py-2.5 px-3 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
               >
-                <option value={0}>Active</option>
-                <option value={2}>Paused</option>
-                <option value={1}>Cancelled</option>
+                <option value={Status.Active}>Active</option>
+                <option value={Status.Paused}>Paused</option>
+                <option value={Status.Cancelled}>Cancelled</option>
               </select>
             </div>
 
@@ -295,9 +297,9 @@ export default function EditSubscriptionModal({
                 }
                 className="w-full bg-[#0e0e0e] border border-white/5 rounded-xl py-2.5 px-3 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
               >
-                <option value={0}>Monthly</option>
-                <option value={1}>Yearly</option>
-                <option value={2}>Weekly</option>
+                <option value={BillingCycle.Monthly}>Monthly</option>
+                <option value={BillingCycle.Yearly}>Yearly</option>
+                <option value={BillingCycle.Weekly}>Weekly</option>
               </select>
             </div>
           </div>

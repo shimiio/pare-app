@@ -14,6 +14,13 @@ export type BillingCycleValue =
   (typeof BillingCycle)[keyof typeof BillingCycle];
 export type StatusValue = (typeof Status)[keyof typeof Status];
 
+// Record<BillingCycleValue, ...> forces a name for every cycle: adding a cycle without one fails to compile
+export const BILLING_CYCLE_NAMES: Record<BillingCycleValue, string> = {
+  [BillingCycle.Monthly]: "Monthly",
+  [BillingCycle.Yearly]: "Yearly",
+  [BillingCycle.Weekly]: "Weekly",
+};
+
 export interface Subscription {
   id: number;
   name: string;

@@ -4,7 +4,7 @@ import { useSubscriptions } from "../hooks/useSubscriptions";
 import SubscriptionCard from "../components/subscriptions/SubscriptionCard";
 import CreateSubscriptionModal from "../components/subscriptions/CreateSubscriptionModal";
 import EditSubscriptionModal from "../components/subscriptions/EditSubscriptionModal";
-import type { Subscription } from "../types";
+import { Status, type Subscription } from "../types";
 import { readableDate } from "../utils/dateUtils";
 import { getMonthlyExpenses } from "../utils/subscriptionUtils";
 import { useCurrencyConverter } from "#hooks/useCurrencyConverter";
@@ -26,9 +26,9 @@ export default function Subscriptions() {
   if (!data) return null;
 
   const subscriptions: Subscription[] | undefined = data;
-  const active = subscriptions?.filter((sub) => sub.status === 0);
-  const cancelled = subscriptions?.filter((sub) => sub.status === 1);
-  const paused = subscriptions?.filter((sub) => sub.status === 2);
+  const active = subscriptions?.filter((sub) => sub.status === Status.Active);
+  const cancelled = subscriptions?.filter((sub) => sub.status === Status.Cancelled);
+  const paused = subscriptions?.filter((sub) => sub.status === Status.Paused);
 
   const sorted = active?.sort((a, b) => {
     return (

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 import { useCurrencyConverter } from "../hooks/useCurrencyConverter";
-import type { Subscription } from "../types";
+import { Status, type Subscription } from "../types";
 import { getDaysUtil } from "../utils/dateUtils";
 import { formatCurrency } from "../utils/formatUtils";
 import {
@@ -34,7 +34,7 @@ export default function Dashboard() {
 
   // get active subscriptions
   const subscriptions: Subscription[] | undefined = data;
-  const active = subscriptions?.filter((sub) => sub.status === 0);
+  const active = subscriptions?.filter((sub) => sub.status === Status.Active);
 
   // sort by date
   const sorted = active?.sort((a, b) => {

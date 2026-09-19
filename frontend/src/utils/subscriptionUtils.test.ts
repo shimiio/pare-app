@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import type { Subscription } from "../types";
+import { BillingCycle, Status, type Subscription } from "../types";
 import {
   sanitizePriceInput,
   calculateNextBilling,
@@ -12,8 +12,8 @@ const createSubscription = (partial: Partial<Subscription>): Subscription => ({
   id: 1,
   name: "Test Service",
   currency: "EUR",
-  billingCycle: 0,
-  status: 0,
+  billingCycle: BillingCycle.Monthly,
+  status: Status.Active,
   nextBillingDate: "2026-06-02",
   startDate: "2026-06-02",
   serviceUrl: "https://example.com",
@@ -50,13 +50,13 @@ describe("calculateNextBilling", () => {
   const referenceDate = new Date(Date.UTC(2026, 5, 15, 12, 0, 0));
 
   it("should calculate next billing date for monthly cycle", () => {
-    expect(calculateNextBilling("2026-06-02", 0, referenceDate)).toBe(
+    expect(calculateNextBilling("2026-06-02", BillingCycle.Monthly, referenceDate)).toBe(
       "2026-07-02",
     );
   });
 
   it("should calculate next billing date for yearly cycle", () => {
-    expect(calculateNextBilling("2026-06-02", 1, referenceDate)).toBe(
+    expect(calculateNextBilling("2026-06-02", BillingCycle.Yearly, referenceDate)).toBe(
       "2027-06-02",
     );
   });
@@ -75,7 +75,7 @@ describe("Subscription Expenses Calculations", () => {
       const sub = createSubscription({
         price: 100,
         currency: "EUR",
-        billingCycle: 0,
+        billingCycle: BillingCycle.Monthly,
       });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(100);
     });
@@ -84,7 +84,7 @@ describe("Subscription Expenses Calculations", () => {
       const sub = createSubscription({
         price: 120,
         currency: "EUR",
-        billingCycle: 1,
+        billingCycle: BillingCycle.Yearly,
       });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(10); // 120 / 12
     });
@@ -93,7 +93,7 @@ describe("Subscription Expenses Calculations", () => {
       const sub = createSubscription({
         price: 10,
         currency: "EUR",
-        billingCycle: 2,
+        billingCycle: BillingCycle.Weekly,
       });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(43.3); // 10 * 4.33
     });
@@ -101,7 +101,7 @@ describe("Subscription Expenses Calculations", () => {
     it("should return 0 if price is not specified (undefined)", () => {
       const sub = createSubscription({
         currency: "EUR",
-        billingCycle: 0,
+        billingCycle: BillingCycle.Monthly,
         price: undefined,
       });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(0);
@@ -111,7 +111,7 @@ describe("Subscription Expenses Calculations", () => {
       const sub = createSubscription({
         price: 100,
         currency: "USD",
-        billingCycle: 0,
+        billingCycle: BillingCycle.Monthly,
       });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(200);
     });
@@ -120,8 +120,8 @@ describe("Subscription Expenses Calculations", () => {
   describe("getMonthlyExpenses", () => {
     it("should add up the monthly subscription mass costs", () => {
       const subs: Subscription[] = [
-        createSubscription({ price: 100, currency: "EUR", billingCycle: 0 }), // 100 per month
-        createSubscription({ price: 120, currency: "EUR", billingCycle: 1 }), // 10 per month
+        createSubscription({ price: 100, currency: "EUR", billingCycle: BillingCycle.Monthly }), // 100 per month
+        createSubscription({ price: 120, currency: "EUR", billingCycle: BillingCycle.Yearly }), // 10 per month
       ];
 
       expect(getMonthlyExpenses(subs, mockToDefaultCurrency)).toBe(110);
@@ -135,8 +135,8 @@ describe("Subscription Expenses Calculations", () => {
   describe("getYearlyExpenses", () => {
     it("should multiply monthly expenses by 12", () => {
       const subs: Subscription[] = [
-        createSubscription({ price: 100, currency: "EUR", billingCycle: 0 }), // 100 per month
-        createSubscription({ price: 10, currency: "EUR", billingCycle: 0 }), // 10 per month
+        createSubscription({ price: 100, currency: "EUR", billingCycle: BillingCycle.Monthly }), // 100 per month
+        createSubscription({ price: 10, currency: "EUR", billingCycle: BillingCycle.Monthly }), // 10 per month
       ];
 
       expect(getYearlyExpenses(subs, mockToDefaultCurrency)).toBe(1320);

@@ -3,7 +3,12 @@ import { useMutation, useQueryClient } from "react-query";
 import { X, Star } from "lucide-react";
 import axios from "axios";
 import Modal from "../ui/Modal";
-import { type BillingCycleValue, type WriteSubscription } from "../../types";
+import {
+  BillingCycle,
+  Status,
+  type BillingCycleValue,
+  type WriteSubscription,
+} from "../../types";
 import { createSubscription } from "../../api/subscriptions";
 import {
   calculateNextBilling,
@@ -100,7 +105,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
       price: convertedPrice,
       currency: currency,
       billingCycle: cycle,
-      status: 0,
+      status: Status.Active,
       nextBillingDate: isoNextBilling,
       startDate: startDate,
       serviceUrl: serviceUrl,
@@ -238,9 +243,9 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                 }
                 className="w-full bg-[#0e0e0e] border border-white/5 rounded-xl py-2.5 px-3 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 appearance-none transition-all cursor-pointer"
               >
-                <option value={0}>Monthly</option>
-                <option value={1}>Yearly</option>
-                <option value={2}>Weekly</option>
+                <option value={BillingCycle.Monthly}>Monthly</option>
+                <option value={BillingCycle.Yearly}>Yearly</option>
+                <option value={BillingCycle.Weekly}>Weekly</option>
               </select>
             </div>
 
