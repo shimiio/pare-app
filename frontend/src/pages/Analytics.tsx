@@ -8,8 +8,7 @@ import {
   getMonthlyExpenses,
   getYearlyExpenses,
 } from "../utils/subscriptionUtils";
-import { useCurrencyRates } from "../hooks/useCurrencyRates";
-import { useUser } from "../hooks/useUser";
+import { useCurrencyConverter } from "../hooks/useCurrencyConverter";
 import { formatCurrency } from "../utils/formatUtils";
 import { getDomain } from "../utils/formatUtils";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
@@ -19,9 +18,7 @@ const BILLING_CYCLE_NAMES = ["Monthly", "Yearly", "Weekly"] as const;
 
 export default function Analytics() {
   const { data, isLoading, isError } = useSubscriptions();
-  const { data: user } = useUser();
-  const currency = user?.currency ?? "EUR";
-  const { data: rates } = useCurrencyRates(currency);
+  const { currency, toDefaultCurrency } = useCurrencyConverter();
   const [modal, setModal] = useState<"create" | null>(null);
 
   if (isLoading) return <div>Loading...</div>;
@@ -31,13 +28,6 @@ export default function Analytics() {
   // get active subscriptions
   const subscriptions: Subscription[] | undefined = data;
   const active = subscriptions?.filter((sub) => sub.status === 0);
-
-  // currency
-  const toDefaultCurrency = (amount: number, fromCurrency: string): number => {
-    if (!rates) return amount;
-    const inBase = amount / (rates[fromCurrency] ?? 1);
-    return inBase * (rates[currency] ?? 1);
-  };
 
   // sort by price
   const sortedByPrice = active

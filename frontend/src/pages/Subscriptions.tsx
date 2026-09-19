@@ -7,8 +7,7 @@ import EditSubscriptionModal from "../components/subscriptions/EditSubscriptionM
 import type { Subscription } from "../types";
 import { readableDate } from "../utils/dateUtils";
 import { getMonthlyExpenses } from "../utils/subscriptionUtils";
-import { useCurrencyRates } from "#hooks/useCurrencyRates";
-import { useUser } from "#hooks/useUser";
+import { useCurrencyConverter } from "#hooks/useCurrencyConverter";
 import { formatCurrency } from "../utils/formatUtils";
 import NoActiveSubscriptions from "#components/ui/NoActiveSubscriptions";
 
@@ -20,9 +19,7 @@ export default function Subscriptions() {
   const [activeOpen, setActiveOpen] = useState(true);
   const [pausedOpen, setPausedOpen] = useState(false);
   const [cancelledOpen, setCancelledOpen] = useState(false);
-  const { data: user } = useUser();
-  const currency = user?.currency ?? "EUR";
-  const { data: rates } = useCurrencyRates(currency);
+  const { currency, toDefaultCurrency } = useCurrencyConverter();
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>ERROR</div>;
@@ -55,12 +52,6 @@ export default function Subscriptions() {
   );
 
   const groupedEntries = Object.entries(grouped ?? {});
-
-  const toDefaultCurrency = (amount: number, fromCurrency: string): number => {
-    if (!rates) return amount;
-    const inBase = amount / (rates[fromCurrency] ?? 1);
-    return inBase * (rates[currency] ?? 1);
-  };
 
   return (
     <>
