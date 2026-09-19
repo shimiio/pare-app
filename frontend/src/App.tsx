@@ -1,11 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import { useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 import { useAuthStore } from "./store/useAuthStore";
 import { refresh } from "./api/auth";
 import Silk from "./components/Silk";
+import LoadingState from "./components/ui/LoadingState";
 
 export default function App() {
   const setToken = useAuthStore((state) => state.setToken);
@@ -29,7 +28,11 @@ export default function App() {
   }, [setToken, clearAuth, setLoading]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#121212]">
+        <LoadingState />
+      </div>
+    );
   }
 
   return (
