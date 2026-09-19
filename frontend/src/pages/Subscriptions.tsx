@@ -10,9 +10,12 @@ import { getMonthlyExpenses } from "../utils/subscriptionUtils";
 import { useCurrencyConverter } from "#hooks/useCurrencyConverter";
 import { formatCurrency } from "../utils/formatUtils";
 import NoActiveSubscriptions from "#components/ui/NoActiveSubscriptions";
+import LoadingState from "#components/ui/LoadingState";
+import ErrorState from "#components/ui/ErrorState";
 
 export default function Subscriptions() {
-  const { data, isLoading, isError } = useSubscriptions();
+  const { data, isLoading, isError, refetch, isFetching } =
+    useSubscriptions();
   const [modal, setModal] = useState<"create" | "edit" | null>(null);
   const [selectedSubscription, setSelectedSubscription] =
     useState<Subscription | null>(null);
@@ -21,8 +24,9 @@ export default function Subscriptions() {
   const [cancelledOpen, setCancelledOpen] = useState(false);
   const { currency, toDefaultCurrency } = useCurrencyConverter();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>ERROR</div>;
+  if (isLoading) return <LoadingState message="Loading subscriptions" />;
+  if (isError)
+    return <ErrorState onRetry={() => refetch()} isRetrying={isFetching} />;
   if (!data) return null;
 
   const subscriptions: Subscription[] | undefined = data;

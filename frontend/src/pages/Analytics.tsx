@@ -19,14 +19,18 @@ import { formatCurrency } from "../utils/formatUtils";
 import { getDomain } from "../utils/formatUtils";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import NoActiveSubscriptions from "#components/ui/NoActiveSubscriptions";
+import LoadingState from "#components/ui/LoadingState";
+import ErrorState from "#components/ui/ErrorState";
 
 export default function Analytics() {
-  const { data, isLoading, isError } = useSubscriptions();
+  const { data, isLoading, isError, refetch, isFetching } =
+    useSubscriptions();
   const { currency, toDefaultCurrency } = useCurrencyConverter();
   const [modal, setModal] = useState<"create" | null>(null);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>ERROR</div>;
+  if (isLoading) return <LoadingState message="Loading subscriptions" />;
+  if (isError)
+    return <ErrorState onRetry={() => refetch()} isRetrying={isFetching} />;
   if (!data) return null;
 
   // get active subscriptions

@@ -13,6 +13,8 @@ import CreateSubscriptionModal from "../components/subscriptions/CreateSubscript
 import SubscriptionCard from "#components/subscriptions/SubscriptionCard";
 import EditSubscriptionModal from "#components/subscriptions/EditSubscriptionModal";
 import NoActiveSubscriptions from "#components/ui/NoActiveSubscriptions";
+import LoadingState from "#components/ui/LoadingState";
+import ErrorState from "#components/ui/ErrorState";
 
 interface INextPayment {
   name: string;
@@ -22,14 +24,16 @@ interface INextPayment {
 }
 
 export default function Dashboard() {
-  const { data, isLoading, isError } = useSubscriptions();
+  const { data, isLoading, isError, refetch, isFetching } =
+    useSubscriptions();
   const { currency, toDefaultCurrency } = useCurrencyConverter();
   const [modal, setModal] = useState<"create" | "edit" | null>(null);
   const [selectedSubscription, setSelectedSubscription] =
     useState<Subscription | null>(null);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>ERROR</div>;
+  if (isLoading) return <LoadingState message="Loading subscriptions" />;
+  if (isError)
+    return <ErrorState onRetry={() => refetch()} isRetrying={isFetching} />;
   if (!data) return null;
 
   // get active subscriptions
