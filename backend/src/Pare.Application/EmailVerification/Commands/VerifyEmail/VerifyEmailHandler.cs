@@ -7,12 +7,17 @@ using Pare.Domain.Entities;
 
 namespace Pare.Application.EmailVerification.Commands.VerifyEmail;
 
-public class VerifyEmailHandler(IUserRepository userRepo, IEmailVerificationRepository emailRepo, IUnsubscribeTokenRepository unsubscribeRepo)
+public class VerifyEmailHandler(
+    IUserRepository userRepo,
+    IEmailVerificationRepository emailRepo,
+    IUnsubscribeTokenRepository unsubscribeRepo,
+    ITransactionManager transactionManager)
     : IRequestHandler<VerifyEmailCommand>
 {
     private readonly IUserRepository _userRepo = userRepo;
     private readonly IEmailVerificationRepository _emailRepo = emailRepo;
     private readonly IUnsubscribeTokenRepository _unsubscribeRepo = unsubscribeRepo;
+    private readonly ITransactionManager _transactionManager = transactionManager;
 
     public async Task Handle(VerifyEmailCommand command, CancellationToken cancellationToken)
     {
@@ -30,32 +35,37 @@ public class VerifyEmailHandler(IUserRepository userRepo, IEmailVerificationRepo
         // compare with user token
         if (derivedHashCode != token.CodeHash) throw new BadRequestException("Invalid verification code");
 
-        // change & save
-        token.UsedAtUtc = DateTime.UtcNow;
-        user.IsEmailVerified = true;
+        // change & save: all writes below commit together, or not at all
+        await _transactionManager.ExecuteInTransactionAsync(async () =>
+        {
+            token.UsedAtUtc = DateTime.UtcNow;
+            user.IsEmailVerified = true;
 
-        await _userRepo.UpdateAsync(user);
-        await _emailRepo.UpdateUsedAtUtcAsync(user.Id, token);
+            await _userRepo.UpdateAsync(user);
+            await _emailRepo.UpdateUsedAtUtcAsync(user.Id, token);
 
-        // generate unsubcribe token
-        var unsubcribeToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))
+            // create unsubscribe token
+            var existingToken = await _unsubscribeRepo.GetByUserIdAsync(user.Id);
+            if (existingToken == null)
+            {
+                var unsubscribeToken = new UnsubscribeToken
+                {
+                    UserId = user.Id,
+                    Token = GenerateUnsubscribeToken(),
+                    CreatedAtUtc = DateTime.UtcNow,
+                };
+
+                await _unsubscribeRepo.CreateAsync(unsubscribeToken);
+            }
+        }, cancellationToken);
+    }
+
+    // URL-safe random token for the unsubscribe link
+    private static string GenerateUnsubscribeToken()
+    {
+        return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))
             .Replace('+', '-')
             .Replace('/', '_')
             .TrimEnd('=');
-
-        // create unsubscribe token
-        var existingToken = await _unsubscribeRepo.GetByUserIdAsync(user.Id);
-        if (existingToken == null)
-        {
-            var unsubscribeToken = new UnsubscribeToken
-            {
-                UserId = user.Id,
-                Token = unsubcribeToken,
-                CreatedAtUtc = DateTime.UtcNow,
-            };
-
-            // save
-            await _unsubscribeRepo.CreateAsync(unsubscribeToken);
-        }
     }
 }
