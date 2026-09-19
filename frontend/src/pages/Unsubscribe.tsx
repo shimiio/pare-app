@@ -1,33 +1,48 @@
 import Logo from "#components/ui/Logo";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 type UnsubscribeState = "loading" | "success" | "already" | "invalid" | "error";
 
 export default function Unsubscribe() {
-  const [state, setState] = useState<UnsubscribeState>("loading");
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+
+  // without a token there is nothing to request, so the page starts in its final state
+  const [state, setState] = useState<UnsubscribeState>(
+    token ? "loading" : "invalid",
+  );
+
+  const requestSent = useRef(false);
 
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get("token");
+    // StrictMode runs effects twice in development. Unsubscribing is a POST that
+    // changes data, so it must be sent once even if the effect runs again.
+    if (!token || requestSent.current) return;
+    requestSent.current = true;
 
-    if (!token) {
-      setState("invalid");
-      return;
-    }
-
-    const controller = new AbortController();
+    // The request is deliberately not aborted on unmount: the user asked to be
+    // unsubscribed, so the server should finish the job. Only the UI update is skipped.
+    let active = true;
 
     fetch(`/api/unsubscribe?token=${encodeURIComponent(token)}`, {
       method: "POST",
     })
       .then((res) => {
+        if (!active) return;
         if (res.status === 200) return setState("success");
         if (res.status === 404) return setState("invalid");
         if (res.status === 409) return setState("already");
         return setState("error");
       })
-      .catch(() => setState("error"));
-    return () => controller.abort();
-  }, []);
+      .catch(() => {
+        if (active) setState("error");
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [token]);
 
   return (
     <div className="flex flex-col items-center mx-auto justify-between h-screen text-white">
