@@ -22,13 +22,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     {
         var result = await _mediator.Send(new RegisterUserCommand(request));
 
-        Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddDays(30)
-        });
+        SetRefreshTokenCookie(result.RefreshToken);
 
         return Created("", new { jwtToken = result.JwtToken });
     }
@@ -39,13 +33,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     {
         var result = await _mediator.Send(new LoginUserCommand(request));
 
-        Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddDays(30)
-        });
+        SetRefreshTokenCookie(result.RefreshToken);
 
         return Ok(new { jwtToken = result.JwtToken });
     }
@@ -58,7 +46,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
         if (refreshToken != null)
             await _mediator.Send(new LogoutUserCommand(new RefreshTokenDto { RefreshToken = refreshToken }));
 
-        Response.Cookies.Delete("refreshToken");
+        ClearRefreshTokenCookie();
         return NoContent();
     }
 
@@ -72,14 +60,25 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
 
         var result = await _mediator.Send(new RefreshUserCommand(new RefreshTokenDto { RefreshToken = refreshToken }));
 
-        Response.Cookies.Append("refreshToken", result.RefreshToken, new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddDays(30)
-        });
+        SetRefreshTokenCookie(result.RefreshToken);
 
         return Ok(new { jwtToken = result.JwtToken });
     }
+
+    // One definition for the refresh cookie, so every endpoint sets identical attributes.
+    // SameSite=Strict: the frontend and the API are the same site behind Caddy, so the browser
+    // never needs to send this cookie from another site, and a cross-site request cannot use it.
+    private static CookieOptions RefreshTokenCookieOptions() => new()
+    {
+        HttpOnly = true,
+        Secure = true,
+        SameSite = SameSiteMode.Strict,
+        Expires = DateTimeOffset.UtcNow.AddDays(30)
+    };
+
+    private void SetRefreshTokenCookie(string refreshToken)
+        => Response.Cookies.Append("refreshToken", refreshToken, RefreshTokenCookieOptions());
+
+    private void ClearRefreshTokenCookie()
+        => Response.Cookies.Delete("refreshToken", RefreshTokenCookieOptions());
 }
