@@ -67,6 +67,38 @@ public class SubscriptionWriteDtoValidatorTests
     }
 
     [Fact]
+    public void Validate_WithThreeDecimalPrice_ShouldHavePriceError()
+    {
+        // Arrange
+        var dto = new SubscriptionWriteDto
+        {
+            Price = 9.999M,
+        };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(s => s.Price);
+    }
+
+    [Fact]
+    public void Validate_WithTrailingZeroPrice_ShouldHaveNoPriceError()
+    {
+        // Arrange
+        var dto = new SubscriptionWriteDto
+        {
+            Price = 9.990M,
+        };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(s => s.Price);
+    }
+
+    [Fact]
     public void Validate_WithPastNextBillingDate_ShouldHaveError()
     {
         DateOnly pastDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1);
