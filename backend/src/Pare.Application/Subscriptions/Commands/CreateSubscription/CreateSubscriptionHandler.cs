@@ -6,7 +6,7 @@ using Pare.Application.Exceptions;
 
 namespace Pare.Application.Subscriptions.Commands.CreateSubscription;
 
-public class CreateSubscriptionHandler(ISubscriptionRepository repo)
+public sealed class CreateSubscriptionHandler(ISubscriptionRepository repo)
         : IRequestHandler<CreateSubscriptionCommand, SubscriptionDto>
 {
     private readonly ISubscriptionRepository _repo = repo;

@@ -5,7 +5,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.Subscriptions.Queries.GetSubscriptionById;
 
-public class GetSubscriptionByIdHandler(ISubscriptionRepository repo)
+public sealed class GetSubscriptionByIdHandler(ISubscriptionRepository repo)
         : IRequestHandler<GetSubscriptionByIdQuery, SubscriptionDto>
 {
     private readonly ISubscriptionRepository _repo = repo;

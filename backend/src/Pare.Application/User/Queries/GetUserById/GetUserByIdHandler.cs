@@ -5,7 +5,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Queries.GetUserById;
 
-public class GetUserByIdHandler(IUserRepository repo)
+public sealed class GetUserByIdHandler(IUserRepository repo)
         : IRequestHandler<GetUserByIdQuery, UserDto>
 {
     private readonly IUserRepository _repo = repo;

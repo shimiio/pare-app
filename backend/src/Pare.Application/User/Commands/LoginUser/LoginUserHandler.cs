@@ -7,7 +7,7 @@ using Pare.Application.Common;
 
 namespace Pare.Application.User.Commands.LoginUser;
 
-public class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwtTokenService jwtService)
+public sealed class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwtTokenService jwtService)
         : IRequestHandler<LoginUserCommand, AuthResponseDto>
 {
     private readonly IUserRepository _repo = repo;

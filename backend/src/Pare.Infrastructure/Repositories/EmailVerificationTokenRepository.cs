@@ -5,7 +5,7 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Repositories;
 
-public class EmailVerificationRepository(AppDbContext db) : IEmailVerificationRepository
+public sealed class EmailVerificationRepository(AppDbContext db) : IEmailVerificationRepository
 {
     private readonly AppDbContext _db = db;
 

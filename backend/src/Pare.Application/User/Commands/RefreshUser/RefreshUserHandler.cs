@@ -7,7 +7,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.RefreshUser;
 
-public class RefreshUserHandler(IUserRepository repo, IJwtTokenService jwtService)
+public sealed class RefreshUserHandler(IUserRepository repo, IJwtTokenService jwtService)
         : IRequestHandler<RefreshUserCommand, AuthResponseDto>
 {
     private readonly IUserRepository _repo = repo;

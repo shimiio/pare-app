@@ -2,7 +2,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Data;
 
-public class TransactionManager(AppDbContext db) : ITransactionManager
+public sealed class TransactionManager(AppDbContext db) : ITransactionManager
 {
     private readonly AppDbContext _db = db;
 

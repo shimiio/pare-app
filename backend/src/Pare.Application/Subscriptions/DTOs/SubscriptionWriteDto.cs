@@ -2,7 +2,7 @@ using Pare.Domain.Enums;
 
 namespace Pare.Application.Subscriptions.DTOs;
 
-public class SubscriptionWriteDto
+public sealed class SubscriptionWriteDto
 {
     public string Name { get; set; } = string.Empty;
     public decimal Price { get; set; }

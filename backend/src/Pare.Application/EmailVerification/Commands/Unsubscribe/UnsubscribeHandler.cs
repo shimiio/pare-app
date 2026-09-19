@@ -4,7 +4,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.EmailVerification.Commands.Unsubscribe;
 
-public class UnsubscribeHandler(IUnsubscribeTokenRepository unsubscribeRepo, IUserRepository userRepo)
+public sealed class UnsubscribeHandler(IUnsubscribeTokenRepository unsubscribeRepo, IUserRepository userRepo)
         : IRequestHandler<UnsubscribeCommand>
 {
     private readonly IUnsubscribeTokenRepository _unsubscribeRepo = unsubscribeRepo;

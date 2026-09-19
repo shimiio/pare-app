@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Pare.Application.User.Commands.UpdateUserCurrency;
 
-public class UpdateUserCurrencyCommandValidator : AbstractValidator<UpdateUserCurrencyCommand>
+public sealed class UpdateUserCurrencyCommandValidator : AbstractValidator<UpdateUserCurrencyCommand>
 {
     public UpdateUserCurrencyCommandValidator()
     {

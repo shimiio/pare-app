@@ -1,5 +1,5 @@
 namespace Pare.Application.Exceptions;
 
-public class BadRequestException(string message) : Exception(message)
+public sealed class BadRequestException(string message) : Exception(message)
 {
 }

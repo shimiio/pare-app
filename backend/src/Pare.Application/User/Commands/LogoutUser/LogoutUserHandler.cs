@@ -5,7 +5,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.User.Commands.LogoutUser;
 
-public class LogoutUserHandler(IUserRepository repo)
+public sealed class LogoutUserHandler(IUserRepository repo)
         : IRequestHandler<LogoutUserCommand, Unit>
 {
     private readonly IUserRepository _repo = repo;

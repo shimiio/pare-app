@@ -1,5 +1,5 @@
 namespace Pare.Application.Exceptions;
 
-public class UnprocessableEntityException(string message) : Exception(message)
+public sealed class UnprocessableEntityException(string message) : Exception(message)
 {
 }

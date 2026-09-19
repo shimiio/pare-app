@@ -7,7 +7,7 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Repositories;
 
-public class UserRepository(AppDbContext db) : IUserRepository
+public sealed class UserRepository(AppDbContext db) : IUserRepository
 {
     private readonly AppDbContext _db = db;
     private const string EmailUniqueIndex = "IX_users_Email";

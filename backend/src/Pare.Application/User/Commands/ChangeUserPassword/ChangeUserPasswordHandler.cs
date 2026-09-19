@@ -5,7 +5,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.ChangeUserPassword;
 
-public class ChangeUserPasswordHandler(IUserRepository repo, IPasswordHasher hasher)
+public sealed class ChangeUserPasswordHandler(IUserRepository repo, IPasswordHasher hasher)
         : IRequestHandler<ChangeUserPasswordCommand, ChangePasswordDto>
 {
     private readonly IUserRepository _repo = repo;

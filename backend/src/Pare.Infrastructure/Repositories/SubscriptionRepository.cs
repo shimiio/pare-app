@@ -5,7 +5,7 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Repositories;
 
-public class SubscriptionRepository(AppDbContext db) : ISubscriptionRepository
+public sealed class SubscriptionRepository(AppDbContext db) : ISubscriptionRepository
 {
     private readonly AppDbContext _db = db;
 

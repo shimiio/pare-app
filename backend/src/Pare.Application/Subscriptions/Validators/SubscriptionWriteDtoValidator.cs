@@ -3,7 +3,7 @@ using Pare.Application.Subscriptions.DTOs;
 
 namespace Pare.Application.Subscriptions.Validators;
 
-public class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWriteDto>
+public sealed class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWriteDto>
 {
     public SubscriptionWriteDtoValidator()
     {

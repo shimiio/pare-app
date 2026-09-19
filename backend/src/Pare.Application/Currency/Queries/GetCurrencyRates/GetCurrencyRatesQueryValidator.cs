@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Pare.Application.Currency.Queries.GetCurrencyRates;
 
-public class GetCurrencyRatesQueryValidator : AbstractValidator<GetCurrencyRatesQuery>
+public sealed class GetCurrencyRatesQueryValidator : AbstractValidator<GetCurrencyRatesQuery>
 {
     private static readonly string[] AllowedCurrencies = ["USD", "GBP", "EUR", "UAH", "CZK", "PLN", "JPY"];
 

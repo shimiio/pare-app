@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Pare.Application.User.Commands.ChangeUserEmail;
 
-public class ChangeUserEmailCommandValidator : AbstractValidator<ChangeUserEmailCommand>
+public sealed class ChangeUserEmailCommandValidator : AbstractValidator<ChangeUserEmailCommand>
 {
     public ChangeUserEmailCommandValidator()
     {

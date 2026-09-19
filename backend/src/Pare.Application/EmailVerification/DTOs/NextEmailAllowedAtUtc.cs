@@ -1,6 +1,6 @@
 namespace Pare.Application.EmailVerification.DTOs;
 
-public class NextEmailAllowed
+public sealed class NextEmailAllowed
 {
     public DateTime NextEmailAllowedAtUtc { get; set; }
 }

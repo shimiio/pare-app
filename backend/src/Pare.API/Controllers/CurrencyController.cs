@@ -10,7 +10,7 @@ namespace Pare.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [EnableRateLimiting("global")]
-public class CurrencyController(IMediator mediator) : ControllerBase
+public sealed class CurrencyController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 

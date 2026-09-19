@@ -4,7 +4,7 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Jobs;
 
-public class TokenCleanupJob(AppDbContext db, ILogger<TokenCleanupJob> logger)
+public sealed class TokenCleanupJob(AppDbContext db, ILogger<TokenCleanupJob> logger)
 {
     public async Task ExecuteAsync(CancellationToken ct)
     {

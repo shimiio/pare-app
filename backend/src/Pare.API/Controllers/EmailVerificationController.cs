@@ -13,7 +13,7 @@ namespace Pare.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [EnableRateLimiting("global")]
-public class EmailVerificationController(IMediator mediator) : ControllerBase
+public sealed class EmailVerificationController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 

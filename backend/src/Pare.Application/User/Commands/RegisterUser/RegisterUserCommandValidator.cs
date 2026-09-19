@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Pare.Application.User.Commands.RegisterUser;
 
-public class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
+public sealed class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
 {
     public RegisterUserCommandValidator()
     {

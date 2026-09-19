@@ -3,7 +3,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.Services;
 
-public class ReminderService(IEmailService emailService, ISubscriptionRepository subscriptionRepository, IUnsubscribeTokenRepository unsubscribeRepo, ILogger<ReminderService> logger) : IReminderService
+public sealed class ReminderService(IEmailService emailService, ISubscriptionRepository subscriptionRepository, IUnsubscribeTokenRepository unsubscribeRepo, ILogger<ReminderService> logger) : IReminderService
 {
     private readonly IUnsubscribeTokenRepository _unsubscribeRepo = unsubscribeRepo;
 

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Pare.Application.Behaviours;
 
-public class LoggingBehaviour<TRequest, TResponse>(
+public sealed class LoggingBehaviour<TRequest, TResponse>(
     ILogger<LoggingBehaviour<TRequest, TResponse>> logger,
     IHttpContextAccessor httpContextAccessor) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
@@ -21,12 +21,12 @@ public class LoggingBehaviour<TRequest, TResponse>(
         var userId = _httpContextAccessor.HttpContext?.User
             .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
 
-        _logger.LogInformation("→ {RequestName} | User: {UserId}",
+        _logger.LogInformation("â†’ {RequestName} | User: {UserId}",
             typeof(TRequest).Name, userId);
 
         var response = await next(ct);
 
-        _logger.LogInformation("← {RequestName} completed | User: {UserId}",
+        _logger.LogInformation("â† {RequestName} completed | User: {UserId}",
             typeof(TRequest).Name, userId);
 
         return response;

@@ -6,7 +6,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Services;
 
-public class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> logger) : IEmailService
+public sealed class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> logger) : IEmailService
 {
     public async Task SendReminderAsync(string toEmail, string toName, IEnumerable<Domain.Entities.Subscription> subscriptions, string unsubscribeToken)
     {
@@ -49,7 +49,7 @@ public class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> l
             """;
 
         var footer = $"""
-            <p style="margin:0 0 16px 0;color:#666;font-size:13px;">— Pare App</p>
+            <p style="margin:0 0 16px 0;color:#666;font-size:13px;">â€” Pare App</p>
             <a href="{unsubscribeUrl}" style="color:#666;font-size:12px;text-decoration:underline;">
                 Unsubscribe from these emails
             </a>

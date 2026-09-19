@@ -7,7 +7,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.RegisterUser;
 
-public class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwtTokenService jwtService)
+public sealed class RegisterUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwtTokenService jwtService)
         : IRequestHandler<RegisterUserCommand, AuthResponseDto>
 {
     private readonly IUserRepository _repo = repo;

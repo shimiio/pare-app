@@ -5,7 +5,7 @@ using Pare.Domain.Entities;
 
 namespace Pare.Infrastructure.Repositories;
 
-public class UnsubscribeTokenRepository(AppDbContext db) : IUnsubscribeTokenRepository
+public sealed class UnsubscribeTokenRepository(AppDbContext db) : IUnsubscribeTokenRepository
 {
     private readonly AppDbContext _db = db;
 

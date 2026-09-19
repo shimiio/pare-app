@@ -1,6 +1,6 @@
 namespace Pare.Domain.Entities;
 
-public class UnsubscribeToken
+public sealed class UnsubscribeToken
 {
     public int Id { get; set; }
     public int UserId { get; set; }

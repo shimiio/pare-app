@@ -5,7 +5,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.UpdateUserName;
 
-public class UpdateUserNameHandler(IUserRepository repo)
+public sealed class UpdateUserNameHandler(IUserRepository repo)
         : IRequestHandler<UpdateUserNameCommand, UpdateNameDto>
 {
     private readonly IUserRepository _repo = repo;

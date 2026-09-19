@@ -5,7 +5,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.UpdateUserCurrency;
 
-public class UpdateUserCurrencyHandler(IUserRepository repo)
+public sealed class UpdateUserCurrencyHandler(IUserRepository repo)
         : IRequestHandler<UpdateUserCurrencyCommand, UpdateCurrencyDto>
 {
     private readonly IUserRepository _repo = repo;

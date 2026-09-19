@@ -5,7 +5,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Services;
 
-public class EmailService(IConfiguration config, ILogger<EmailService> logger) : IEmailService
+public sealed class EmailService(IConfiguration config, ILogger<EmailService> logger) : IEmailService
 {
     public async Task SendReminderAsync(string toEmail, string toName, IEnumerable<Domain.Entities.Subscription> subscriptions, string unsubscribeToken)
     {
@@ -48,7 +48,7 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
             """;
 
         var footer = $"""
-            <p style="margin:0 0 16px 0;color:#666;font-size:13px;">— Pare App</p>
+            <p style="margin:0 0 16px 0;color:#666;font-size:13px;">â€” Pare App</p>
             <a href="{unsubscribeUrl}" style="color:#666;font-size:12px;text-decoration:underline;">
                 Unsubscribe from these emails
             </a>
@@ -67,7 +67,7 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
 
             {textRows}
 
-            — Pare App
+            â€” Pare App
 
             Unsubscribe: {unsubscribeUrl}
             """;
@@ -124,7 +124,7 @@ public class EmailService(IConfiguration config, ILogger<EmailService> logger) :
 
             This code expires in 10 minutes. If you didn't request this, just ignore this email.
 
-            — Pare App
+            â€” Pare App
             """;
 
         var message = new EmailMessage

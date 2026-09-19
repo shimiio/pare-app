@@ -6,7 +6,7 @@ using Pare.Domain.Entities;
 
 namespace Pare.UnitTests.Services;
 
-public class ReminderServiceTests
+public sealed class ReminderServiceTests
 {
     private readonly Mock<ISubscriptionRepository> _repoMock = new();
     private readonly Mock<IUnsubscribeTokenRepository> _unsubscribeRepoMock = new();
@@ -22,14 +22,14 @@ public class ReminderServiceTests
     [Fact]
     public async Task ExecuteAsync_WhenNoSubscriptions_ShouldNotSendEmail()
     {
-        // Arrange — tells the repository to return the empty list
+        // Arrange â€” tells the repository to return the empty list
         _repoMock.Setup(r => r.GetActiveWithBillingDateAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Enumerable.Empty<Subscription>());
 
-        // Act — tells the service to execute
+        // Act â€” tells the service to execute
         await _service.ExecuteAsync(CancellationToken.None);
 
-        // Assert — tells us to check that the email was not sent
+        // Assert â€” tells us to check that the email was not sent
         _emailMock.Verify(
             e => e.SendReminderAsync(
                 It.IsAny<string>(),

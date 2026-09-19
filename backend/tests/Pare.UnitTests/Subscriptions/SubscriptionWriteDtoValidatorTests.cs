@@ -1,10 +1,10 @@
-﻿using FluentValidation.TestHelper;
+using FluentValidation.TestHelper;
 using Pare.Application.Subscriptions.DTOs;
 using Pare.Application.Subscriptions.Validators;
 
 namespace Pare.UnitTests.Subscriptions;
 
-public class SubscriptionWriteDtoValidatorTests
+public sealed class SubscriptionWriteDtoValidatorTests
 {
     private readonly SubscriptionWriteDtoValidator _validator = new();
 

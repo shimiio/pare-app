@@ -6,7 +6,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.Subscriptions.Commands.UpdateSubscription;
 
-public class UpdateSubscriptionHandler(ISubscriptionRepository repo)
+public sealed class UpdateSubscriptionHandler(ISubscriptionRepository repo)
         : IRequestHandler<UpdateSubscriptionCommand, SubscriptionDto>
 {
     private readonly ISubscriptionRepository _repo = repo;

@@ -3,7 +3,7 @@ using Pare.Application.Subscriptions.Validators;
 
 namespace Pare.Application.Subscriptions.Commands.UpdateSubscription;
 
-public class UpdateSubscriptionCommandValidator : AbstractValidator<UpdateSubscriptionCommand>
+public sealed class UpdateSubscriptionCommandValidator : AbstractValidator<UpdateSubscriptionCommand>
 {
     public UpdateSubscriptionCommandValidator()
     {

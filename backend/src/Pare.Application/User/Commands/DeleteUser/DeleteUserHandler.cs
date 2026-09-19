@@ -4,7 +4,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.User.Commands.DeleteUser;
 
-public class DeleteUserHandler(IUserRepository repo)
+public sealed class DeleteUserHandler(IUserRepository repo)
         : IRequestHandler<DeleteUserCommand, bool>
 {
     private readonly IUserRepository _repo = repo;

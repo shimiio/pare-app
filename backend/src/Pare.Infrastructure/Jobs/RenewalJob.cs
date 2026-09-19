@@ -5,7 +5,7 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Jobs;
 
-public class RenewalJob(AppDbContext db, ILogger<RenewalJob> logger)
+public sealed class RenewalJob(AppDbContext db, ILogger<RenewalJob> logger)
 {
     public async Task ExecuteAsync(CancellationToken ct)
     {

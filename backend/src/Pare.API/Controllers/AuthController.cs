@@ -12,7 +12,7 @@ namespace Pare.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [EnableRateLimiting("auth")]
-public class AuthController(IMediator mediator) : ControllerBase
+public sealed class AuthController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
