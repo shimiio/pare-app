@@ -22,14 +22,14 @@ public sealed class ReminderServiceTests
     [Fact]
     public async Task ExecuteAsync_WhenNoSubscriptions_ShouldNotSendEmail()
     {
-        // Arrange â€” tells the repository to return the empty list
+        // Arrange — tells the repository to return the empty list
         _repoMock.Setup(r => r.GetActiveWithBillingDateAsync(It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Enumerable.Empty<Subscription>());
 
-        // Act â€” tells the service to execute
+        // Act — tells the service to execute
         await _service.ExecuteAsync(CancellationToken.None);
 
-        // Assert â€” tells us to check that the email was not sent
+        // Assert — tells us to check that the email was not sent
         _emailMock.Verify(
             e => e.SendReminderAsync(
                 It.IsAny<string>(),

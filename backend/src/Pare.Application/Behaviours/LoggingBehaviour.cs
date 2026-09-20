@@ -21,12 +21,12 @@ public sealed class LoggingBehaviour<TRequest, TResponse>(
         var userId = _httpContextAccessor.HttpContext?.User
             .FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "anonymous";
 
-        _logger.LogInformation("â†’ {RequestName} | User: {UserId}",
+        _logger.LogInformation("→ {RequestName} | User: {UserId}",
             typeof(TRequest).Name, userId);
 
         var response = await next(ct);
 
-        _logger.LogInformation("â† {RequestName} completed | User: {UserId}",
+        _logger.LogInformation("← {RequestName} completed | User: {UserId}",
             typeof(TRequest).Name, userId);
 
         return response;

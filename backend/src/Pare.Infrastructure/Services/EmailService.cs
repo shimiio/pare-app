@@ -48,7 +48,7 @@ public sealed class EmailService(IConfiguration config, ILogger<EmailService> lo
             """;
 
         var footer = $"""
-            <p style="margin:0 0 16px 0;color:#666;font-size:13px;">â€” Pare App</p>
+            <p style="margin:0 0 16px 0;color:#666;font-size:13px;">— Pare App</p>
             <a href="{unsubscribeUrl}" style="color:#666;font-size:12px;text-decoration:underline;">
                 Unsubscribe from these emails
             </a>
@@ -67,7 +67,7 @@ public sealed class EmailService(IConfiguration config, ILogger<EmailService> lo
 
             {textRows}
 
-            â€” Pare App
+            — Pare App
 
             Unsubscribe: {unsubscribeUrl}
             """;
@@ -124,7 +124,7 @@ public sealed class EmailService(IConfiguration config, ILogger<EmailService> lo
 
             This code expires in 10 minutes. If you didn't request this, just ignore this email.
 
-            â€” Pare App
+            — Pare App
             """;
 
         var message = new EmailMessage
