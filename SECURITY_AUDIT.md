@@ -47,11 +47,11 @@ Pare underwent a structured penetration test conducted by its author prior to pr
 
 **DoS via request flooding**
 - **Finding** — The server became unresponsive under ~50 concurrent connections with no request throttling in place.
-- **Fix** — Global rate limiting applied at the reverse proxy level. During a flood test the server remained responsive for legitimate users while blocked requests received `429` responses.
+- **Fix** — IP-based rate limiting applied in the API (ASP.NET Core rate limiter): 100 requests/min on authenticated endpoints, 10 requests per 5 min on auth endpoints, 20 requests/min on token refresh. During a flood test the server remained responsive for legitimate users while blocked requests received `429` responses.
 
 **Currency API key exposed in frontend bundle**
 - **Finding** — The third-party currency conversion API key was prefixed with `VITE_`, causing it to be embedded in the compiled JavaScript bundle and visible to anyone opening DevTools.
-- **Fix** — All currency conversion requests are now proxied through the backend. The API key lives only in server-side environment variables and is never sent to the client. Responses are cached for 24 hours to minimize external API calls.
+- **Fix** — All currency conversion requests are now proxied through the backend. The API key lives only in server-side environment variables and is never sent to the client. Responses are cached for 12 hours to minimize external API calls.
 
 ### Medium
 
@@ -61,11 +61,12 @@ Pare underwent a structured penetration test conducted by its author prior to pr
 
 **No subscription limit**
 - **Finding** — A script could create hundreds of subscriptions per user, exhausting database resources.
-- **Fix** — Users are limited to 50 active subscriptions. Requests exceeding this return `422 Unprocessable Entity`.
+- **Fix** — Users are limited to 50 subscriptions (of any status). Requests exceeding this return `422 Unprocessable Entity`.
 
 **No rate limiting on Hangfire dashboard**
 - **Finding** — The Hangfire admin dashboard had no brute force protection on its Basic Auth login.
 - **Fix** — Rate limiting applied. After several failed attempts the IP is temporarily blocked.
+- **Update (July 2026)** — Superseded. The dashboard is no longer routed through Caddy — it is reachable only through an SSH tunnel, so the login already requires the SSH key. Basic Auth kept; the dashboard rate limit was removed.
 
 **Insufficient security logging**
 - **Finding** — Failed login attempts were logged only as generic command invocations with no IP address or email context, making it impossible to detect or investigate attacks.
@@ -103,20 +104,33 @@ Pare underwent a structured penetration test conducted by its author prior to pr
 
 ---
 
+## Post-Audit Code Review (September 2026)
+
+| Finding | Severity | Fix |
+|---|---|---|
+| Email uniqueness checked in code only (check-then-insert), and compared case-sensitively — concurrent registrations could create duplicate accounts | Medium | Emails normalized to lowercase; unique index on `users.Email`; a violation returns `409` |
+| Email verification wrote in three separate transactions — a failure in between left a user verified with no unsubscribe token, and no way to retry | Medium | All writes run in one transaction |
+| Swagger UI served in production, kept private only by Caddy routing and the `127.0.0.1` binding | Low | Development-only guard restored in code |
+| Refresh cookie used `SameSite=None`, though the frontend and API are the same site behind Caddy | Low | `SameSite=Strict`; cookie options defined once |
+| `subscriptions.Price` was an unconstrained `numeric`, with the 2-decimal rule only in the frontend | Low | Column set to `numeric(12,2)`; the validator rejects more than 2 decimals |
+
+---
+
 ## Implemented Security Controls
 
 - HTTPS enforced via Caddy with automatic TLS (Let's Encrypt in production)
 - JWT authentication with short-lived access tokens (15 min) and rotating refresh tokens
 - Refresh tokens hashed with SHA-256 before storage
 - HttpOnly, Secure cookies for refresh token delivery
-- IP-based rate limiting on all authentication and admin endpoints
+- IP-based rate limiting on authentication, token refresh, and authenticated API endpoints
 - Subscription limit enforced server-side (50 per user)
+- Emails normalized to lowercase and enforced unique at the database level
 - All database queries via EF Core (parameterized — no raw SQL)
 - Security headers: CSP, HSTS, X-Frame-Options, X-Content-Type-Options
 - Server version header suppressed
-- Swagger UI disabled in production
-- Hangfire dashboard protected with Basic Auth + rate limiting
+- Swagger UI served only in the Development environment (enforced in code, not only by proxy routing)
+- Hangfire dashboard not publicly routed — reachable only through an SSH tunnel, protected with Basic Auth
 - Structured security logging (failed logins, rate limit events) with IP context
 - Currency API proxied through backend — key never exposed to client
-- Firewall configured to expose only ports 2222, 80, and 443
+- Firewall configured to expose only ports 2222, 80, and 443. Internal service ports (API, Seq) are published on `127.0.0.1` only, because Docker-published ports bypass ufw
 - Access to SSH can only be accessed with an SSH key. Login to the SSH via password is disabled
