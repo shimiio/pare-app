@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Pare.Application.Behaviours;
 
-public class LoggingBehaviour<TRequest, TResponse>(
+public sealed class LoggingBehaviour<TRequest, TResponse>(
     ILogger<LoggingBehaviour<TRequest, TResponse>> logger,
     IHttpContextAccessor httpContextAccessor) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>

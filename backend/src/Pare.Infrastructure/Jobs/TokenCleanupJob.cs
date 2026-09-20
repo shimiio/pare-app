@@ -4,9 +4,9 @@ using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Jobs;
 
-public class TokenCleanupJob(AppDbContext db, ILogger<TokenCleanupJob> logger)
+public sealed class TokenCleanupJob(AppDbContext db, ILogger<TokenCleanupJob> logger)
 {
-    public async Task ExecuteAsync()
+    public async Task ExecuteAsync(CancellationToken ct)
     {
         var today = DateTime.UtcNow;
 
@@ -14,7 +14,7 @@ public class TokenCleanupJob(AppDbContext db, ILogger<TokenCleanupJob> logger)
             .Where(u => u.RefreshToken != null && u.RefreshTokenExpiry <= today)
             .ExecuteUpdateAsync(u => u
                 .SetProperty(x => x.RefreshToken, (string?)null)
-                .SetProperty(x => x.RefreshTokenExpiry, (DateTime?)null));
+                .SetProperty(x => x.RefreshTokenExpiry, (DateTime?)null), ct);
 
         logger.LogInformation("TokenCleanupJob: cleaned {Count} expired tokens", count);
     }

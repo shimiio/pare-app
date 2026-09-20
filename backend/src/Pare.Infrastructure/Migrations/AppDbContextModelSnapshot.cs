@@ -77,7 +77,8 @@ namespace Pare.Infrastructure.Migrations
                         .HasColumnType("date");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
 
                     b.Property<string>("ServiceUrl")
                         .IsRequired()
@@ -164,6 +165,12 @@ namespace Pare.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("RefreshToken")
+                        .IsUnique();
 
                     b.ToTable("users", (string)null);
                 });

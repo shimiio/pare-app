@@ -1,10 +1,10 @@
-﻿using FluentValidation.TestHelper;
+using FluentValidation.TestHelper;
 using Pare.Application.Subscriptions.DTOs;
 using Pare.Application.Subscriptions.Validators;
 
 namespace Pare.UnitTests.Subscriptions;
 
-public class SubscriptionWriteDtoValidatorTests
+public sealed class SubscriptionWriteDtoValidatorTests
 {
     private readonly SubscriptionWriteDtoValidator _validator = new();
 
@@ -20,8 +20,8 @@ public class SubscriptionWriteDtoValidatorTests
             Name = "sub",
             Price = 9.99M,
             Currency = "EUR",
-            BillingCycle = Domain.Emums.BillingCycle.Monthly,
-            Status = Domain.Emums.Status.Active,
+            BillingCycle = Domain.Enums.BillingCycle.Monthly,
+            Status = Domain.Enums.Status.Active,
             NextBillingDate = nextBillingDate,
             StartDate = startDate,
             ServiceUrl = "sub.com"
@@ -64,6 +64,38 @@ public class SubscriptionWriteDtoValidatorTests
 
         // Assert
         result.ShouldHaveValidationErrorFor(s => s.Price);
+    }
+
+    [Fact]
+    public void Validate_WithThreeDecimalPrice_ShouldHavePriceError()
+    {
+        // Arrange
+        var dto = new SubscriptionWriteDto
+        {
+            Price = 9.999M,
+        };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(s => s.Price);
+    }
+
+    [Fact]
+    public void Validate_WithTrailingZeroPrice_ShouldHaveNoPriceError()
+    {
+        // Arrange
+        var dto = new SubscriptionWriteDto
+        {
+            Price = 9.990M,
+        };
+
+        // Act
+        var result = _validator.TestValidate(dto);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(s => s.Price);
     }
 
     [Fact]

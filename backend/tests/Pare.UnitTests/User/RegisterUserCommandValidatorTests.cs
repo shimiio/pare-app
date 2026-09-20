@@ -4,7 +4,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.UnitTests.User;
 
-public class RegisterUserCommandValidatorTests
+public sealed class RegisterUserCommandValidatorTests
 {
     private readonly RegisterUserCommandValidator _validator = new();
 

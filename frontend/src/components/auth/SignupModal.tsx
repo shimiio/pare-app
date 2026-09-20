@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation } from "react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import axios from "axios";
@@ -159,10 +159,10 @@ export default function SignupModal({ onClose }: Props) {
 
           <button
             type="submit"
-            disabled={mutation.isLoading}
+            disabled={mutation.isPending}
             className="flex justify-center items-center cursor-pointer w-full bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 hover:bg-violet-400/5 text-white py-3 rounded-xl text-xs 2xl:text-sm font-semibold shadow-md shadow-indigo-600/10 transition-all active:scale-98"
           >
-            {mutation.isLoading ? "Logging in..." : "Sign Up"}
+            {mutation.isPending ? "Logging in..." : "Sign Up"}
           </button>
         </div>
       </form>

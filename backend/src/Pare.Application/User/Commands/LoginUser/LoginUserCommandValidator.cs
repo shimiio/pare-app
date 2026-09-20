@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Pare.Application.User.Commands.LoginUser;
 
-public class LoginUserCommandValidator : AbstractValidator<LoginUserCommand>
+public sealed class LoginUserCommandValidator : AbstractValidator<LoginUserCommand>
 {
     public LoginUserCommandValidator()
     {

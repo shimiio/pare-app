@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Pare.Application.User.Commands.UpdateUserName;
 
-public class UpdateUserNameCommandValidator : AbstractValidator<UpdateUserNameCommand>
+public sealed class UpdateUserNameCommandValidator : AbstractValidator<UpdateUserNameCommand>
 {
     public UpdateUserNameCommandValidator()
     {

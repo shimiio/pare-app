@@ -2,42 +2,40 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import CreateSubscriptionModal from "../components/subscriptions/CreateSubscriptionModal";
 import { useSubscriptions } from "../hooks/useSubscriptions";
-import type { BillingCycleValue, Subscription } from "../types";
+import {
+  BILLING_CYCLE_NAMES,
+  BillingCycle,
+  Status,
+  type BillingCycleValue,
+  type Subscription,
+} from "../types";
 import {
   getMonthlyAmount,
   getMonthlyExpenses,
   getYearlyExpenses,
 } from "../utils/subscriptionUtils";
-import { useCurrencyRates } from "../hooks/useCurrencyRates";
-import { useUser } from "../hooks/useUser";
+import { useCurrencyConverter } from "../hooks/useCurrencyConverter";
 import { formatCurrency } from "../utils/formatUtils";
 import { getDomain } from "../utils/formatUtils";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
 import NoActiveSubscriptions from "#components/ui/NoActiveSubscriptions";
-
-const BILLING_CYCLE_NAMES = ["Monthly", "Yearly", "Weekly"] as const;
+import LoadingState from "#components/ui/LoadingState";
+import ErrorState from "#components/ui/ErrorState";
 
 export default function Analytics() {
-  const { data, isLoading, isError } = useSubscriptions();
-  const { data: user } = useUser();
-  const currency = user?.currency ?? "EUR";
-  const { data: rates } = useCurrencyRates(currency);
+  const { data, isLoading, isError, refetch, isFetching } =
+    useSubscriptions();
+  const { currency, toDefaultCurrency } = useCurrencyConverter();
   const [modal, setModal] = useState<"create" | null>(null);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>ERROR</div>;
+  if (isLoading) return <LoadingState message="Loading subscriptions" />;
+  if (isError)
+    return <ErrorState onRetry={() => refetch()} isRetrying={isFetching} />;
   if (!data) return null;
 
   // get active subscriptions
   const subscriptions: Subscription[] | undefined = data;
-  const active = subscriptions?.filter((sub) => sub.status === 0);
-
-  // currency
-  const toDefaultCurrency = (amount: number, fromCurrency: string): number => {
-    if (!rates) return amount;
-    const inBase = amount / (rates[fromCurrency] ?? 1);
-    return inBase * (rates[currency] ?? 1);
-  };
+  const active = subscriptions?.filter((sub) => sub.status === Status.Active);
 
   // sort by price
   const sortedByPrice = active
@@ -66,9 +64,9 @@ export default function Analytics() {
 
     let days = 30;
 
-    if (billingCycle === 1) {
+    if (billingCycle === BillingCycle.Yearly) {
       days = 365;
-    } else if (billingCycle === 2) {
+    } else if (billingCycle === BillingCycle.Weekly) {
       days = 7;
     }
 
@@ -87,7 +85,7 @@ export default function Analytics() {
   const cheapest =
     sortedByPrice.length > 0 ? sortedByPrice[sortedByPrice.length - 1] : null;
 
-  // Grouping for Pie Chart and progress bars on Billing Cycle (0 = Monthly, 1 = Yearly, 2 = Weekly)
+  // Grouping for Pie Chart and progress bars on Billing Cycle
   let monthlyCyclesTotal = 0;
   let yearlyCyclesTotal = 0;
   let weeklyCyclesTotal = 0;
@@ -95,9 +93,9 @@ export default function Analytics() {
   if (active) {
     active.forEach((sub) => {
       const monthlyAmount = getMonthlyAmount(sub, toDefaultCurrency);
-      if (sub.billingCycle === 0) monthlyCyclesTotal += monthlyAmount;
-      else if (sub.billingCycle === 1) yearlyCyclesTotal += monthlyAmount;
-      else if (sub.billingCycle === 2) weeklyCyclesTotal += monthlyAmount;
+      if (sub.billingCycle === BillingCycle.Monthly) monthlyCyclesTotal += monthlyAmount;
+      else if (sub.billingCycle === BillingCycle.Yearly) yearlyCyclesTotal += monthlyAmount;
+      else if (sub.billingCycle === BillingCycle.Weekly) weeklyCyclesTotal += monthlyAmount;
     });
   }
 

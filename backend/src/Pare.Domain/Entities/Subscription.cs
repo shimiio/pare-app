@@ -1,8 +1,8 @@
-using Pare.Domain.Emums;
+using Pare.Domain.Enums;
 
 namespace Pare.Domain.Entities;
 
-public class Subscription
+public sealed class Subscription
 {
     public DateOnly CalculateNextBillingDate()
     {

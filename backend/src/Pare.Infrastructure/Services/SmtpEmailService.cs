@@ -6,7 +6,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Services;
 
-public class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> logger) : IEmailService
+public sealed class SmtpEmailService(IConfiguration config, ILogger<SmtpEmailService> logger) : IEmailService
 {
     public async Task SendReminderAsync(string toEmail, string toName, IEnumerable<Domain.Entities.Subscription> subscriptions, string unsubscribeToken)
     {

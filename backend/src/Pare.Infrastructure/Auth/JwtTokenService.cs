@@ -7,7 +7,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Infrastructure.Auth;
 
-public class JwtTokenService(IConfiguration config) : IJwtTokenService
+public sealed class JwtTokenService(IConfiguration config) : IJwtTokenService
 {
     private readonly IConfiguration _config = config;
 

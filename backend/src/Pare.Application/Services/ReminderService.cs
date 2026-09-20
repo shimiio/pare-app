@@ -3,16 +3,16 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.Services;
 
-public class ReminderService(IEmailService emailService, ISubscriptionRepository subscriptionRepository, IUnsubscribeTokenRepository unsubscribeRepo, ILogger<ReminderService> logger) : IReminderService
+public sealed class ReminderService(IEmailService emailService, ISubscriptionRepository subscriptionRepository, IUnsubscribeTokenRepository unsubscribeRepo, ILogger<ReminderService> logger) : IReminderService
 {
     private readonly IUnsubscribeTokenRepository _unsubscribeRepo = unsubscribeRepo;
 
-    public async Task ExecuteAsync()
+    public async Task ExecuteAsync(CancellationToken ct)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var reminderDate = today.AddDays(3);
 
-        var subscriptions = (await subscriptionRepository.GetActiveWithBillingDateAsync(reminderDate)).ToList();
+        var subscriptions = (await subscriptionRepository.GetActiveWithBillingDateAsync(reminderDate, ct)).ToList();
 
         if (subscriptions.Count == 0)
         {
@@ -24,7 +24,7 @@ public class ReminderService(IEmailService emailService, ISubscriptionRepository
 
         foreach (var group in grouped)
         {
-            var unsubscribeToken = await _unsubscribeRepo.GetByUserIdAsync(group.Key.Id);
+            var unsubscribeToken = await _unsubscribeRepo.GetByUserIdAsync(group.Key.Id, ct);
 
             await emailService.SendReminderAsync(
                 toEmail: group.Key.Email,

@@ -5,7 +5,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.UpdateUserCurrency;
 
-public class UpdateUserCurrencyHandler(IUserRepository repo)
+public sealed class UpdateUserCurrencyHandler(IUserRepository repo)
         : IRequestHandler<UpdateUserCurrencyCommand, UpdateCurrencyDto>
 {
     private readonly IUserRepository _repo = repo;
@@ -15,11 +15,11 @@ public class UpdateUserCurrencyHandler(IUserRepository repo)
         CancellationToken ct)
     {
         // Get user data
-        var existing = await _repo.GetByIdAsync(command.Id) ?? throw new NotFoundException("User not found");
+        var existing = await _repo.GetByIdAsync(command.Id, ct) ?? throw new NotFoundException("User not found");
 
         // Update currency
         existing.Currency = command.Update.Currency;
-        await _repo.UpdateAsync(existing);
+        await _repo.UpdateAsync(existing, ct);
 
         return command.Update;
     }

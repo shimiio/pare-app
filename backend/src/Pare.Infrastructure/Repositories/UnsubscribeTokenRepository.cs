@@ -5,25 +5,25 @@ using Pare.Domain.Entities;
 
 namespace Pare.Infrastructure.Repositories;
 
-public class UnsubscribeTokenRepository(AppDbContext db) : IUnsubscribeTokenRepository
+public sealed class UnsubscribeTokenRepository(AppDbContext db) : IUnsubscribeTokenRepository
 {
     private readonly AppDbContext _db = db;
 
-    public async Task<UnsubscribeToken> CreateAsync(UnsubscribeToken token)
+    public async Task<UnsubscribeToken> CreateAsync(UnsubscribeToken token, CancellationToken ct)
     {
         _db.UnsubscribeToken.Add(token);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(ct);
 
         return token;
     }
 
-    public async Task<UnsubscribeToken?> GetByUserIdAsync(int userId)
+    public async Task<UnsubscribeToken?> GetByUserIdAsync(int userId, CancellationToken ct)
     {
-        return await _db.UnsubscribeToken.FirstOrDefaultAsync(u => u.UserId == userId);
+        return await _db.UnsubscribeToken.FirstOrDefaultAsync(u => u.UserId == userId, ct);
     }
 
-    public async Task<UnsubscribeToken?> GetByTokenAsync(string token)
+    public async Task<UnsubscribeToken?> GetByTokenAsync(string token, CancellationToken ct)
     {
-        return await _db.UnsubscribeToken.FirstOrDefaultAsync(u => u.Token == token);
+        return await _db.UnsubscribeToken.FirstOrDefaultAsync(u => u.Token == token, ct);
     }
 }

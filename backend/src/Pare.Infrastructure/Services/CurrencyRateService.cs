@@ -9,7 +9,7 @@ namespace Pare.Infrastructure.Services;
 
 public sealed class CurrencyRateService(IConfiguration config, ILogger<CurrencyRateService> logger, IHttpClientFactory httpClientFactory, IMemoryCache cache) : ICurrencyRateService
 {
-    public async Task<Dictionary<string, decimal>> GetRatesAsync(string baseCurrency)
+    public async Task<Dictionary<string, decimal>> GetRatesAsync(string baseCurrency, CancellationToken ct)
     {
         var cacheKey = $"currency_rates_{baseCurrency}";
 
@@ -25,7 +25,8 @@ public sealed class CurrencyRateService(IConfiguration config, ILogger<CurrencyR
         {
             var response = await client.GetFromJsonAsync<ExchangeRateResponse>(
                 $"https://v6.exchangerate-api.com/v6/{apiKey}/latest/{baseCurrency}",
-                new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
+                new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web),
+                ct);
 
             if (response?.ConversionRates is null)
                 throw new InvalidOperationException("Failed to deserialize exchange rate response");

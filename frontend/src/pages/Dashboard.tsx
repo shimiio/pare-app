@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useSubscriptions } from "../hooks/useSubscriptions";
-import { useUser } from "../hooks/useUser";
-import { useCurrencyRates } from "../hooks/useCurrencyRates";
-import type { Subscription } from "../types";
+import { useCurrencyConverter } from "../hooks/useCurrencyConverter";
+import { Status, type Subscription } from "../types";
 import { getDaysUtil } from "../utils/dateUtils";
 import { formatCurrency } from "../utils/formatUtils";
 import {
@@ -14,6 +13,8 @@ import CreateSubscriptionModal from "../components/subscriptions/CreateSubscript
 import SubscriptionCard from "#components/subscriptions/SubscriptionCard";
 import EditSubscriptionModal from "#components/subscriptions/EditSubscriptionModal";
 import NoActiveSubscriptions from "#components/ui/NoActiveSubscriptions";
+import LoadingState from "#components/ui/LoadingState";
+import ErrorState from "#components/ui/ErrorState";
 
 interface INextPayment {
   name: string;
@@ -23,21 +24,21 @@ interface INextPayment {
 }
 
 export default function Dashboard() {
-  const { data, isLoading, isError } = useSubscriptions();
-  const { data: user } = useUser();
-  const currency = user?.currency ?? "EUR";
-  const { data: rates } = useCurrencyRates(currency);
+  const { data, isLoading, isError, refetch, isFetching } =
+    useSubscriptions();
+  const { currency, toDefaultCurrency } = useCurrencyConverter();
   const [modal, setModal] = useState<"create" | "edit" | null>(null);
   const [selectedSubscription, setSelectedSubscription] =
     useState<Subscription | null>(null);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>ERROR</div>;
+  if (isLoading) return <LoadingState message="Loading subscriptions" />;
+  if (isError)
+    return <ErrorState onRetry={() => refetch()} isRetrying={isFetching} />;
   if (!data) return null;
 
   // get active subscriptions
   const subscriptions: Subscription[] | undefined = data;
-  const active = subscriptions?.filter((sub) => sub.status === 0);
+  const active = subscriptions?.filter((sub) => sub.status === Status.Active);
 
   // sort by date
   const sorted = active?.sort((a, b) => {
@@ -46,13 +47,6 @@ export default function Dashboard() {
       new Date(b.nextBillingDate).getTime()
     );
   });
-
-  // currency
-  const toDefaultCurrency = (amount: number, fromCurrency: string): number => {
-    if (!rates) return amount;
-    const inBase = amount / (rates[fromCurrency] ?? 1);
-    return inBase * (rates[currency] ?? 1);
-  };
 
   // get most expensive subscription name
   const mostExpensive = active?.length

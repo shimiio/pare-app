@@ -17,7 +17,7 @@ namespace Pare.API.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [EnableRateLimiting("global")]
-public class UserController(IMediator mediator) : ControllerBase
+public sealed class UserController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 

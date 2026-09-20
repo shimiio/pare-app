@@ -3,7 +3,7 @@ using Pare.Application.Subscriptions.DTOs;
 
 namespace Pare.Application.Subscriptions.Validators;
 
-public class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWriteDto>
+public sealed class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWriteDto>
 {
     public SubscriptionWriteDtoValidator()
     {
@@ -13,7 +13,8 @@ public class SubscriptionWriteDtoValidator : AbstractValidator<SubscriptionWrite
 
         RuleFor(x => x.Price)
             .GreaterThan(0).WithMessage("Price must be greater than 0")
-            .LessThanOrEqualTo(1000000).WithMessage("Price is unrealistically high");
+            .LessThanOrEqualTo(1000000).WithMessage("Price is unrealistically high")
+            .PrecisionScale(12, 2, true).WithMessage("Price can have at most 2 decimal places");
 
         RuleFor(x => x.Currency)
             .NotEmpty().WithMessage("Currency is required")

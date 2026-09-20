@@ -3,4 +3,4 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.RegisterUser;
 
-public record RegisterUserCommand(RegisterRequest Request) : IRequest<AuthResponseDto>;
+public sealed record RegisterUserCommand(RegisterRequest Request) : IRequest<AuthResponseDto>;

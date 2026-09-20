@@ -7,7 +7,7 @@ using Pare.Application.Common;
 
 namespace Pare.Application.User.Commands.LoginUser;
 
-public class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwtTokenService jwtService)
+public sealed class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwtTokenService jwtService)
         : IRequestHandler<LoginUserCommand, AuthResponseDto>
 {
     private readonly IUserRepository _repo = repo;
@@ -21,7 +21,7 @@ public class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwt
         var request = command.Request;
 
         // Get user data
-        var existing = await _repo.GetByEmailAsync(request.Email)
+        var existing = await _repo.GetByEmailAsync(EmailNormalizer.Normalize(request.Email), ct)
             ?? throw new UnauthorizedException("Invalid email or password");
 
         // Verify password
@@ -40,7 +40,7 @@ public class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwt
         existing.RefreshTokenExpiry = refreshTokenExpiry;
 
         // Add generated hashed token
-        await _repo.UpdateAsync(existing);
+        await _repo.UpdateAsync(existing, ct);
 
         // Generate JWT token
         var token = _jwtService.GenerateToken(existing.Id, existing.Email);

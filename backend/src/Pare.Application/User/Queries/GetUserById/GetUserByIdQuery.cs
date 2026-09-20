@@ -3,4 +3,4 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Queries.GetUserById;
 
-public record GetUserByIdQuery(int Id) : IRequest<UserDto>;
+public sealed record GetUserByIdQuery(int Id) : IRequest<UserDto>;

@@ -4,34 +4,35 @@ import { useSubscriptions } from "../hooks/useSubscriptions";
 import SubscriptionCard from "../components/subscriptions/SubscriptionCard";
 import CreateSubscriptionModal from "../components/subscriptions/CreateSubscriptionModal";
 import EditSubscriptionModal from "../components/subscriptions/EditSubscriptionModal";
-import type { Subscription } from "../types";
+import { Status, type Subscription } from "../types";
 import { readableDate } from "../utils/dateUtils";
 import { getMonthlyExpenses } from "../utils/subscriptionUtils";
-import { useCurrencyRates } from "#hooks/useCurrencyRates";
-import { useUser } from "#hooks/useUser";
+import { useCurrencyConverter } from "#hooks/useCurrencyConverter";
 import { formatCurrency } from "../utils/formatUtils";
 import NoActiveSubscriptions from "#components/ui/NoActiveSubscriptions";
+import LoadingState from "#components/ui/LoadingState";
+import ErrorState from "#components/ui/ErrorState";
 
 export default function Subscriptions() {
-  const { data, isLoading, isError } = useSubscriptions();
+  const { data, isLoading, isError, refetch, isFetching } =
+    useSubscriptions();
   const [modal, setModal] = useState<"create" | "edit" | null>(null);
   const [selectedSubscription, setSelectedSubscription] =
     useState<Subscription | null>(null);
   const [activeOpen, setActiveOpen] = useState(true);
   const [pausedOpen, setPausedOpen] = useState(false);
   const [cancelledOpen, setCancelledOpen] = useState(false);
-  const { data: user } = useUser();
-  const currency = user?.currency ?? "EUR";
-  const { data: rates } = useCurrencyRates(currency);
+  const { currency, toDefaultCurrency } = useCurrencyConverter();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>ERROR</div>;
+  if (isLoading) return <LoadingState message="Loading subscriptions" />;
+  if (isError)
+    return <ErrorState onRetry={() => refetch()} isRetrying={isFetching} />;
   if (!data) return null;
 
   const subscriptions: Subscription[] | undefined = data;
-  const active = subscriptions?.filter((sub) => sub.status === 0);
-  const cancelled = subscriptions?.filter((sub) => sub.status === 1);
-  const paused = subscriptions?.filter((sub) => sub.status === 2);
+  const active = subscriptions?.filter((sub) => sub.status === Status.Active);
+  const cancelled = subscriptions?.filter((sub) => sub.status === Status.Cancelled);
+  const paused = subscriptions?.filter((sub) => sub.status === Status.Paused);
 
   const sorted = active?.sort((a, b) => {
     return (
@@ -55,12 +56,6 @@ export default function Subscriptions() {
   );
 
   const groupedEntries = Object.entries(grouped ?? {});
-
-  const toDefaultCurrency = (amount: number, fromCurrency: string): number => {
-    if (!rates) return amount;
-    const inBase = amount / (rates[fromCurrency] ?? 1);
-    return inBase * (rates[currency] ?? 1);
-  };
 
   return (
     <>

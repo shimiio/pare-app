@@ -5,7 +5,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Queries.GetUserById;
 
-public class GetUserByIdHandler(IUserRepository repo)
+public sealed class GetUserByIdHandler(IUserRepository repo)
         : IRequestHandler<GetUserByIdQuery, UserDto>
 {
     private readonly IUserRepository _repo = repo;
@@ -14,7 +14,7 @@ public class GetUserByIdHandler(IUserRepository repo)
         GetUserByIdQuery query,
         CancellationToken ct)
     {
-        var user = await _repo.GetByIdAsync(query.Id) ?? throw new NotFoundException("User not found");
+        var user = await _repo.GetByIdAsync(query.Id, ct) ?? throw new NotFoundException("User not found");
         return new UserDto
         {
             Name = user.Name,

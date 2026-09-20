@@ -1,4 +1,8 @@
-import type { Subscription } from "../types";
+import {
+  BillingCycle,
+  type BillingCycleValue,
+  type Subscription,
+} from "../types";
 
 // price input validation
 export const sanitizePriceInput = (value: string): string | null => {
@@ -11,7 +15,7 @@ export const sanitizePriceInput = (value: string): string | null => {
 // calculate the next billing date between start date and cycle
 export const calculateNextBilling = (
   startDateStr: string,
-  cycle: number,
+  cycle: BillingCycleValue,
   referenceDate: Date = new Date(),
 ): string => {
   if (!startDateStr) return "";
@@ -31,14 +35,11 @@ export const calculateNextBilling = (
   );
 
   while (nextBilling <= todayUTC) {
-    if (cycle === 0) {
-      // Monthly
+    if (cycle === BillingCycle.Monthly) {
       nextBilling.setUTCMonth(nextBilling.getUTCMonth() + 1);
-    } else if (cycle === 1) {
-      // Yearly
+    } else if (cycle === BillingCycle.Yearly) {
       nextBilling.setUTCFullYear(nextBilling.getUTCFullYear() + 1);
-    } else if (cycle === 2) {
-      // Weekly
+    } else if (cycle === BillingCycle.Weekly) {
       nextBilling.setUTCDate(nextBilling.getUTCDate() + 7);
     }
   }
@@ -65,11 +66,11 @@ export const getMonthlyAmount = (
   const inDefault = toDefaultCurrency(price, sub.currency);
 
   switch (sub.billingCycle) {
-    case 0:
+    case BillingCycle.Monthly:
       return inDefault;
-    case 1:
+    case BillingCycle.Yearly:
       return inDefault / 12;
-    case 2:
+    case BillingCycle.Weekly:
       return inDefault * 4.33;
     default:
       return inDefault;

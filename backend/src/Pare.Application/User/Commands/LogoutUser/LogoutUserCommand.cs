@@ -3,4 +3,4 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.LogoutUser;
 
-public record LogoutUserCommand(RefreshTokenDto RefreshToken) : IRequest<Unit>;
+public sealed record LogoutUserCommand(RefreshTokenDto RefreshToken) : IRequest<Unit>;

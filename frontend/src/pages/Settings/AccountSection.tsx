@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../../api/auth";
 import { useState } from "react";
 import type { User } from "../../types";
@@ -192,7 +192,7 @@ export default function AccountSection({ user }: { user: User }) {
                   setNameError([]);
                   setEmailError([]);
                 }}
-                disabled={nameMutation.isLoading || emailMutation.isLoading}
+                disabled={nameMutation.isPending || emailMutation.isPending}
                 className="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 Cancel
@@ -200,14 +200,14 @@ export default function AccountSection({ user }: { user: User }) {
               <button
                 onClick={handleSaveAccount}
                 disabled={
-                  nameMutation.isLoading ||
-                  emailMutation.isLoading ||
+                  nameMutation.isPending ||
+                  emailMutation.isPending ||
                   nameError.length > 0 ||
                   emailError.length > 0
                 }
                 className="px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
-                {nameMutation.isLoading || emailMutation.isLoading
+                {nameMutation.isPending || emailMutation.isPending
                   ? "Saving..."
                   : "Save Changes"}
               </button>

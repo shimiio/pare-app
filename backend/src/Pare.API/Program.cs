@@ -43,8 +43,11 @@ if (args.Contains("--migrate-only"))
 }
 
 // Swagger
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // Get Header from Caddy 
 var forwardedOptions = new ForwardedHeadersOptions
@@ -93,9 +96,10 @@ app.MapHangfireDashboard("/hangfire", dashboardOptions);
 // Recurring jobs
 using (var scope = app.Services.CreateScope())
 {
-    RecurringJob.AddOrUpdate<RenewalJob>("renewal-job", job => job.ExecuteAsync(), "5 22 * * *"); // 22 05 UTC = 00 05 Austria time
-    RecurringJob.AddOrUpdate<ReminderJob>("reminder-job", job => job.ExecuteAsync(), "0 10 * * *"); // 10 00 UTC = 12 00 Austria time
-    RecurringJob.AddOrUpdate<TokenCleanupJob>("token-cleanup-job", job => job.ExecuteAsync(), "5 22 * * *");
+    // CancellationToken.None is a placeholder: Hangfire substitutes a token that is cancelled on shutdown
+    RecurringJob.AddOrUpdate<RenewalJob>("renewal-job", job => job.ExecuteAsync(CancellationToken.None), "5 22 * * *"); // 22 05 UTC = 00 05 Austria time
+    RecurringJob.AddOrUpdate<ReminderJob>("reminder-job", job => job.ExecuteAsync(CancellationToken.None), "0 10 * * *"); // 10 00 UTC = 12 00 Austria time
+    RecurringJob.AddOrUpdate<TokenCleanupJob>("token-cleanup-job", job => job.ExecuteAsync(CancellationToken.None), "5 22 * * *");
 }
 
 app.MapControllers();

@@ -1,9 +1,9 @@
-using Pare.Domain.Emums;
+using Pare.Domain.Enums;
 using Pare.Domain.Entities;
 
 namespace Pare.Application.Subscriptions.DTOs;
 
-public class SubscriptionDto
+public sealed class SubscriptionDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;

@@ -4,7 +4,7 @@ namespace Pare.Application.Interfaces;
 
 public interface IUnsubscribeTokenRepository
 {
-    Task<UnsubscribeToken> CreateAsync(UnsubscribeToken token);
-    Task<UnsubscribeToken?> GetByUserIdAsync(int userId);
-    Task<UnsubscribeToken?> GetByTokenAsync(string token);
+    Task<UnsubscribeToken> CreateAsync(UnsubscribeToken token, CancellationToken ct);
+    Task<UnsubscribeToken?> GetByUserIdAsync(int userId, CancellationToken ct);
+    Task<UnsubscribeToken?> GetByTokenAsync(string token, CancellationToken ct);
 }

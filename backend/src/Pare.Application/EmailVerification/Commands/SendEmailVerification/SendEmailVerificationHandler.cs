@@ -8,7 +8,7 @@ using Pare.Domain.Entities;
 
 namespace Pare.Application.EmailVerification.Commands.SendEmailVerification;
 
-public class EmailVerificationHandler(IUserRepository userRepo, IEmailVerificationRepository emailRepo, IEmailService emailService) :
+public sealed class EmailVerificationHandler(IUserRepository userRepo, IEmailVerificationRepository emailRepo, IEmailService emailService) :
         IRequestHandler<SendEmailVerificationCommand, NextEmailAllowed>
 {
     private readonly IUserRepository _userRepo = userRepo;
@@ -16,7 +16,7 @@ public class EmailVerificationHandler(IUserRepository userRepo, IEmailVerificati
 
     public async Task<NextEmailAllowed> Handle(SendEmailVerificationCommand command, CancellationToken cancellationToken)
     {
-        var user = await _userRepo.GetByIdAsync(command.UserId) ?? throw new NotFoundException("User not found");
+        var user = await _userRepo.GetByIdAsync(command.UserId, cancellationToken) ?? throw new NotFoundException("User not found");
 
         if (user.IsEmailVerified) // true or false
             throw new ConflictException("Email already verified");
@@ -35,7 +35,7 @@ public class EmailVerificationHandler(IUserRepository userRepo, IEmailVerificati
 
         // Update user
         user.LastVerificationRequestAtUtc = DateTime.UtcNow;
-        await _userRepo.UpdateAsync(user);
+        await _userRepo.UpdateAsync(user, cancellationToken);
 
         // Add email verification token
         var token = new EmailVerificationToken
@@ -46,7 +46,7 @@ public class EmailVerificationHandler(IUserRepository userRepo, IEmailVerificati
             ExpiresAtUtc = DateTime.UtcNow.AddMinutes(10)
         };
 
-        await _emailRepo.CreateAsync(token);
+        await _emailRepo.CreateAsync(token, cancellationToken);
 
         // Send code
         await emailService.SendVerificationCodeAsync(user.Email, user.Name, code);

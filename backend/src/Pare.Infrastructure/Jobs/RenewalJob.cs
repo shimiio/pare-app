@@ -1,19 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Pare.Domain.Emums;
+using Pare.Domain.Enums;
 using Pare.Infrastructure.Data;
 
 namespace Pare.Infrastructure.Jobs;
 
-public class RenewalJob(AppDbContext db, ILogger<RenewalJob> logger)
+public sealed class RenewalJob(AppDbContext db, ILogger<RenewalJob> logger)
 {
-    public async Task ExecuteAsync()
+    public async Task ExecuteAsync(CancellationToken ct)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
         var subscriptions = await db.Subscriptions
             .Where(s => s.Status == Status.Active && s.NextBillingDate <= today)
-            .ToListAsync();
+            .ToListAsync(ct);
 
         if (subscriptions.Count == 0)
         {
@@ -30,6 +30,6 @@ public class RenewalJob(AppDbContext db, ILogger<RenewalJob> logger)
                 subscription.Id, subscription.UserId, subscription.NextBillingDate);
         }
 
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(ct);
     }
 }

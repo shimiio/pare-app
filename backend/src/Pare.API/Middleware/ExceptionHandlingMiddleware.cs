@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Pare.API.Middleware;
 
-public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
+public sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
 {
     private readonly RequestDelegate _next = next;
 
@@ -19,6 +19,14 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
                 context.Response.ContentType = "application/json";
                 await context.Response.WriteAsJsonAsync(new { error = "Endpoint not found" });
             }
+        }
+        catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+        {
+            // the client went away (closed the tab, navigated on): not a server fault
+            logger.LogInformation("Request cancelled by the client | Path: {Path}", context.Request.Path);
+
+            if (!context.Response.HasStarted)
+                context.Response.StatusCode = 499; // client closed request
         }
         catch (ValidationException ex)
         {

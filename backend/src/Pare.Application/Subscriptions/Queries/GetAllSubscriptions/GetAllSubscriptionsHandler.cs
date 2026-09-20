@@ -4,7 +4,7 @@ using Pare.Application.Interfaces;
 
 namespace Pare.Application.Subscriptions.Queries.GetAllSubscriptions;
 
-public class GetAllSubscriptionsHandler(ISubscriptionRepository repo)
+public sealed class GetAllSubscriptionsHandler(ISubscriptionRepository repo)
         : IRequestHandler<GetAllSubscriptionsQuery, IEnumerable<SubscriptionDto>>
 {
     private readonly ISubscriptionRepository _repo = repo;
@@ -13,7 +13,7 @@ public class GetAllSubscriptionsHandler(ISubscriptionRepository repo)
         GetAllSubscriptionsQuery query,
         CancellationToken ct)
     {
-        var subscriptions = await _repo.GetAllAsync(query.UserId);
+        var subscriptions = await _repo.GetAllAsync(query.UserId, ct);
         return subscriptions.Select(SubscriptionDto.FromEntity);
     }
 }

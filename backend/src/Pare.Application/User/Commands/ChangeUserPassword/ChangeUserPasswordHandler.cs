@@ -5,7 +5,7 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.ChangeUserPassword;
 
-public class ChangeUserPasswordHandler(IUserRepository repo, IPasswordHasher hasher)
+public sealed class ChangeUserPasswordHandler(IUserRepository repo, IPasswordHasher hasher)
         : IRequestHandler<ChangeUserPasswordCommand, ChangePasswordDto>
 {
     private readonly IUserRepository _repo = repo;
@@ -16,7 +16,7 @@ public class ChangeUserPasswordHandler(IUserRepository repo, IPasswordHasher has
         CancellationToken ct)
     {
         // Get user data
-        var existing = await _repo.GetByIdAsync(command.Id) ?? throw new NotFoundException("User not found");
+        var existing = await _repo.GetByIdAsync(command.Id, ct) ?? throw new NotFoundException("User not found");
 
         // Verify password
         bool verify = _hasher.Verify(command.Change.CurrentPassword, existing.PasswordHash);
@@ -27,7 +27,7 @@ public class ChangeUserPasswordHandler(IUserRepository repo, IPasswordHasher has
         existing.PasswordHash = hash;
 
         // Update user data
-        await _repo.UpdateAsync(existing);
+        await _repo.UpdateAsync(existing, ct);
 
         return command.Change;
     }

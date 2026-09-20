@@ -1,6 +1,6 @@
 namespace Pare.Application.User.DTOs;
 
-public class UpdateCurrencyDto
+public sealed class UpdateCurrencyDto
 {
     public string Currency { get; set; } = string.Empty;
 }

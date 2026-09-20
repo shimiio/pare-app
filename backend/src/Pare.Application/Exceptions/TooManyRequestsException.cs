@@ -1,5 +1,5 @@
 namespace Pare.Application.Exceptions;
 
-public class TooManyRequestsException(string message) : Exception(message)
+public sealed class TooManyRequestsException(string message) : Exception(message)
 {
 }
