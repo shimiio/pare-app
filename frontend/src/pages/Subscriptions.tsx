@@ -94,7 +94,7 @@ export default function Subscriptions() {
 
                 <button
                   onClick={() => setModal("create")}
-                  className="flex shrink-0 items-center gap-1 px-3 py-1.5 backdrop-blur-xs text-white bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 border border-white/5 hover:bg-violet-400/5 shadow-md shadow-indigo-600/10 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer"
+                  className="flex shrink-0 items-center gap-1 px-3 py-3 md:py-1.5 backdrop-blur-xs text-white bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 border border-white/5 hover:bg-violet-400/5 shadow-md shadow-indigo-600/10 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer"
                 >
                   <Plus size={12} strokeWidth={2} />
                   <span className="text-neutral-200">

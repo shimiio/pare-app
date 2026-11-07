@@ -118,7 +118,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
     <Modal
       onClose={handleClose}
       isClosing={isClosing}
-      className="max-w-sm 2xl:max-w-md w-full"
+      className="md:max-w-sm 2xl:max-w-md w-full"
     >
       <form
         onSubmit={handleCreate}
@@ -132,14 +132,14 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           <button
             type="button"
             onClick={handleClose}
-            className="text-neutral-500 hover:text-white transition-colors cursor-pointer"
+            className="p-3 -m-3 text-neutral-500 hover:text-white transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* FORM CONTENT */}
-        <div className="p-6 space-y-5">
+        <div className="p-4 md:p-6 space-y-5">
           {/* Service Name & URL */}
           <div className="space-y-4">
             {/* Service Name with Favicon */}
@@ -175,9 +175,9 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
 
             {/* Service URL */}
             <div className="space-y-1.5">
-              <label className="flex justify-between text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
-                <p>Service URL</p>
-                <p className="flex items-end text-[9px] text-neutral-600">
+              <label className="flex justify-between gap-2 text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+                <p className="whitespace-nowrap">Service URL</p>
+                <p className="flex items-end text-right text-[9px] text-neutral-600">
                   Used to fetch the service icon
                 </p>
               </label>
@@ -185,6 +185,10 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                 type="text"
                 value={serviceUrl}
                 placeholder="https://example.com"
+                inputMode="url"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 onChange={(e) => setServiceUrl(e.target.value)}
                 autoComplete="off"
                 className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
@@ -193,8 +197,8 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           </div>
 
           {/* Price & Currency */}
-          <div className="grid grid-cols-3 gap-4 pt-1 border-t border-white/5">
-            <div className="col-span-2 space-y-1.5 mt-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-1 border-t border-white/5">
+            <div className="md:col-span-2 space-y-1.5 mt-3">
               <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Price
               </label>
@@ -257,7 +261,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:invert hover:[&::-webkit-calendar-picker-indicator]:opacity-80"
+                className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-3 md:px-4 text-xs 2xl:text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 transition-all cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:invert hover:[&::-webkit-calendar-picker-indicator]:opacity-80"
               />
             </div>
           </div>
@@ -273,7 +277,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
         </div>
 
         {/* FOOTER & ACTIONS */}
-        <div className="p-6 pt-4 border-t border-white/5 bg-[#0a0a0a]/70">
+        <div className="p-4 md:p-6 md:pt-4 border-t border-white/5 bg-[#0a0a0a]/70">
           {errors.length > 0 && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-xs space-y-1">
               {errors.map((err, i) => (

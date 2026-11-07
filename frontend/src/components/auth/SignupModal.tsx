@@ -73,7 +73,7 @@ export default function SignupModal({ onClose }: Props) {
     <Modal
       onClose={handleClose}
       isClosing={isClosing}
-      className="max-w-sm w-full"
+      className="md:max-w-sm w-full"
     >
       <form
         onSubmit={handleSignup}
@@ -87,7 +87,7 @@ export default function SignupModal({ onClose }: Props) {
           <button
             type="button"
             onClick={handleClose}
-            className="text-neutral-500 hover:text-white transition-colors cursor-pointer"
+            className="p-3 -m-3 text-neutral-500 hover:text-white transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -105,7 +105,7 @@ export default function SignupModal({ onClose }: Props) {
               value={name}
               placeholder="Name"
               onChange={(e) => setName(e.target.value)}
-              autoComplete="off"
+              autoComplete="name"
               className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
             />
           </div>
@@ -117,10 +117,14 @@ export default function SignupModal({ onClose }: Props) {
             </label>
             <input
               name="email"
+              inputMode="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               value={email}
               placeholder="email@gmail.com"
               onChange={(e) => setEmail(e.target.value)}
-              autoComplete="off"
+              autoComplete="username"
               className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
             />
           </div>
@@ -137,7 +141,7 @@ export default function SignupModal({ onClose }: Props) {
                 value={password}
                 placeholder="••••••••"
                 onChange={(e) => setPassword(e.target.value)}
-                autoComplete="off"
+                autoComplete="new-password"
                 className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all [&::-ms-reveal]:invert [&::-ms-reveal]:opacity-60 [&::-webkit-credentials-store-indicator]:invert"
               />
               <span className="text-white/40 text-[10px] 2xl:text-xs pl-3">

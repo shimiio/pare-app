@@ -53,12 +53,66 @@
   animation: fadeOut 0.3s ease-out;
 }
 
-.animate-scaleIn {
-  animation: scaleIn 0.3s ease-out;
+@keyframes sheetIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
-.animate-scaleOut {
-  animation: scaleOut 0.3s ease-out;
+@keyframes sheetOut {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Phones get a sheet sliding up from the bottom, md and up a centered dialog */
+.animate-modalIn {
+  animation: sheetIn 0.3s ease-out;
+}
+
+.animate-modalOut {
+  animation: sheetOut 0.2s ease-in both;
+}
+
+@media (min-width: 48rem) {
+  .animate-modalIn {
+    animation: scaleIn 0.3s ease-out;
+  }
+
+  .animate-modalOut {
+    animation: scaleOut 0.3s ease-out;
+  }
+}
+
+/* Unlayered on purpose: these must beat the text-* and select-none utilities */
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Browser autofill paints fields light, which breaks the dark theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #e5e5e5;
+  caret-color: #e5e5e5;
+  box-shadow: 0 0 0 1000px #121212 inset;
+}
+
+/* iOS Safari zooms the page when a focused field is smaller than 16px */
+@media (max-width: 47.98rem) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
 
 @theme inline {
