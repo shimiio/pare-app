@@ -45,7 +45,7 @@ export default function Unsubscribe() {
   }, [token]);
 
   return (
-    <div className="flex flex-col items-center mx-auto justify-between h-screen text-white">
+    <div className="flex flex-col items-center mx-auto justify-between h-dvh text-white">
       <div className="flex flex-col items-center mt-27 2xl:mt-37">
         <div className="flex flex-row items-center gap-1 mb-30">
           <span className="rounded-xl flex items-center justify-center text-indigo-400">

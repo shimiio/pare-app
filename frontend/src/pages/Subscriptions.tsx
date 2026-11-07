@@ -62,14 +62,14 @@ export default function Subscriptions() {
       {subscriptions?.length === 0 ? (
         <NoActiveSubscriptions onClick={() => setModal("create")} />
       ) : (
-        <div className="space-y-10 2xl:space-y-13 max-w-5xl 2xl:max-w-6xl mx-auto px-4 py-10">
+        <div className="space-y-10 2xl:space-y-13 max-w-5xl 2xl:max-w-6xl mx-auto px-4 py-6 md:py-10">
           {/* Active */}
           {active && active.length > 0 ? (
             <>
-              <div className="flex flex-row justify-between mb-6">
+              <div className="flex flex-row justify-between gap-3 mb-6">
                 <button
                   onClick={() => setActiveOpen(!activeOpen)}
-                  className="flex flex-row cursor-pointer items-center text-lg 2xl:text-xl font-medium"
+                  className="flex flex-row min-w-0 cursor-pointer items-center text-left text-lg 2xl:text-xl font-medium"
                 >
                   {activeOpen ? (
                     <ChevronRight className="h-5 w-5 2xl:h-6 2xl:w-6 rotate-90 opacity-60 duration-200" />
@@ -81,7 +81,7 @@ export default function Subscriptions() {
                     <span className="text-xs 2xl:text-sm ml-1.5">
                       {active.length}
                     </span>
-                    <span className="text-xs 2xl:text-sm text-white/40 ml-1.5">
+                    <span className="text-xs 2xl:text-sm text-white/40 ml-1.5 whitespace-nowrap">
                       ·{" "}
                       {formatCurrency(
                         getMonthlyExpenses(active ?? [], toDefaultCurrency),
@@ -94,14 +94,16 @@ export default function Subscriptions() {
 
                 <button
                   onClick={() => setModal("create")}
-                  className="flex items-center gap-1 px-3 py-1.5 backdrop-blur-xs text-white bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 border border-white/5 hover:bg-violet-400/5 shadow-md shadow-indigo-600/10 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer"
+                  className="flex shrink-0 items-center gap-1 px-3 py-1.5 backdrop-blur-xs text-white bg-linear-to-br from-pink-400/15 via-violet-500/10 to-blue-500/20 border border-white/5 hover:bg-violet-400/5 shadow-md shadow-indigo-600/10 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer"
                 >
                   <Plus size={12} strokeWidth={2} />
-                  <span className="text-neutral-200">Add Subscription</span>
+                  <span className="text-neutral-200">
+                    Add<span className="hidden md:inline"> Subscription</span>
+                  </span>
                 </button>
               </div>
 
-              <div className="space-y-8 2xl:space-y-9 mx-13">
+              <div className="space-y-8 2xl:space-y-9 md:mx-13">
                 {activeOpen &&
                   groupedEntries.map(([date, subs], index) => (
                     <div key={date}>
@@ -171,7 +173,7 @@ export default function Subscriptions() {
                 </div>
               </button>
 
-              <div className="mx-13">
+              <div className="md:mx-13">
                 {pausedOpen && (
                   <div className="bg-[#121212]/40 border border-white/5 rounded-xl flex flex-col divide-y divide-white/5">
                     {paused.map((sub) => (
@@ -211,7 +213,7 @@ export default function Subscriptions() {
                 </div>
               </button>
 
-              <div className="mx-13">
+              <div className="md:mx-13">
                 {cancelledOpen && (
                   <div className="bg-[#121212]/40 border border-white/5 rounded-xl flex flex-col divide-y divide-white/5">
                     {cancelled.map((sub) => (

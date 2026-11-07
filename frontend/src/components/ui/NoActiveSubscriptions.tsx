@@ -7,7 +7,7 @@ interface ButtonProps {
 
 export default function NoActiveSubscriptions({ onClick }: ButtonProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-100 text-center max-w-sm mx-auto select-none">
+    <div className="flex flex-col items-center justify-center min-h-100 text-center max-w-sm mx-auto px-4 md:px-0 select-none">
       <div className="w-12 h-12 rounded-2xl bg-white/2 border border-white/5 flex items-center justify-center text-indigo-400 text-xl mb-4 shadow-sm">
         <Logo />
       </div>

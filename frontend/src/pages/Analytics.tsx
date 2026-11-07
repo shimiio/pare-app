@@ -176,32 +176,32 @@ export default function Analytics() {
 
                 <div className="bg-[#121212]/40 border border-white/5 rounded-xl flex flex-col divide-y divide-white/5">
                   {mostExpensive && (
-                    <div className="p-3.5 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                    <div className="p-3.5 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
                         {mostExpensive.serviceUrl.length > 3 ? (
                           <img
                             src={`https://www.google.com/s2/favicons?domain=${getDomain(mostExpensive.serviceUrl)}&sz=64`}
                             width={24}
-                            className="rounded-sm"
+                            className="rounded-sm shrink-0"
                           />
                         ) : (
-                          <Star className="w-6 h-6 text-indigo-400" />
+                          <Star className="w-6 h-6 text-indigo-400 shrink-0" />
                         )}
-                        <div className="flex flex-col gap-0.5">
+                        <div className="flex flex-col gap-0.5 min-w-0">
                           <span className="text-[10px] text-red-400 uppercase tracking-wider font-semibold">
                             Most Expensive
                           </span>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs font-medium text-neutral-200">
+                          <div className="flex items-center gap-1 min-w-0">
+                            <span className="text-xs font-medium text-neutral-200 truncate">
                               {mostExpensive.name}
                             </span>
-                            <span className="text-[11px] text-white/50">
+                            <span className="text-[11px] text-white/50 shrink-0">
                               · {getBillingCycleName(mostExpensive)}
                             </span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end">
+                      <div className="flex flex-col items-end shrink-0">
                         <span className="text-xs 2xl:text-sm font-semibold text-neutral-100">
                           {formatCurrency(
                             getMonthlyAmount(mostExpensive, toDefaultCurrency),
@@ -226,32 +226,32 @@ export default function Analytics() {
                   )}
 
                   {cheapest && active.length > 1 && (
-                    <div className="p-3.5 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
+                    <div className="p-3.5 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
                         {cheapest.serviceUrl.length > 3 ? (
                           <img
                             src={`https://www.google.com/s2/favicons?domain=${getDomain(cheapest.serviceUrl)}&sz=64`}
                             width={24}
-                            className="rounded-sm"
+                            className="rounded-sm shrink-0"
                           />
                         ) : (
-                          <Star className="w-6 h-6 text-indigo-400" />
+                          <Star className="w-6 h-6 text-indigo-400 shrink-0" />
                         )}
-                        <div className="flex flex-col gap-0.5">
+                        <div className="flex flex-col gap-0.5 min-w-0">
                           <span className="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold">
                             Cheapest
                           </span>
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs font-medium text-neutral-200">
+                          <div className="flex items-center gap-1 min-w-0">
+                            <span className="text-xs font-medium text-neutral-200 truncate">
                               {cheapest.name}
                             </span>
-                            <span className="text-[11px] text-white/50">
+                            <span className="text-[11px] text-white/50 shrink-0">
                               · {getBillingCycleName(cheapest)}
                             </span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex flex-col items-end">
+                      <div className="flex flex-col items-end shrink-0">
                         <span className="text-xs 2xl:text-sm font-semibold text-neutral-100">
                           {formatCurrency(
                             getMonthlyAmount(cheapest, toDefaultCurrency),

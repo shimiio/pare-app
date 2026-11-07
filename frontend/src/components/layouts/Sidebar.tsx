@@ -20,7 +20,7 @@ export default function Sidebar() {
   const { data } = useUser();
 
   return (
-    <nav className="flex flex-col border-r border-white/5 bg-[#121212]/10 backdrop-blur-md p-2 py-10 2xl:py-12">
+    <nav className="hidden md:flex flex-col border-r border-white/5 bg-[#121212]/10 backdrop-blur-md p-2 py-10 2xl:py-12">
       <div className="flex flex-row items-center mb-15 2xl:mb-17 gap-2 mx-auto">
         <Logo />
         <span className="flex text-xl items-center font-medium">Pare</span>
