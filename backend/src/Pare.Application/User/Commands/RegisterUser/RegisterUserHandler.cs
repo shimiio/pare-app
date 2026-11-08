@@ -1,9 +1,9 @@
-using System.Security.Cryptography;
 using MediatR;
 using Pare.Application.Common;
 using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
 using Pare.Application.User.DTOs;
+using Pare.Domain.Entities;
 
 namespace Pare.Application.User.Commands.RegisterUser;
 
@@ -28,22 +28,25 @@ public sealed class RegisterUserHandler(IUserRepository repo, IPasswordHasher ha
         // Hash the password
         string hash = _hasher.Hash(request.Password);
 
-        // Generate and hash refresh token
-        var plainToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-        var hashedToken = TokenHasher.Hash(plainToken);
+        var plainToken = RefreshTokenGenerator.NewPlainToken();
+        var now = DateTime.UtcNow;
 
-        // Create refresh token expiry
-        var refreshTokenExpiry = DateTime.UtcNow.AddDays(30);
-
-        // Create the user
+        // Create the user with its first session: both rows are saved together
         var user = new Domain.Entities.User
         {
             Name = request.Name,
             Email = email,
             PasswordHash = hash,
             Currency = "EUR",
-            RefreshToken = hashedToken,
-            RefreshTokenExpiry = refreshTokenExpiry
+            RefreshTokens =
+            [
+                new RefreshToken
+                {
+                    TokenHash = TokenHasher.Hash(plainToken),
+                    ExpiresAtUtc = now + RefreshTokenGenerator.Lifetime,
+                    CreatedAtUtc = now
+                }
+            ]
         };
 
         // Create user
@@ -51,12 +54,10 @@ public sealed class RegisterUserHandler(IUserRepository repo, IPasswordHasher ha
 
         // Generate JWT token
         var token = _jwtService.GenerateToken(user.Id, user.Email);
-        var jwtToken = new AuthResponseDto
+        return new AuthResponseDto
         {
             JwtToken = token,
             RefreshToken = plainToken
         };
-
-        return jwtToken;
     }
 }

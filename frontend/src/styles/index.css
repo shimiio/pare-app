@@ -53,12 +53,78 @@
   animation: fadeOut 0.3s ease-out;
 }
 
-.animate-scaleIn {
-  animation: scaleIn 0.3s ease-out;
+/* Static stand-in for the animated Silk background: what phones show, and what desktop shows
+   while three.js is still loading. Soft diagonal light on near-black, like Silk at rest. */
+.silk-fallback {
+  background-color: #0b0b0b;
+  background-image:
+    /* grain, drawn by public/grain.svg and tiled */
+    url("/grain.svg"),
+    radial-gradient(ellipse 90% 55% at 10% 15%, rgb(255 255 255 / 0.07), transparent 70%),
+    radial-gradient(ellipse 80% 45% at 90% 60%, rgb(255 255 255 / 0.05), transparent 70%),
+    radial-gradient(ellipse 100% 40% at 35% 105%, rgb(255 255 255 / 0.045), transparent 70%);
 }
 
-.animate-scaleOut {
-  animation: scaleOut 0.3s ease-out;
+@keyframes sheetIn {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheetOut {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Phones get a sheet sliding up from the bottom, md and up a centered dialog */
+.animate-modalIn {
+  animation: sheetIn 0.3s ease-out;
+}
+
+.animate-modalOut {
+  animation: sheetOut 0.2s ease-in both;
+}
+
+@media (min-width: 48rem) {
+  .animate-modalIn {
+    animation: scaleIn 0.3s ease-out;
+  }
+
+  .animate-modalOut {
+    animation: scaleOut 0.3s ease-out;
+  }
+}
+
+/* Unlayered on purpose: these must beat the text-* and select-none utilities */
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Browser autofill paints fields light, which breaks the dark theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #e5e5e5;
+  caret-color: #e5e5e5;
+  box-shadow: 0 0 0 1000px #121212 inset;
+}
+
+/* iOS Safari zooms the page when a focused field is smaller than 16px */
+@media (max-width: 47.98rem) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
 }
 
 @theme inline {

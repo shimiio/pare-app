@@ -8,8 +8,8 @@ export default function MainWindow() {
   const [modal, setModal] = useState<"login" | "signup" | null>(null);
 
   return (
-    <div className="flex flex-col items-center mx-auto justify-between h-full">
-      <div className="flex flex-col items-center mt-27 2xl:mt-37">
+    <div className="flex flex-col items-center mx-auto justify-between gap-10 min-h-full">
+      <div className="flex flex-col items-center w-full max-w-sm md:max-w-none md:w-auto px-4 md:px-0 mt-16 md:mt-27 2xl:mt-37">
         <div className="flex flex-row items-center gap-1 mb-13">
           <span className="rounded-xl flex items-center justify-center text-indigo-400">
             <Logo />
@@ -17,7 +17,7 @@ export default function MainWindow() {
           <span className="text-2xl font-medium">Pare</span>
         </div>
 
-        <div className="text-3xl font-bold mb-5.5 text-center">
+        <div className="text-2xl min-[360px]:text-3xl font-bold mb-5.5 text-center">
           <p className="mb-1">You probably pay for</p>
           <p>more than you think.</p>
         </div>
@@ -63,8 +63,8 @@ export default function MainWindow() {
           </p>
         </div>
 
-        <div className="flex flex-row gap-8 xl:gap-5">
-          <div className="p-4 xl:p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-48 xl:w-55 shadow-lg shadow-white/5">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-8 xl:gap-5 w-full md:w-auto">
+          <div className="p-4 xl:p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-full md:w-48 xl:w-55 shadow-lg shadow-white/5">
             <Bell className="opacity-65 xl:h-5 xl:w-5 h-4.5 w-4.5" />
             <h3 className="text-xs text-neutral-500 uppercase tracking-wider font-medium mt-4 xl:mt-5 mb-2">
               Reminders
@@ -75,7 +75,7 @@ export default function MainWindow() {
             </div>
           </div>
 
-          <div className="p-4 xl:p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-48 xl:w-55 shadow-lg shadow-white/5">
+          <div className="p-4 xl:p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-full md:w-48 xl:w-55 shadow-lg shadow-white/5">
             <Euro className="opacity-65 xl:h-5 xl:w-5 h-4.5 w-4.5" />
             <h3 className="text-xs text-neutral-500 uppercase tracking-wider font-medium mt-5 mb-2">
               Multi-currency
@@ -83,7 +83,7 @@ export default function MainWindow() {
             <p className="text-sm">Track in any currency</p>
           </div>
 
-          <div className="p-4 xl:p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-48 xl:w-55 shadow-lg shadow-white/5">
+          <div className="p-4 xl:p-5 bg-[#121212]/40 border border-white/8 rounded-lg w-full md:w-48 xl:w-55 shadow-lg shadow-white/5">
             <ChartNoAxesColumn className="opacity-65 xl:h-5 xl:w-5 h-4.5 w-4.5" />
             <h3 className="text-xs text-neutral-500 uppercase tracking-wider font-medium mt-5 mb-2">
               Analytics

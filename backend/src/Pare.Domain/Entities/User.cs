@@ -9,8 +9,7 @@ public sealed class User
     public DateTime? LastVerificationRequestAtUtc { get; set; }
     public string Currency { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
-    public string? RefreshToken { get; set; }
-    public DateTime? RefreshTokenExpiry { get; set; }
 
     public ICollection<Subscription> Subscriptions { get; set; } = [];
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }

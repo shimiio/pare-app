@@ -1,35 +1,66 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 import { useAuthStore } from "./store/useAuthStore";
-import { refresh } from "./api/auth";
-import Silk from "./components/Silk";
+import axios from "axios";
+import { refreshSession, isSessionEnded } from "./api/auth";
 import LoadingState from "./components/ui/LoadingState";
+import { DESKTOP_QUERY, useMediaQuery } from "./hooks/useMediaQuery";
+
+// Separate chunk: three.js and the WebGL canvas are downloaded only when Silk is actually shown
+const Silk = lazy(() => import("./components/Silk"));
+
+const STARTUP_REFRESH_ATTEMPTS = 3;
+
+// Wait as long as the server asks (Retry-After on a 429), otherwise 1s, 2s, ...; at most 5s
+const retryDelayMs = (error: unknown, attempt: number) => {
+  const retryAfter = axios.isAxiosError(error) ? Number(error.response?.headers["retry-after"]) : NaN;
+  const ms = Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 1000 * 2 ** attempt;
+  return Math.min(ms, 5000);
+};
 
 export default function App() {
   const setToken = useAuthStore((state) => state.setToken);
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const setLoading = useAuthStore((state) => state.setLoading);
   const isLoading = useAuthStore((state) => state.isLoading);
+  // Phones get the static gradient: a full-screen WebGL animation costs battery and heat there.
+  // Same for anyone who asked the system for less motion.
+  const showSilk = useMediaQuery(
+    `${DESKTOP_QUERY} and (prefers-reduced-motion: no-preference)`,
+  );
 
   useEffect(() => {
+    let cancelled = false;
+
     const checkAuth = async () => {
-      try {
-        const response = await refresh();
-        setToken(response.data.jwtToken);
-      } catch {
-        clearAuth();
-      } finally {
-        setLoading(false);
+      for (let attempt = 1; ; attempt++) {
+        try {
+          const token = await refreshSession();
+          if (!cancelled) setToken(token);
+          break;
+        } catch (error) {
+          // Logged out only when the server says the session is over, or after a few failed tries
+          if (isSessionEnded(error) || attempt === STARTUP_REFRESH_ATTEMPTS) {
+            if (!cancelled) clearAuth();
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, retryDelayMs(error, attempt - 1)));
+          if (cancelled) return;
+        }
       }
+      if (!cancelled) setLoading(false);
     };
 
     checkAuth();
+    return () => {
+      cancelled = true;
+    };
   }, [setToken, clearAuth, setLoading]);
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#121212]">
+      <div className="flex h-dvh items-center justify-center bg-[#121212]">
         <LoadingState />
       </div>
     );
@@ -37,7 +68,7 @@ export default function App() {
 
   return (
     <>
-      <div className="fixed inset-0 -z-10">
+      <div className="fixed inset-0 -z-10 silk-fallback">
         <svg className="absolute w-0 h-0" width="0" height="0">
           <defs>
             <linearGradient
@@ -55,13 +86,17 @@ export default function App() {
           </defs>
         </svg>
 
-        <Silk
-          speed={1.5}
-          scale={0.7}
-          color="#212121"
-          noiseIntensity={1.7}
-          rotation={0}
-        />
+        {showSilk && (
+          <Suspense fallback={null}>
+            <Silk
+              speed={1.5}
+              scale={0.7}
+              color="#212121"
+              noiseIntensity={1.7}
+              rotation={0}
+            />
+          </Suspense>
+        )}
       </div>
       <RouterProvider router={router} />
     </>

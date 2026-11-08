@@ -1,28 +1,19 @@
 using MediatR;
 using Pare.Application.Common;
-using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
 
 namespace Pare.Application.User.Commands.LogoutUser;
 
-public sealed class LogoutUserHandler(IUserRepository repo)
+public sealed class LogoutUserHandler(IRefreshTokenRepository refreshTokens)
         : IRequestHandler<LogoutUserCommand, Unit>
 {
-    private readonly IUserRepository _repo = repo;
+    private readonly IRefreshTokenRepository _refreshTokens = refreshTokens;
 
     public async Task<Unit> Handle(LogoutUserCommand command, CancellationToken ct)
     {
-        var request = command.RefreshToken;
-
-        // Get user data by refresh token
-        var user = await _repo.GetByHashedRefreshTokenAsync(TokenHasher.Hash(request.RefreshToken), ct)
-            ?? throw new UnauthorizedException("Unauthorized");
-
-        // Update refresh token
-        user.RefreshToken = null;
-        user.RefreshTokenExpiry = null;
-
-        await _repo.UpdateAsync(user, ct);
+        // End only this browser's session. An unknown token (already expired, or revoked by a
+        // password change elsewhere) is not an error: the result is the same, the user is logged out.
+        await _refreshTokens.DeleteByHashAsync(TokenHasher.Hash(command.RefreshToken.RefreshToken), ct);
 
         return Unit.Value;
     }

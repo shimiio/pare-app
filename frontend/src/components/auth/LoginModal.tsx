@@ -62,7 +62,7 @@ export default function LoginModal({ onClose }: Props) {
     <Modal
       onClose={handleClose}
       isClosing={isClosing}
-      className="max-w-sm w-full"
+      className="md:max-w-sm w-full"
     >
       <form
         onSubmit={handleLogin}
@@ -76,7 +76,7 @@ export default function LoginModal({ onClose }: Props) {
           <button
             type="button"
             onClick={handleClose}
-            className="text-neutral-500 hover:text-white transition-colors cursor-pointer"
+            className="p-3 -m-3 text-neutral-500 hover:text-white transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -86,22 +86,26 @@ export default function LoginModal({ onClose }: Props) {
         <div className="p-6 space-y-4">
           {/* Email */}
           <div className="flex flex-col">
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-0.5 2xl:mb-1">
+            <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-0.5 2xl:mb-1">
               Email address
             </label>
             <input
               name="email"
+              inputMode="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               value={email}
               placeholder="email@gmail.com"
               onChange={(e) => setEmail(e.target.value)}
-              autoComplete="off"
+              autoComplete="username"
               className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all"
             />
           </div>
 
           {/* Password */}
           <div className="flex flex-col">
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-0.5 2xl:mb-1">
+            <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-0.5 2xl:mb-1">
               Password
             </label>
             <input
@@ -110,7 +114,7 @@ export default function LoginModal({ onClose }: Props) {
               value={password}
               placeholder="••••••••"
               onChange={(e) => setPassword(e.target.value)}
-              autoComplete="off"
+              autoComplete="current-password"
               className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all [&::-ms-reveal]:invert [&::-ms-reveal]:opacity-60 [&::-webkit-credentials-store-indicator]:invert"
             />
           </div>

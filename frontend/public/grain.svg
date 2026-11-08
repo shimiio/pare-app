@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180">
+  <!-- Background grain (see .silk-fallback in index.css): white specks whose opacity follows the
+       noise. A file rather than a data: URI, because the production CSP only allows images from
+       'self' and https:. The 0.14 below is the grain strength. -->
+  <filter id="n">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" />
+    <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.14 0 0 0 -0.03" />
+  </filter>
+  <rect width="100%" height="100%" filter="url(#n)" />
+</svg>

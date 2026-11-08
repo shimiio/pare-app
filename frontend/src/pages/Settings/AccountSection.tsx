@@ -143,7 +143,7 @@ export default function AccountSection({ user }: { user: User }) {
           <label className="block text-xs text-neutral-500 uppercase tracking-wider mb-1">
             Email Address
             {!user.isEmailVerified && (
-              <span className="text-[10px] ml-1 bg-amber-950/30 text-amber-500 px-1.5 py-0.5 rounded border border-amber-900/30 lowercase tracking-normal">
+              <span className="text-[11px] md:text-[10px] ml-1 bg-amber-950/30 text-amber-500 px-1.5 py-0.5 rounded border border-amber-900/30 lowercase tracking-normal">
                 unverified
               </span>
             )}
@@ -155,6 +155,10 @@ export default function AccountSection({ user }: { user: User }) {
                 : "border-b border-transparent pb-1 cursor-pointer"
             }`}
             name="email"
+            inputMode="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             value={email}
             onClick={() => setIsEditing(true)}
             onChange={(e) => {
@@ -178,7 +182,7 @@ export default function AccountSection({ user }: { user: User }) {
           {!isEditing ? (
             <button
               onClick={() => logoutMutation.mutate()}
-              className="text-xs font-medium text-neutral-500 hover:text-white transition-colors cursor-pointer"
+              className="py-3 -my-3 pr-4 text-xs font-medium text-neutral-500 hover:text-white transition-colors cursor-pointer"
             >
               Logout
             </button>
@@ -193,7 +197,7 @@ export default function AccountSection({ user }: { user: User }) {
                   setEmailError([]);
                 }}
                 disabled={nameMutation.isPending || emailMutation.isPending}
-                className="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-4 py-3 md:py-1.5 rounded-lg text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 Cancel
               </button>
@@ -205,7 +209,7 @@ export default function AccountSection({ user }: { user: User }) {
                   nameError.length > 0 ||
                   emailError.length > 0
                 }
-                className="px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-3 md:py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {nameMutation.isPending || emailMutation.isPending
                   ? "Saving..."

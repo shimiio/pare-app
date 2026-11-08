@@ -125,7 +125,7 @@ export default function PreferencesSection({ user }: { user: User }) {
                       <button
                         onClick={() => sendCodeMutation.mutate()}
                         disabled={sendCodeMutation.isPending}
-                        className="shrink-0 px-3 py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg text-xs font-medium text-amber-500 transition-colors disabled:opacity-50 cursor-pointer"
+                        className="shrink-0 px-3 py-3 md:py-1.5 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 rounded-lg text-xs font-medium text-amber-500 transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         Send Code
                       </button>
@@ -145,10 +145,12 @@ export default function PreferencesSection({ user }: { user: User }) {
                       . Enter it below:
                     </p>
 
-                    <div className="flex items-center gap-5 mt-1 ml-3">
+                    <div className="flex flex-wrap items-center gap-3 md:gap-5 mt-1 md:ml-3">
                       <input
                         type="text"
                         maxLength={6}
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
                         placeholder="000000"
                         value={verificationCode}
                         onChange={(e) => {
@@ -172,7 +174,7 @@ export default function PreferencesSection({ user }: { user: User }) {
                             verifyCodeMutation.mutate(verificationCode)
                           }
                           disabled={verificationCode.length !== 6}
-                          className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-md text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-500 cursor-pointer"
+                          className="px-3 py-3 md:py-1.5 bg-amber-500 hover:bg-amber-400 text-amber-950 rounded-md text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-amber-500 cursor-pointer"
                         >
                           Verify
                         </button>
@@ -184,7 +186,7 @@ export default function PreferencesSection({ user }: { user: User }) {
                             setVerifyError("");
                             setSendError("");
                           }}
-                          className="px-2 py-1.5 text-xs text-neutral-500 hover:text-neutral-300 transition-colors cursor-pointer"
+                          className="px-2 py-3 md:py-1.5 text-xs text-neutral-500 hover:text-neutral-300 transition-colors cursor-pointer"
                         >
                           Cancel
                         </button>

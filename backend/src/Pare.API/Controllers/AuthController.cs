@@ -22,7 +22,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     {
         var result = await _mediator.Send(new RegisterUserCommand(request));
 
-        SetRefreshTokenCookie(result.RefreshToken);
+        SetRefreshTokenCookie(result.RefreshToken!);
 
         return Created("", new { jwtToken = result.JwtToken });
     }
@@ -33,13 +33,16 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
     {
         var result = await _mediator.Send(new LoginUserCommand(request));
 
-        SetRefreshTokenCookie(result.RefreshToken);
+        SetRefreshTokenCookie(result.RefreshToken!);
 
         return Ok(new { jwtToken = result.JwtToken });
     }
 
     // POST logout
+    // Per session, not in the per-IP "auth" budget: logging out guesses nothing, and people
+    // sharing an IP should not be unable to log out because others logged in
     [HttpPost("logout")]
+    [EnableRateLimiting("session")]
     public async Task<IActionResult> LogoutAsync()
     {
         var refreshToken = Request.Cookies["refreshToken"];
@@ -52,7 +55,7 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
 
     // POST refresh
     [HttpPost("refresh")]
-    [EnableRateLimiting("refresh")]
+    [EnableRateLimiting("session")]
     public async Task<IActionResult> RefreshAsync()
     {
         var refreshToken = Request.Cookies["refreshToken"];
@@ -60,7 +63,10 @@ public sealed class AuthController(IMediator mediator) : ControllerBase
 
         var result = await _mediator.Send(new RefreshUserCommand(new RefreshTokenDto { RefreshToken = refreshToken }));
 
-        SetRefreshTokenCookie(result.RefreshToken);
+        // No new token: this request lost a rotation race and the winner already set the cookie.
+        // Overwriting it here with nothing (or the old value) would break the session.
+        if (result.RefreshToken is not null)
+            SetRefreshTokenCookie(result.RefreshToken);
 
         return Ok(new { jwtToken = result.JwtToken });
     }

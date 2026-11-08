@@ -20,6 +20,25 @@ apiClient.interceptors.request.use(
   },
 );
 
+// One refresh at a time per tab. StrictMode runs the startup effect twice and several requests can
+// hit a 401 together; they all wait for the same request instead of each rotating the token.
+let refreshInFlight: Promise<string> | null = null;
+
+export const refreshSession = (): Promise<string> => {
+  refreshInFlight ??= apiClient
+    .post<{ jwtToken: string }>("/auth/refresh")
+    .then((response) => response.data.jwtToken)
+    .finally(() => {
+      refreshInFlight = null;
+    });
+  return refreshInFlight;
+};
+
+// Only a 401 from refresh means the session is over. A 429, a server error or a lost
+// connection is temporary: the refresh cookie is still valid, so it must not log the user out.
+export const isSessionEnded = (error: unknown) =>
+  axios.isAxiosError(error) && error.response?.status === 401;
+
 // Queue
 let isRefreshing = false;
 let failedQueue: Array<{
@@ -79,8 +98,7 @@ apiClient.interceptors.response.use(
 
       try {
         // Attempt to refresh the token
-        const response = await apiClient.post("/auth/refresh");
-        const newToken = response.data.jwtToken;
+        const newToken = await refreshSession();
 
         // Update the token in the auth store
         useAuthStore.getState().setToken(newToken);
@@ -92,10 +110,12 @@ apiClient.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
-        // If refresh fails, clear auth and redirect to main page
         processQueue(refreshError, null);
-        useAuthStore.getState().clearAuth();
-        window.location.href = "/";
+        // Session over: clear auth and go to the main page. Anything else just fails this request.
+        if (isSessionEnded(refreshError)) {
+          useAuthStore.getState().clearAuth();
+          window.location.href = "/";
+        }
         return Promise.reject(refreshError);
       } finally {
         // Reset the refreshing flag

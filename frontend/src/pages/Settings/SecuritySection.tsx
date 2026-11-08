@@ -74,7 +74,7 @@ export default function SecuritySection() {
 
       <div className="bg-[#121212]/40 border border-white/5 rounded-xl p-4">
         {!isPasswordEditing ? (
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-3">
             <div>
               <p className="text-sm font-medium text-neutral-200">Password</p>
               <p className="text-xs text-neutral-500 mt-0.5">
@@ -83,7 +83,7 @@ export default function SecuritySection() {
             </div>
             <button
               onClick={() => setIsPasswordEditing(true)}
-              className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-neutral-200 transition-colors cursor-pointer"
+              className="shrink-0 px-3 py-3 md:py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-neutral-200 transition-colors cursor-pointer"
             >
               Change Password
             </button>
@@ -110,7 +110,7 @@ export default function SecuritySection() {
                 value={currentPassword}
                 placeholder="Current Password"
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                autoComplete="off"
+                autoComplete="current-password"
               />
               <input
                 className="bg-[#161616] border border-white/10 rounded-lg px-3 py-2 text-sm text-neutral-200 focus:outline-none focus:border-indigo-500/50 placeholder-neutral-600 transition-colors"
@@ -119,7 +119,7 @@ export default function SecuritySection() {
                 value={newPassword}
                 placeholder="New Password"
                 onChange={(e) => setNewPassword(e.target.value)}
-                autoComplete="off"
+                autoComplete="new-password"
               />
               <span className="text-neutral-500 text-xs">
                 Min 8 characters, 1 uppercase, 1 number
@@ -130,7 +130,7 @@ export default function SecuritySection() {
               <button
                 onClick={handleSavePassword}
                 disabled={passwordMutation.isPending}
-                className="px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-4 py-3 md:py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-xs font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {passwordMutation.isPending ? "Saving..." : "Save Password"}
               </button>
@@ -142,7 +142,7 @@ export default function SecuritySection() {
                   setNewPassword("");
                 }}
                 disabled={passwordMutation.isPending}
-                className="px-4 py-1.5 rounded-lg text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-4 py-3 md:py-1.5 rounded-lg text-xs font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 Cancel
               </button>
