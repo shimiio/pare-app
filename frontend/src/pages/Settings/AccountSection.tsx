@@ -143,7 +143,7 @@ export default function AccountSection({ user }: { user: User }) {
           <label className="block text-xs text-neutral-500 uppercase tracking-wider mb-1">
             Email Address
             {!user.isEmailVerified && (
-              <span className="text-[10px] ml-1 bg-amber-950/30 text-amber-500 px-1.5 py-0.5 rounded border border-amber-900/30 lowercase tracking-normal">
+              <span className="text-[11px] md:text-[10px] ml-1 bg-amber-950/30 text-amber-500 px-1.5 py-0.5 rounded border border-amber-900/30 lowercase tracking-normal">
                 unverified
               </span>
             )}

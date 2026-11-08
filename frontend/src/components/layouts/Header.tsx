@@ -19,7 +19,7 @@ export default function Header() {
   const currentTitle = routeTitles[location.pathname];
 
   return (
-    <header className="flex flex-row justify-between transform-gpu border-b border-white/5 bg-[#121212]/10 p-4 md:p-6 2xl:p-7 md:px-8 lg:px-24 2xl:px-40 backdrop-blur-md sticky top-0 z-10">
+    <header className="hidden md:flex flex-row justify-between transform-gpu border-b border-white/5 bg-[#121212]/10 p-4 md:p-6 2xl:p-7 md:px-8 lg:px-24 2xl:px-40 backdrop-blur-md sticky top-0 z-10">
       <div className="flex font-semibold text-neutral-200 uppercase tracking-wider items-center">
         {currentTitle}
       </div>

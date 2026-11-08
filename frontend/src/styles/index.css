@@ -53,6 +53,18 @@
   animation: fadeOut 0.3s ease-out;
 }
 
+/* Static stand-in for the animated Silk background: what phones show, and what desktop shows
+   while three.js is still loading. Soft diagonal light on near-black, like Silk at rest. */
+.silk-fallback {
+  background-color: #0b0b0b;
+  background-image:
+    /* grain: white specks whose opacity follows SVG noise, drawn once and tiled */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.14 0 0 0 -0.03'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse 90% 55% at 10% 15%, rgb(255 255 255 / 0.07), transparent 70%),
+    radial-gradient(ellipse 80% 45% at 90% 60%, rgb(255 255 255 / 0.05), transparent 70%),
+    radial-gradient(ellipse 100% 40% at 35% 105%, rgb(255 255 255 / 0.045), transparent 70%);
+}
+
 @keyframes sheetIn {
   from {
     transform: translateY(100%);

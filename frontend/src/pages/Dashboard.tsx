@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
+import { DESKTOP_QUERY, useMediaQuery } from "../hooks/useMediaQuery";
 import { useSubscriptions } from "../hooks/useSubscriptions";
 import { useCurrencyConverter } from "../hooks/useCurrencyConverter";
 import { Status, type Subscription } from "../types";
@@ -30,6 +33,8 @@ export default function Dashboard() {
   const [modal, setModal] = useState<"create" | "edit" | null>(null);
   const [selectedSubscription, setSelectedSubscription] =
     useState<Subscription | null>(null);
+  // On a phone the list is the main content, so it shows a few more payments
+  const isDesktop = useMediaQuery(DESKTOP_QUERY);
 
   if (isLoading) return <LoadingState message="Loading subscriptions" />;
   if (isError)
@@ -92,13 +97,49 @@ export default function Dashboard() {
   // get next billing day
   const nextBillingDay = getDaysUtil(nextPayment.nextBillingDate);
 
+  const monthlyTotal = getMonthlyExpenses(active ?? [], toDefaultCurrency);
+  const yearlyTotal = getYearlyExpenses(active ?? [], toDefaultCurrency);
+  const upcomingCount = isDesktop ? 3 : 5;
+
   return (
     <>
       {!active?.length ? (
         <NoActiveSubscriptions onClick={() => setModal("create")} />
       ) : (
         <div className="max-w-3xl 2xl:max-w-4xl mx-auto px-4 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {/* Phones: one summary card instead of three stat cards and the budget summary */}
+          <div className="md:hidden bg-[#121212]/40 border border-white/5 rounded-2xl p-5 mb-6">
+            <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium">
+              Per Month
+            </p>
+            <p className="text-4xl font-semibold text-neutral-100 mt-1">
+              {formatCurrency(monthlyTotal, currency)}
+            </p>
+            <p className="text-sm text-neutral-300 mt-2">
+              {formatCurrency(yearlyTotal, currency)}
+              <span className="text-neutral-500"> per year · </span>
+              {formatCurrency(monthlyTotal / 30, currency)}
+              <span className="text-neutral-500"> per day</span>
+            </p>
+
+            <div className="border-t border-white/5 mt-4 pt-4 flex items-center justify-between gap-4 text-sm">
+              <span className="flex items-center gap-1.5 text-neutral-400 shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                {active.length} active
+              </span>
+              <span className="flex items-center gap-1.5 min-w-0">
+                <span className="text-neutral-500 shrink-0">Next</span>
+                <span className="text-neutral-200 truncate">
+                  {nextPayment.name}
+                </span>
+                <span className={`shrink-0 font-medium ${nextPaymentColor}`}>
+                  {nextBillingDay === 0 ? "today" : `in ${nextBillingDay}d`}
+                </span>
+              </span>
+            </div>
+          </div>
+
+          <div className="hidden md:grid md:grid-cols-3 gap-4 mb-8">
             {/* Per Month */}
             <div className="bg-[#121212]/40 border border-white/5 rounded-xl p-4 flex flex-col justify-between">
               <div>
@@ -106,10 +147,7 @@ export default function Dashboard() {
                   Per Month
                 </p>
                 <p className="text-xl 2xl:text-2xl font-semibold text-neutral-100 mt-1">
-                  {formatCurrency(
-                    getMonthlyExpenses(active ?? [], toDefaultCurrency),
-                    currency,
-                  )}
+                  {formatCurrency(monthlyTotal, currency)}
                 </p>
               </div>
 
@@ -175,13 +213,22 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <h3 className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-3 px-1">
-                Upcoming Payments
-              </h3>
+              <div className="flex items-center justify-between mb-3 px-1">
+                <h3 className="text-sm font-medium text-neutral-400 uppercase tracking-wider">
+                  Upcoming Payments
+                </h3>
+                <Link
+                  to="/subscriptions"
+                  className="flex items-center gap-0.5 py-2 -my-2 text-sm text-neutral-500 hover:text-neutral-300 active:text-neutral-300 transition duration-200"
+                >
+                  See all
+                  <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
 
               <div className="bg-[#121212]/40 border border-white/5 rounded-xl flex flex-col">
                 <div className="divide-y divide-white/5">
-                  {sorted?.slice(0, 3).map((sub) => (
+                  {sorted?.slice(0, upcomingCount).map((sub) => (
                     <div key={sub.id} className="flex flex-col">
                       <SubscriptionCard
                         subscription={sub}
@@ -197,7 +244,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div>
+            <div className="hidden md:block">
               <h3 className="text-sm font-medium text-neutral-400 uppercase tracking-wider mb-3 px-1">
                 Budget Summary
               </h3>

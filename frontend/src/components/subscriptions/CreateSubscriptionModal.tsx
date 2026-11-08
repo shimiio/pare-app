@@ -144,7 +144,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           <div className="space-y-4">
             {/* Service Name with Favicon */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Service Name
               </label>
               <div className="relative group flex items-center">
@@ -175,9 +175,9 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
 
             {/* Service URL */}
             <div className="space-y-1.5">
-              <label className="flex justify-between gap-2 text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="flex justify-between gap-2 text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 <p className="whitespace-nowrap">Service URL</p>
-                <p className="flex items-end text-right text-[9px] text-neutral-600">
+                <p className="flex items-end text-right text-[11px] md:text-[9px] text-neutral-600">
                   Used to fetch the service icon
                 </p>
               </label>
@@ -199,7 +199,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           {/* Price & Currency */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-1 border-t border-white/5">
             <div className="md:col-span-2 space-y-1.5 mt-3">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Price
               </label>
               <input
@@ -215,7 +215,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
               />
             </div>
             <div className="space-y-1.5 mt-3">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Currency
               </label>
               <select
@@ -237,7 +237,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           {/* Billing Info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Billing Cycle
               </label>
               <select
@@ -254,7 +254,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Start Date
               </label>
               <input
@@ -267,7 +267,7 @@ export default function CreateSubscriptionModal({ onClose }: Props) {
           </div>
 
           <div className="flex items-center justify-between px-1 pt-2">
-            <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest">
+            <span className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest">
               Next Billing Date
             </span>
             <span className="text-xs 2xl:text-sm font-medium text-neutral-300">

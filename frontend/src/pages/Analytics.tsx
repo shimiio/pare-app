@@ -169,7 +169,7 @@ export default function Analytics() {
                   <h3 className="text-sm font-medium text-neutral-400 uppercase tracking-wider">
                     Price Extremes
                   </h3>
-                  <p className="flex text-[10px] text-neutral-500 uppercase tracking-wider font-medium items-end">
+                  <p className="flex text-[11px] md:text-[10px] text-neutral-500 uppercase tracking-wider font-medium items-end">
                     Per Month
                   </p>
                 </div>
@@ -188,14 +188,14 @@ export default function Analytics() {
                           <Star className="w-6 h-6 text-indigo-400 shrink-0" />
                         )}
                         <div className="flex flex-col gap-0.5 min-w-0">
-                          <span className="text-[10px] text-red-400 uppercase tracking-wider font-semibold">
+                          <span className="text-[11px] md:text-[10px] text-red-400 uppercase tracking-wider font-semibold">
                             Most Expensive
                           </span>
                           <div className="flex items-center gap-1 min-w-0">
                             <span className="text-xs font-medium text-neutral-200 truncate">
                               {mostExpensive.name}
                             </span>
-                            <span className="text-[11px] text-white/50 shrink-0">
+                            <span className="text-xs md:text-[11px] text-white/50 shrink-0">
                               · {getBillingCycleName(mostExpensive)}
                             </span>
                           </div>
@@ -208,14 +208,15 @@ export default function Analytics() {
                             currency,
                           )}
                         </span>
-                        <span className="text-[10px] 2xl:text-[11px] text-white/40">
+                        <span className="text-[11px] md:text-[10px] 2xl:text-[11px] text-white/40">
                           {formatCurrency(
                             calculateDailyCost(
                               getMonthlyAmount(
                                 mostExpensive,
                                 toDefaultCurrency,
                               ),
-                              mostExpensive.billingCycle,
+                              // the amount is already per month, so divide it as a monthly one
+                              BillingCycle.Monthly,
                             ),
                             currency,
                           )}
@@ -238,14 +239,14 @@ export default function Analytics() {
                           <Star className="w-6 h-6 text-indigo-400 shrink-0" />
                         )}
                         <div className="flex flex-col gap-0.5 min-w-0">
-                          <span className="text-[10px] text-emerald-400 uppercase tracking-wider font-semibold">
+                          <span className="text-[11px] md:text-[10px] text-emerald-400 uppercase tracking-wider font-semibold">
                             Cheapest
                           </span>
                           <div className="flex items-center gap-1 min-w-0">
                             <span className="text-xs font-medium text-neutral-200 truncate">
                               {cheapest.name}
                             </span>
-                            <span className="text-[11px] text-white/50 shrink-0">
+                            <span className="text-xs md:text-[11px] text-white/50 shrink-0">
                               · {getBillingCycleName(cheapest)}
                             </span>
                           </div>
@@ -258,11 +259,12 @@ export default function Analytics() {
                             currency,
                           )}
                         </span>
-                        <span className="text-[10px] 2xl:text-[11px] text-white/40">
+                        <span className="text-[11px] md:text-[10px] 2xl:text-[11px] text-white/40">
                           {formatCurrency(
                             calculateDailyCost(
                               getMonthlyAmount(cheapest, toDefaultCurrency),
-                              cheapest.billingCycle,
+                              // the amount is already per month, so divide it as a monthly one
+                              BillingCycle.Monthly,
                             ),
                             currency,
                           )}
@@ -282,7 +284,7 @@ export default function Analytics() {
                   <h3 className="text-sm font-medium text-neutral-400 uppercase tracking-wider">
                     Billing Cycles Split
                   </h3>
-                  <span className="text-[10px] text-neutral-500 uppercase tracking-wider font-medium">
+                  <span className="text-[11px] md:text-[10px] text-neutral-500 uppercase tracking-wider font-medium">
                     Monthly share
                   </span>
                 </div>
@@ -332,7 +334,7 @@ export default function Analytics() {
                           </span>
                           <span className="text-neutral-400">
                             {formatCurrency(monthlyCyclesTotal, currency)}
-                            <span className="text-neutral-600 text-[10px] font-semibold ml-1">
+                            <span className="text-neutral-600 text-[11px] md:text-[10px] font-semibold ml-1">
                               {getPercent(monthlyCyclesTotal)}%
                             </span>
                           </span>
@@ -356,7 +358,7 @@ export default function Analytics() {
                           </span>
                           <span className="text-neutral-400">
                             {formatCurrency(yearlyCyclesTotal, currency)}
-                            <span className="text-neutral-600 text-[10px] font-semibold ml-1">
+                            <span className="text-neutral-600 text-[11px] md:text-[10px] font-semibold ml-1">
                               {getPercent(yearlyCyclesTotal)}%
                             </span>
                           </span>
@@ -380,7 +382,7 @@ export default function Analytics() {
                           </span>
                           <span className="text-neutral-400">
                             {formatCurrency(weeklyCyclesTotal, currency)}
-                            <span className="text-neutral-600 text-[10px] font-semibold ml-1">
+                            <span className="text-neutral-600 text-[11px] md:text-[10px] font-semibold ml-1">
                               {getPercent(weeklyCyclesTotal)}%
                             </span>
                           </span>

@@ -181,7 +181,7 @@ export default function EditSubscriptionModal({
           <div className="space-y-4">
             {/* Service Name with Favicon */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Service Name
               </label>
               <div className="relative group flex items-center">
@@ -212,9 +212,9 @@ export default function EditSubscriptionModal({
 
             {/* Service URL */}
             <div className="space-y-1.5">
-              <label className="flex justify-between gap-2 text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="flex justify-between gap-2 text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 <p className="whitespace-nowrap">Service URL</p>
-                <p className="flex items-end text-right text-[9px] text-neutral-600">
+                <p className="flex items-end text-right text-[11px] md:text-[9px] text-neutral-600">
                   Used to fetch the service icon
                 </p>
               </label>
@@ -236,7 +236,7 @@ export default function EditSubscriptionModal({
           {/* Price & Currency */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-1 border-t border-white/5">
             <div className="md:col-span-2 space-y-1.5 mt-3">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Price
               </label>
               <input
@@ -252,7 +252,7 @@ export default function EditSubscriptionModal({
               />
             </div>
             <div className="space-y-1.5 mt-3">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Currency
               </label>
               <select
@@ -274,7 +274,7 @@ export default function EditSubscriptionModal({
           {/* Billing Info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Status
               </label>
               <select
@@ -291,7 +291,7 @@ export default function EditSubscriptionModal({
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Billing Cycle
               </label>
               <select
@@ -310,7 +310,7 @@ export default function EditSubscriptionModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Start Date
               </label>
               <input
@@ -322,7 +322,7 @@ export default function EditSubscriptionModal({
             </div>
 
             <div className="space-y-1.5 flex flex-col justify-center">
-              <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
+              <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1">
                 Next Billing Date
               </label>
               <span className="text-xs 2xl:text-sm font-medium text-neutral-300 px-1 mt-1">

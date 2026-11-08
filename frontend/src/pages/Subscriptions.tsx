@@ -112,7 +112,7 @@ export default function Subscriptions() {
                           {readableDate(date)}
                         </span>
                         {index === 0 && (
-                          <span className="flex items-end text-white/40 uppercase text-[10px] 2xl:text-xs tracking-wider">
+                          <span className="flex items-end text-white/40 uppercase text-[11px] md:text-[10px] 2xl:text-xs tracking-wider">
                             Next Payment
                           </span>
                         )}

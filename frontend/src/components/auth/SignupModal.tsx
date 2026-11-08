@@ -97,7 +97,7 @@ export default function SignupModal({ onClose }: Props) {
         <div className="p-6 space-y-4">
           {/* Name */}
           <div className="flex flex-col">
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-0.5 2xl:mb-1">
+            <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-0.5 2xl:mb-1">
               Name
             </label>
             <input
@@ -112,7 +112,7 @@ export default function SignupModal({ onClose }: Props) {
 
           {/* Email */}
           <div className="flex flex-col">
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-0.5 2xl:mb-1">
+            <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-0.5 2xl:mb-1">
               Email address
             </label>
             <input
@@ -131,7 +131,7 @@ export default function SignupModal({ onClose }: Props) {
 
           {/* Password */}
           <div className="flex flex-col">
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-0.5 2xl:px-1">
+            <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-0.5 2xl:px-1">
               Password
             </label>
             <div>
@@ -144,7 +144,7 @@ export default function SignupModal({ onClose }: Props) {
                 autoComplete="new-password"
                 className="w-full bg-[#121212]/50 border border-white/5 rounded-xl py-2.5 px-4 text-xs 2xl:text-sm text-neutral-200 placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-all [&::-ms-reveal]:invert [&::-ms-reveal]:opacity-60 [&::-webkit-credentials-store-indicator]:invert"
               />
-              <span className="text-white/40 text-[10px] 2xl:text-xs pl-3">
+              <span className="text-white/40 text-[11px] md:text-[10px] 2xl:text-xs pl-3">
                 Min 8 characters, 1 uppercase, 1 number
               </span>
             </div>

@@ -86,7 +86,7 @@ export default function LoginModal({ onClose }: Props) {
         <div className="p-6 space-y-4">
           {/* Email */}
           <div className="flex flex-col">
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-0.5 2xl:mb-1">
+            <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest px-1 mb-0.5 2xl:mb-1">
               Email address
             </label>
             <input
@@ -105,7 +105,7 @@ export default function LoginModal({ onClose }: Props) {
 
           {/* Password */}
           <div className="flex flex-col">
-            <label className="text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-0.5 2xl:mb-1">
+            <label className="text-[11px] md:text-[10px] font-semibold text-neutral-500 uppercase tracking-widest mb-0.5 2xl:mb-1">
               Password
             </label>
             <input

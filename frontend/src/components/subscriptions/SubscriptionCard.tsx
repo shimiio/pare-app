@@ -63,7 +63,7 @@ export default function SubscriptionCard({
           <span className="text-white text-sm 2xl:text-base truncate max-w-full">
             {subscription.name}
           </span>
-          <span className="flex text-[10px] 2xl:text-xs items-start text-white/40">
+          <span className="flex text-[11px] md:text-[10px] 2xl:text-xs items-start text-white/40">
             {getBillingCycleName(subscription)}
           </span>
         </div>
@@ -75,11 +75,11 @@ export default function SubscriptionCard({
             className={`flex text-xs rounded-2xl border px-2 py-0.5 font-medium gap-1 ${labelColor}`}
           >
             {days === 0 ? (
-              <span className="font-medium text-[11px] 2xl:text-xs">
+              <span className="font-medium text-xs md:text-[11px] 2xl:text-xs">
                 today
               </span>
             ) : (
-              <span className="font-medium text-[11px] 2xl:text-xs">
+              <span className="font-medium text-xs md:text-[11px] 2xl:text-xs">
                 {days} days
               </span>
             )}
@@ -90,7 +90,7 @@ export default function SubscriptionCard({
           <span className="flex items-center font-medium text-xs 2xl:text-sm">
             {formatCurrency(subscription.price, subscription.currency)}
           </span>
-          <span className="flex items-start text-white/40 text-[10px]  2xl:text-xs">
+          <span className="flex items-start text-white/40 text-[11px] md:text-[10px]  2xl:text-xs">
             {formatCurrency(
               calculateDailyCost(subscription),
               subscription.currency,

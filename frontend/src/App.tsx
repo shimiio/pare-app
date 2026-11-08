@@ -1,11 +1,14 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 import { useAuthStore } from "./store/useAuthStore";
 import axios from "axios";
 import { refreshSession, isSessionEnded } from "./api/auth";
-import Silk from "./components/Silk";
 import LoadingState from "./components/ui/LoadingState";
+import { DESKTOP_QUERY, useMediaQuery } from "./hooks/useMediaQuery";
+
+// Separate chunk: three.js and the WebGL canvas are downloaded only when Silk is actually shown
+const Silk = lazy(() => import("./components/Silk"));
 
 const STARTUP_REFRESH_ATTEMPTS = 3;
 
@@ -21,6 +24,11 @@ export default function App() {
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const setLoading = useAuthStore((state) => state.setLoading);
   const isLoading = useAuthStore((state) => state.isLoading);
+  // Phones get the static gradient: a full-screen WebGL animation costs battery and heat there.
+  // Same for anyone who asked the system for less motion.
+  const showSilk = useMediaQuery(
+    `${DESKTOP_QUERY} and (prefers-reduced-motion: no-preference)`,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -60,7 +68,7 @@ export default function App() {
 
   return (
     <>
-      <div className="fixed inset-0 -z-10">
+      <div className="fixed inset-0 -z-10 silk-fallback">
         <svg className="absolute w-0 h-0" width="0" height="0">
           <defs>
             <linearGradient
@@ -78,13 +86,17 @@ export default function App() {
           </defs>
         </svg>
 
-        <Silk
-          speed={1.5}
-          scale={0.7}
-          color="#212121"
-          noiseIntensity={1.7}
-          rotation={0}
-        />
+        {showSilk && (
+          <Suspense fallback={null}>
+            <Silk
+              speed={1.5}
+              scale={0.7}
+              color="#212121"
+              noiseIntensity={1.7}
+              rotation={0}
+            />
+          </Suspense>
+        )}
       </div>
       <RouterProvider router={router} />
     </>
