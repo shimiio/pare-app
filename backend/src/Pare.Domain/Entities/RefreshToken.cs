@@ -9,5 +9,10 @@ public sealed class RefreshToken
     public DateTime ExpiresAtUtc { get; set; }
     public DateTime CreatedAtUtc { get; set; }
 
+    // The hash this row had before its last rotation, accepted for a short grace period so that
+    // requests racing with the rotation (several tabs, React StrictMode) do not log the user out
+    public string? PreviousTokenHash { get; set; }
+    public DateTime? RotatedAtUtc { get; set; }
+
     public User User { get; set; } = null!;
 }

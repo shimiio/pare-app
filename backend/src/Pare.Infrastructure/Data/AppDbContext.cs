@@ -61,6 +61,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             // SHA-256 as lowercase hex (TokenHasher) is exactly 64 characters
             entity.Property(x => x.TokenHash).IsRequired().HasMaxLength(64);
             entity.HasIndex(x => x.TokenHash).IsUnique();
+            entity.Property(x => x.PreviousTokenHash).HasMaxLength(64);
+            entity.HasIndex(x => x.PreviousTokenHash);
             entity.HasIndex(x => x.UserId);
             entity.HasOne(x => x.User)
                 .WithMany(u => u.RefreshTokens)

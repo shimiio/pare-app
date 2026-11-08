@@ -8,4 +8,4 @@ export const login = (email: string, password: string) =>
 
 export const logout = () => apiClient.post("/auth/logout");
 
-export const refresh = () => apiClient.post("/auth/refresh");
+export { refreshSession, isSessionEnded } from "./client";

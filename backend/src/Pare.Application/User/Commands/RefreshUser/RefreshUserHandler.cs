@@ -14,34 +14,51 @@ public sealed class RefreshUserHandler(IRefreshTokenRepository refreshTokens, IJ
 
     public async Task<AuthResponseDto> Handle(RefreshUserCommand command, CancellationToken ct)
     {
-        var request = command.RefreshToken;
+        var presentedHash = TokenHasher.Hash(command.RefreshToken.RefreshToken);
+        var now = DateTime.UtcNow;
 
         // Find this browser's session
-        var session = await _refreshTokens.GetByHashAsync(TokenHasher.Hash(request.RefreshToken), ct)
+        var session = await _refreshTokens.GetByHashAsync(presentedHash, ct)
             ?? throw new UnauthorizedException("Unauthorized");
 
         // Validate DateTime of refresh token
-        if (session.ExpiresAtUtc < DateTime.UtcNow)
+        if (session.ExpiresAtUtc < now)
             throw new UnauthorizedException("Unauthorized");
+
+        // The cookie holds the token this session had before its last rotation: another tab, or a
+        // duplicate request, rotated it a moment ago. The browser already has the new cookie from
+        // that response (all tabs share one), so answer with a JWT and leave the cookie alone.
+        if (session.TokenHash != presentedHash)
+        {
+            if (session.RotatedAtUtc is null || now - session.RotatedAtUtc > RefreshTokenGenerator.RotationGracePeriod)
+                throw new UnauthorizedException("Unauthorized");
+
+            return JwtOnly(session.User);
+        }
 
         // Rotate only this session; the user's other devices keep their own tokens
         var plainToken = RefreshTokenGenerator.NewPlainToken();
         var rotated = await _refreshTokens.RotateAsync(
             session.Id,
-            session.TokenHash,
+            presentedHash,
             TokenHasher.Hash(plainToken),
-            DateTime.UtcNow + RefreshTokenGenerator.Lifetime,
+            now + RefreshTokenGenerator.Lifetime,
             ct);
 
-        // Another request already rotated this token between the read and the update
-        if (!rotated) throw new UnauthorizedException("Unauthorized");
+        // Another request rotated this token between our read and our update: the same race as
+        // above, just a few milliseconds later, so it gets the same answer
+        if (!rotated) return JwtOnly(session.User);
 
-        // Generate JWT token
-        var token = _jwtService.GenerateToken(session.User.Id, session.User.Email);
         return new AuthResponseDto
         {
-            JwtToken = token,
+            JwtToken = _jwtService.GenerateToken(session.User.Id, session.User.Email),
             RefreshToken = plainToken
         };
     }
+
+    private AuthResponseDto JwtOnly(Domain.Entities.User user) => new()
+    {
+        JwtToken = _jwtService.GenerateToken(user.Id, user.Email),
+        RefreshToken = null
+    };
 }

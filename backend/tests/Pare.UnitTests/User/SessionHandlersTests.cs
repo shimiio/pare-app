@@ -66,7 +66,7 @@ public sealed class SessionHandlersTests
         // Assert
         created.Should().NotBeNull();
         created!.UserId.Should().Be(_user.Id);
-        created.TokenHash.Should().Be(TokenHasher.Hash(result.RefreshToken));
+        created.TokenHash.Should().Be(TokenHasher.Hash(result.RefreshToken!));
         created.ExpiresAtUtc.Should().BeCloseTo(DateTime.UtcNow.AddDays(30), TimeSpan.FromMinutes(1));
         _refreshTokens.Verify(r => r.CreateAsync(It.IsAny<RefreshToken>(), It.IsAny<CancellationToken>()), Times.Once);
         _refreshTokens.VerifyNoOtherCalls();
@@ -111,7 +111,7 @@ public sealed class SessionHandlersTests
         // Assert
         saved.Should().NotBeNull();
         saved!.RefreshTokens.Should().ContainSingle()
-            .Which.TokenHash.Should().Be(TokenHasher.Hash(result.RefreshToken));
+            .Which.TokenHash.Should().Be(TokenHasher.Hash(result.RefreshToken!));
     }
 
     // Refresh
@@ -136,7 +136,7 @@ public sealed class SessionHandlersTests
         _refreshTokens.Verify(r => r.RotateAsync(
             session.Id,
             TokenHasher.Hash("old-token"),
-            TokenHasher.Hash(result.RefreshToken),
+            TokenHasher.Hash(result.RefreshToken!),
             It.IsAny<DateTime>(),
             It.IsAny<CancellationToken>()), Times.Once);
         _jwt.Verify(j => j.GenerateToken(_user.Id, _user.Email), Times.Once);
@@ -176,13 +176,54 @@ public sealed class SessionHandlersTests
     }
 
     [Fact]
-    public async Task Refresh_WhenAnotherRequestRotatedFirst_ThrowsAndIssuesNoJwt()
+    public async Task Refresh_WhenAnotherRequestRotatedFirst_IssuesJwtAndKeepsTheWinnersCookie()
     {
-        // Arrange
+        // Arrange: two tabs sent the same cookie; the other one rotated between our read and update
         _refreshTokens.Setup(r => r.GetByHashAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Session("old-token", DateTime.UtcNow.AddDays(10)));
         _refreshTokens.Setup(r => r.RotateAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
+        var handler = new RefreshUserHandler(_refreshTokens.Object, _jwt.Object);
+
+        // Act
+        var result = await handler.Handle(
+            new RefreshUserCommand(new RefreshTokenDto { RefreshToken = "old-token" }), default);
+
+        // Assert
+        result.JwtToken.Should().Be("jwt");
+        result.RefreshToken.Should().BeNull("the winner's response already set the new cookie");
+    }
+
+    [Fact]
+    public async Task Refresh_WithJustRotatedPreviousToken_IssuesJwtWithoutRotatingAgain()
+    {
+        // Arrange: the session moved on to "new-token" 5 seconds ago; this tab still sent "old-token"
+        var session = Session("new-token", DateTime.UtcNow.AddDays(30));
+        session.PreviousTokenHash = TokenHasher.Hash("old-token");
+        session.RotatedAtUtc = DateTime.UtcNow.AddSeconds(-5);
+        _refreshTokens.Setup(r => r.GetByHashAsync(TokenHasher.Hash("old-token"), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(session);
+        var handler = new RefreshUserHandler(_refreshTokens.Object, _jwt.Object);
+
+        // Act
+        var result = await handler.Handle(
+            new RefreshUserCommand(new RefreshTokenDto { RefreshToken = "old-token" }), default);
+
+        // Assert
+        result.JwtToken.Should().Be("jwt");
+        result.RefreshToken.Should().BeNull();
+        _refreshTokens.Verify(r => r.RotateAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Refresh_WithPreviousTokenAfterGracePeriod_Throws()
+    {
+        // Arrange: an old token showing up long after the rotation is not a race, it is a leftover (or a stolen copy)
+        var session = Session("new-token", DateTime.UtcNow.AddDays(30));
+        session.PreviousTokenHash = TokenHasher.Hash("old-token");
+        session.RotatedAtUtc = DateTime.UtcNow - RefreshTokenGenerator.RotationGracePeriod - TimeSpan.FromSeconds(1);
+        _refreshTokens.Setup(r => r.GetByHashAsync(TokenHasher.Hash("old-token"), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(session);
         var handler = new RefreshUserHandler(_refreshTokens.Object, _jwt.Object);
 
         // Act

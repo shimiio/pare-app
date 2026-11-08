@@ -64,8 +64,9 @@ app.UseForwardedHeaders(forwardedOptions);
 // Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseRouting();
-app.UseRateLimiter();
 app.UseAuthentication();
+// After authentication: the "global" policy counts requests per signed-in user
+app.UseRateLimiter();
 app.UseAuthorization();
 
 // Hangfire dashboard

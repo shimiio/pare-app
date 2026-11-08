@@ -21,15 +21,19 @@ public sealed class RefreshTokenRepository(AppDbContext db) : IRefreshTokenRepos
     {
         return await _db.RefreshTokens
             .Include(t => t.User)
-            .FirstOrDefaultAsync(t => t.TokenHash == tokenHash, ct);
+            .FirstOrDefaultAsync(t => t.TokenHash == tokenHash || t.PreviousTokenHash == tokenHash, ct);
     }
 
     public async Task<bool> RotateAsync(int id, string currentHash, string newHash, DateTime newExpiresAtUtc, CancellationToken ct)
     {
+        var now = DateTime.UtcNow;
+
         // A single conditional UPDATE: the database decides the race, not two reads in the app
         var updated = await _db.RefreshTokens
             .Where(t => t.Id == id && t.TokenHash == currentHash)
             .ExecuteUpdateAsync(s => s
+                .SetProperty(t => t.PreviousTokenHash, currentHash)
+                .SetProperty(t => t.RotatedAtUtc, now)
                 .SetProperty(t => t.TokenHash, newHash)
                 .SetProperty(t => t.ExpiresAtUtc, newExpiresAtUtc), ct);
 
@@ -38,15 +42,18 @@ public sealed class RefreshTokenRepository(AppDbContext db) : IRefreshTokenRepos
 
     public async Task DeleteByHashAsync(string tokenHash, CancellationToken ct)
     {
+        // Logging out right after a rotation still sends the previous cookie: end the session either way
         await _db.RefreshTokens
-            .Where(t => t.TokenHash == tokenHash)
+            .Where(t => t.TokenHash == tokenHash || t.PreviousTokenHash == tokenHash)
             .ExecuteDeleteAsync(ct);
     }
 
     public async Task DeleteAllForUserExceptAsync(int userId, string? keepTokenHash, CancellationToken ct)
     {
         await _db.RefreshTokens
-            .Where(t => t.UserId == userId && t.TokenHash != keepTokenHash)
+            .Where(t => t.UserId == userId
+                && !(keepTokenHash != null
+                    && (t.TokenHash == keepTokenHash || t.PreviousTokenHash == keepTokenHash)))
             .ExecuteDeleteAsync(ct);
     }
 }
