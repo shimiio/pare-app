@@ -9,6 +9,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public required DbSet<User> Users { get; set; }
     public required DbSet<EmailVerificationToken> EmailVerificationsToken { get; set; }
     public required DbSet<UnsubscribeToken> UnsubscribeToken { get; set; }
+    public required DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -16,11 +17,11 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
         modelBuilder.Entity<User>().ToTable("users");
         modelBuilder.Entity<EmailVerificationToken>().ToTable("email_verification");
         modelBuilder.Entity<UnsubscribeToken>().ToTable("unsubscribe_tokens");
+        modelBuilder.Entity<RefreshToken>().ToTable("refresh_tokens");
 
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasIndex(u => u.Email).IsUnique();
-            entity.HasIndex(u => u.RefreshToken).IsUnique();
         });
 
         modelBuilder.Entity<Subscription>()
@@ -50,6 +51,19 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entity.HasIndex(x => x.Token);
             entity.HasOne(x => x.User)
                 .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            // SHA-256 as lowercase hex (TokenHasher) is exactly 64 characters
+            entity.Property(x => x.TokenHash).IsRequired().HasMaxLength(64);
+            entity.HasIndex(x => x.TokenHash).IsUnique();
+            entity.HasIndex(x => x.UserId);
+            entity.HasOne(x => x.User)
+                .WithMany(u => u.RefreshTokens)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });

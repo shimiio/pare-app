@@ -24,12 +24,6 @@ public sealed class UserRepository(AppDbContext db) : IUserRepository
         return await _db.Users.FirstOrDefaultAsync(u => u.Id == id, ct);
     }
 
-    // GET by hashed refresh token
-    public async Task<User?> GetByHashedRefreshTokenAsync(string hashedRefreshToken, CancellationToken ct)
-    {
-        return await _db.Users.FirstOrDefaultAsync(u => u.RefreshToken == hashedRefreshToken, ct);
-    }
-
     // POST create new user
     public async Task<User> CreateAsync(User user, CancellationToken ct)
     {

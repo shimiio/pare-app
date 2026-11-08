@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using MediatR;
 using Pare.Application.Common;
 using Pare.Application.Exceptions;
@@ -7,36 +6,38 @@ using Pare.Application.User.DTOs;
 
 namespace Pare.Application.User.Commands.RefreshUser;
 
-public sealed class RefreshUserHandler(IUserRepository repo, IJwtTokenService jwtService)
+public sealed class RefreshUserHandler(IRefreshTokenRepository refreshTokens, IJwtTokenService jwtService)
         : IRequestHandler<RefreshUserCommand, AuthResponseDto>
 {
-    private readonly IUserRepository _repo = repo;
+    private readonly IRefreshTokenRepository _refreshTokens = refreshTokens;
     private readonly IJwtTokenService _jwtService = jwtService;
 
     public async Task<AuthResponseDto> Handle(RefreshUserCommand command, CancellationToken ct)
     {
         var request = command.RefreshToken;
 
-        // Get user data by refresh token
-        var user = await _repo.GetByHashedRefreshTokenAsync(TokenHasher.Hash(request.RefreshToken), ct)
+        // Find this browser's session
+        var session = await _refreshTokens.GetByHashAsync(TokenHasher.Hash(request.RefreshToken), ct)
             ?? throw new UnauthorizedException("Unauthorized");
 
         // Validate DateTime of refresh token
-        if (user.RefreshTokenExpiry < DateTime.UtcNow)
+        if (session.ExpiresAtUtc < DateTime.UtcNow)
             throw new UnauthorizedException("Unauthorized");
 
-        // Generate new refresh token
-        var plainToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-        var hashedToken = TokenHasher.Hash(plainToken);
+        // Rotate only this session; the user's other devices keep their own tokens
+        var plainToken = RefreshTokenGenerator.NewPlainToken();
+        var rotated = await _refreshTokens.RotateAsync(
+            session.Id,
+            session.TokenHash,
+            TokenHasher.Hash(plainToken),
+            DateTime.UtcNow + RefreshTokenGenerator.Lifetime,
+            ct);
 
-        // Update user
-        user.RefreshToken = hashedToken;
-        user.RefreshTokenExpiry = DateTime.UtcNow.AddDays(30);
-
-        await _repo.UpdateAsync(user, ct);
+        // Another request already rotated this token between the read and the update
+        if (!rotated) throw new UnauthorizedException("Unauthorized");
 
         // Generate JWT token
-        var token = _jwtService.GenerateToken(user.Id, user.Email);
+        var token = _jwtService.GenerateToken(session.User.Id, session.User.Email);
         return new AuthResponseDto
         {
             JwtToken = token,

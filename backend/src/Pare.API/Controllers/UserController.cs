@@ -55,8 +55,10 @@ public sealed class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto change)
     {
         var userId = GetUserId();
-        var changed = await _mediator.Send(new ChangeUserPasswordCommand(userId, change));
-        return Ok(changed);
+        // The refresh cookie tells the handler which session to keep signed in
+        var currentRefreshToken = Request.Cookies["refreshToken"];
+        await _mediator.Send(new ChangeUserPasswordCommand(userId, change, currentRefreshToken));
+        return NoContent();
     }
 
     // PATCH /api/user/update-currency

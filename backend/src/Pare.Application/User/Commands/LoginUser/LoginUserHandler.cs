@@ -1,16 +1,21 @@
-using System.Security.Cryptography;
 using MediatR;
 using Pare.Application.Exceptions;
 using Pare.Application.Interfaces;
 using Pare.Application.User.DTOs;
 using Pare.Application.Common;
+using Pare.Domain.Entities;
 
 namespace Pare.Application.User.Commands.LoginUser;
 
-public sealed class LoginUserHandler(IUserRepository repo, IPasswordHasher hasher, IJwtTokenService jwtService)
+public sealed class LoginUserHandler(
+    IUserRepository repo,
+    IRefreshTokenRepository refreshTokens,
+    IPasswordHasher hasher,
+    IJwtTokenService jwtService)
         : IRequestHandler<LoginUserCommand, AuthResponseDto>
 {
     private readonly IUserRepository _repo = repo;
+    private readonly IRefreshTokenRepository _refreshTokens = refreshTokens;
     private readonly IPasswordHasher _hasher = hasher;
     private readonly IJwtTokenService _jwtService = jwtService;
 
@@ -28,28 +33,24 @@ public sealed class LoginUserHandler(IUserRepository repo, IPasswordHasher hashe
         bool verify = _hasher.Verify(request.Password, existing.PasswordHash);
         if (!verify) throw new UnauthorizedException("Invalid email or password");
 
-        // Generate and hash refresh token
-        var plainToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
-        var hashedToken = TokenHasher.Hash(plainToken);
+        // Start a new session for this browser; sessions on other devices stay signed in
+        var plainToken = RefreshTokenGenerator.NewPlainToken();
+        var now = DateTime.UtcNow;
 
-        // Create refresh token expiry
-        var refreshTokenExpiry = DateTime.UtcNow.AddDays(30);
-
-        // Update user with new refresh token and expiry
-        existing.RefreshToken = hashedToken;
-        existing.RefreshTokenExpiry = refreshTokenExpiry;
-
-        // Add generated hashed token
-        await _repo.UpdateAsync(existing, ct);
+        await _refreshTokens.CreateAsync(new RefreshToken
+        {
+            UserId = existing.Id,
+            TokenHash = TokenHasher.Hash(plainToken),
+            ExpiresAtUtc = now + RefreshTokenGenerator.Lifetime,
+            CreatedAtUtc = now
+        }, ct);
 
         // Generate JWT token
         var token = _jwtService.GenerateToken(existing.Id, existing.Email);
-        var jwtToken = new AuthResponseDto
+        return new AuthResponseDto
         {
             JwtToken = token,
             RefreshToken = plainToken
         };
-
-        return jwtToken;
     }
 }
