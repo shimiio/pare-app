@@ -64,6 +64,25 @@ public sealed class CalculateNextBilingDateTests
     }
 
     [Fact]
+    public void CalculateNextBillingDate_WhenEveryTwentyEightDays_ShouldAdd28Days()
+    {
+        var startDate = new DateOnly(2020, 1, 1);
+
+        // Arrange
+        var subscription = new Subscription
+        {
+            BillingCycle = BillingCycle.EveryTwentyEightDays,
+            NextBillingDate = startDate
+        };
+
+        // Act
+        var result = subscription.CalculateNextBillingDate();
+
+        // Assert
+        result.Should().Be(new DateOnly(2020, 1, 29));
+    }
+
+    [Fact]
     public void CalculateNextBillingDate_WhenDefault_ShouldNotChangeDate()
     {
         var startDate = new DateOnly(2020, 1, 1);

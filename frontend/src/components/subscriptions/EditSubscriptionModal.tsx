@@ -304,6 +304,9 @@ export default function EditSubscriptionModal({
                 <option value={BillingCycle.Monthly}>Monthly</option>
                 <option value={BillingCycle.Yearly}>Yearly</option>
                 <option value={BillingCycle.Weekly}>Weekly</option>
+                <option value={BillingCycle.EveryTwentyEightDays}>
+                  Every 28 days
+                </option>
               </select>
             </div>
           </div>
