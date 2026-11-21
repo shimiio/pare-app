@@ -2,6 +2,7 @@ export const BillingCycle = {
   Monthly: 0,
   Yearly: 1,
   Weekly: 2,
+  EveryTwentyEightDays: 3,
 } as const;
 
 export const Status = {
@@ -19,6 +20,7 @@ export const BILLING_CYCLE_NAMES: Record<BillingCycleValue, string> = {
   [BillingCycle.Monthly]: "Monthly",
   [BillingCycle.Yearly]: "Yearly",
   [BillingCycle.Weekly]: "Weekly",
+  [BillingCycle.EveryTwentyEightDays]: "Every 28 days",
 };
 
 export interface Subscription {

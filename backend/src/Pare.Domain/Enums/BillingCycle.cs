@@ -5,5 +5,6 @@ public enum BillingCycle
 {
     Monthly = 0,
     Yearly = 1,
-    Weekly = 2
+    Weekly = 2,
+    EveryTwentyEightDays = 3
 }

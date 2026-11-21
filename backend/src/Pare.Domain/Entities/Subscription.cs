@@ -11,6 +11,7 @@ public sealed class Subscription
             BillingCycle.Monthly => NextBillingDate.AddMonths(1),
             BillingCycle.Yearly => NextBillingDate.AddYears(1),
             BillingCycle.Weekly => NextBillingDate.AddDays(7),
+            BillingCycle.EveryTwentyEightDays => NextBillingDate.AddDays(28),
             _ => NextBillingDate
         };
     }
