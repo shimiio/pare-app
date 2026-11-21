@@ -41,6 +41,10 @@ export const calculateNextBilling = (
       nextBilling.setUTCFullYear(nextBilling.getUTCFullYear() + 1);
     } else if (cycle === BillingCycle.Weekly) {
       nextBilling.setUTCDate(nextBilling.getUTCDate() + 7);
+    } else if (cycle === BillingCycle.EveryTwentyEightDays) {
+      nextBilling.setUTCDate(nextBilling.getUTCDate() + 28);
+    } else {
+      break;
     }
   }
 
@@ -72,6 +76,9 @@ export const getMonthlyAmount = (
       return inDefault / 12;
     case BillingCycle.Weekly:
       return inDefault * 4.33;
+    case BillingCycle.EveryTwentyEightDays:
+      // average days in a month (365.25 / 12) divided by the 28-day cycle
+      return inDefault * (365.25 / 12 / 28);
     default:
       return inDefault;
   }

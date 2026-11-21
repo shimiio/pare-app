@@ -30,6 +30,8 @@ export default function SubscriptionCard({
       days = 365;
     } else if (subscription.billingCycle === BillingCycle.Weekly) {
       days = 7;
+    } else if (subscription.billingCycle === BillingCycle.EveryTwentyEightDays) {
+      days = 28;
     }
 
     return subscription.price / days;
