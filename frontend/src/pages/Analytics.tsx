@@ -68,6 +68,8 @@ export default function Analytics() {
       days = 365;
     } else if (billingCycle === BillingCycle.Weekly) {
       days = 7;
+    } else if (billingCycle === BillingCycle.EveryTwentyEightDays) {
+      days = 28;
     }
 
     return price / days;
@@ -89,6 +91,7 @@ export default function Analytics() {
   let monthlyCyclesTotal = 0;
   let yearlyCyclesTotal = 0;
   let weeklyCyclesTotal = 0;
+  let twentyEightDayCyclesTotal = 0;
 
   if (active) {
     active.forEach((sub) => {
@@ -96,6 +99,8 @@ export default function Analytics() {
       if (sub.billingCycle === BillingCycle.Monthly) monthlyCyclesTotal += monthlyAmount;
       else if (sub.billingCycle === BillingCycle.Yearly) yearlyCyclesTotal += monthlyAmount;
       else if (sub.billingCycle === BillingCycle.Weekly) weeklyCyclesTotal += monthlyAmount;
+      else if (sub.billingCycle === BillingCycle.EveryTwentyEightDays)
+        twentyEightDayCyclesTotal += monthlyAmount;
     });
   }
 
@@ -104,6 +109,11 @@ export default function Analytics() {
     { name: "Monthly", value: monthlyCyclesTotal, color: "#6366f1" },
     { name: "Yearly", value: yearlyCyclesTotal, color: "#4f46e5" },
     { name: "Weekly", value: weeklyCyclesTotal, color: "#312e81" },
+    {
+      name: "Every 28 days",
+      value: twentyEightDayCyclesTotal,
+      color: "#3730a3",
+    },
   ].filter((item) => item.value > 0);
 
   // Progress bar percentage calculation function
@@ -392,6 +402,30 @@ export default function Analytics() {
                             className="h-full bg-indigo-800 rounded-full"
                             style={{
                               width: `${getPercent(weeklyCyclesTotal)}%`,
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+
+                    {twentyEightDayCyclesTotal > 0 && (
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between text-xs">
+                          <span className="font-medium text-neutral-300">
+                            Every 28 days (Converted to Month)
+                          </span>
+                          <span className="text-neutral-400">
+                            {formatCurrency(twentyEightDayCyclesTotal, currency)}
+                            <span className="text-neutral-600 text-[11px] md:text-[10px] font-semibold ml-1">
+                              {getPercent(twentyEightDayCyclesTotal)}%
+                            </span>
+                          </span>
+                        </div>
+                        <div className="w-full h-1 bg-white/2 border border-white/5 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-indigo-700 rounded-full"
+                            style={{
+                              width: `${getPercent(twentyEightDayCyclesTotal)}%`,
                             }}
                           ></div>
                         </div>

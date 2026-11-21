@@ -60,6 +60,18 @@ describe("calculateNextBilling", () => {
       "2027-06-02",
     );
   });
+
+  it("should calculate next billing date for 28-day cycle", () => {
+    expect(
+      calculateNextBilling("2026-06-02", BillingCycle.EveryTwentyEightDays, referenceDate),
+    ).toBe("2026-06-30");
+  });
+
+  it("should roll a 28-day cycle forward past several periods", () => {
+    expect(
+      calculateNextBilling("2026-01-01", BillingCycle.EveryTwentyEightDays, referenceDate),
+    ).toBe("2026-06-18"); // 2026-01-01 + 6 * 28 days
+  });
 });
 
 describe("Subscription Expenses Calculations", () => {
@@ -96,6 +108,15 @@ describe("Subscription Expenses Calculations", () => {
         billingCycle: BillingCycle.Weekly,
       });
       expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBe(43.3); // 10 * 4.33
+    });
+
+    it("should convert a 28-day subscription to a monthly amount (cycle 3)", () => {
+      const sub = createSubscription({
+        price: 28,
+        currency: "EUR",
+        billingCycle: BillingCycle.EveryTwentyEightDays,
+      });
+      expect(getMonthlyAmount(sub, mockToDefaultCurrency)).toBeCloseTo(30.4375); // 28 * 365.25 / 12 / 28
     });
 
     it("should return 0 if price is not specified (undefined)", () => {
